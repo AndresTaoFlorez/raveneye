@@ -37,6 +37,7 @@ On top of the base, the observer Dockerfile adds the [[Display Stack]] packages 
 
 - Compose services by name: `http://sample-app:3000` (the [[Sample App]]).
 - Host applications: `http://host.docker.internal:<port>` via `extra_hosts: host-gateway` — demonstrated with a live host app (see [[Project History]]).
+- Containers from other compose projects: attach them with `docker network connect ui-observer_default <container>` — full recipe in [[Observing Your Own App]].
 - Anything else must pass the [[URL Policy]].
 
 Related: [[Architecture Overview]] · [[Commands Reference]] · [[CI Mode]]

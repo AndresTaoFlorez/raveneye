@@ -1,0 +1,213 @@
+{
+  "main": {
+    "id": "ee0b7d8a7149dcef",
+    "type": "split",
+    "children": [
+      {
+        "id": "c5f4d548169cf27a",
+        "type": "tabs",
+        "dimension": 40.933098591549296,
+        "children": [
+          {
+            "id": "962d85463b8f958d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "05-Operations/Quick Start.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Quick Start"
+            }
+          }
+        ]
+      },
+      {
+        "id": "38f72bfc4e8cb84b",
+        "type": "tabs",
+        "dimension": 59.066901408450704,
+        "children": [
+          {
+            "id": "6082d40c76be578e",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9f3cecc08c1be028",
+    "type": "split",
+    "children": [
+      {
+        "id": "f483fd6eb27b1089",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "53a32f2b62981f2d",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "4d49adcfed9849ba",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "51bc7c5358dbda35",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 228.5
+  },
+  "right": {
+    "id": "519d3c37df171ed3",
+    "type": "split",
+    "children": [
+      {
+        "id": "9edd5a97071f6307",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "485fd44a4b993e50",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "05-Operations/Quick Start.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Quick Start"
+            }
+          },
+          {
+            "id": "a18cf1d4bf1c686f",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "05-Operations/Quick Start.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Quick Start"
+            }
+          },
+          {
+            "id": "7c09fff34342fe7a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "6825e5cd97175e27",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "95645d4e15849398",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "05-Operations/Quick Start.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Quick Start"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "962d85463b8f958d",
+  "lastOpenFiles": [
+    "02-Architecture/Docker Design.md.tmp.145860.66725445f562",
+    "05-Operations/Quick Start.md.tmp.145860.53699f744284",
+    "Index.md.tmp.145860.6d0fe1fd0554",
+    "05-Operations/Observing Your Own App.md",
+    "05-Operations/Observing Your Own App.md.tmp.145860.8eacae5e40f6",
+    "Index.md"
+  ]
+}

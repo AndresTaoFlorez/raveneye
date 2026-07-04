@@ -25,7 +25,7 @@ make artifacts      # list the run that just happened
 
 ## Point it at *your* application
 
-Edit `.env` (see [[Configuration]]):
+Full recipe (dockerized apps, network options, per-agent hookup, review mission): [[Observing Your Own App]]. The short version — edit `.env` (see [[Configuration]]):
 
 ```dotenv
 # App running on your host:

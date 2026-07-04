@@ -40,6 +40,7 @@ tags: [moc]
 
 ## ⚙️ Operations
 - [[Quick Start]] — from clone to visible browser
+- [[Observing Your Own App]] — point the observer at your real project (the Zoom-call recipe)
 - [[Commands Reference]] — every make target and script
 - [[Configuration]] — all environment variables
 - [[Profiles]] — ephemeral vs persistent sessions
