@@ -3,10 +3,10 @@
 set -euo pipefail
 
 echo "stopping observer..."
-docker compose stop ui-observer >/dev/null
+docker compose stop raveneye >/dev/null
 echo "clearing /browser-profile volume..."
-docker compose run --rm --no-deps --entrypoint bash ui-observer \
+docker compose run --rm --no-deps --entrypoint bash raveneye \
   -c 'rm -rf /browser-profile/* /browser-profile/.[!.]* 2>/dev/null || true; ls -la /browser-profile'
 echo "restarting observer..."
-docker compose up -d ui-observer >/dev/null
+docker compose up -d raveneye >/dev/null
 echo "profile reset complete"

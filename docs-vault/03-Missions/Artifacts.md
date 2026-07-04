@@ -40,6 +40,6 @@ Interactive screenshots taken through the [[Control API]] land in `artifacts/scr
 
 - Everything passed [[Secret Redaction]] at capture time; bodies are never stored.
 - `artifacts/` is git-ignored, owned by the host user (uid 1000, see [[Docker Design]]), and treated as sensitive — screenshots can show authorized applications.
-- Retention: `UI_OBSERVER_ARTIFACT_RETENTION_DAYS` (default 14), see [[Configuration]].
+- Retention: `RAVENEYE_ARTIFACT_RETENTION_DAYS` (default 14), see [[Configuration]].
 
 Comparing `findings.json` between two runs of the same mission is the verification step of the [[Reasoning Loop]].

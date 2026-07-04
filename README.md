@@ -1,4 +1,4 @@
-# ui-observer
+# raveneye
 
 A standalone development tool that lets a **coding agent and a human developer watch and control the same real Chromium session** — like a screen-share with a browser.
 
@@ -29,7 +29,7 @@ Open `http://127.0.0.1:6080` and you will see Chromium displaying the target app
 
 ## Pointing it at your application
 
-Set `UI_OBSERVER_TARGET_URL` in `.env`:
+Set `RAVENEYE_TARGET_URL` in `.env`:
 
 | Target | URL |
 |---|---|
@@ -37,7 +37,7 @@ Set `UI_OBSERVER_TARGET_URL` in `.env`:
 | App running on the host | `http://host.docker.internal:<port>` |
 | App in another compose network | attach the service and use its name |
 
-Only hosts listed in `UI_OBSERVER_ALLOWED_HOSTS` are reachable; `file:`, `javascript:` and `data:` URLs are always rejected.
+Only hosts listed in `RAVENEYE_ALLOWED_HOSTS` are reachable; `file:`, `javascript:` and `data:` URLs are always rejected.
 
 ## Commands
 

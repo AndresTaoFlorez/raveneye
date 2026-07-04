@@ -8,7 +8,7 @@ import {
   evaluateTargetUrl,
   parseAllowedHosts,
   type UrlPolicy,
-} from '@ui-observer/shared';
+} from '@raveneye/shared';
 import { missionSchema, normalizeChecks, type Mission } from './schema.js';
 import { executeStep, type StepContext } from './actions.js';
 import { RunEvidence } from './evidence.js';
@@ -47,11 +47,11 @@ export async function runMission(opts: RunnerOptions): Promise<number> {
 
   const policy: UrlPolicy = {
     allowedHosts: parseAllowedHosts(
-      process.env.UI_OBSERVER_ALLOWED_HOSTS ?? 'sample-app,host.docker.internal,localhost,127.0.0.1',
+      process.env.RAVENEYE_ALLOWED_HOSTS ?? 'sample-app,host.docker.internal,localhost,127.0.0.1',
     ),
   };
   const targetRaw =
-    opts.targetUrlOverride ?? mission.target_url ?? process.env.UI_OBSERVER_TARGET_URL ?? '';
+    opts.targetUrlOverride ?? mission.target_url ?? process.env.RAVENEYE_TARGET_URL ?? '';
   const decision = evaluateTargetUrl(targetRaw, policy);
   if (!decision.allowed) {
     console.error(`[mission] target rejected: ${decision.reason}`);
@@ -208,7 +208,7 @@ export async function runMission(opts: RunnerOptions): Promise<number> {
     target_url: baseUrl.toString(),
     started_at: startedAt.toISOString(),
     completed_at: new Date().toISOString(),
-    git_commit: process.env.UI_OBSERVER_GIT_COMMIT ?? 'unknown',
+    git_commit: process.env.RAVENEYE_GIT_COMMIT ?? 'unknown',
     observer_version: OBSERVER_VERSION,
     browser_version: browserVersion,
     playwright_version: playwrightVersion,

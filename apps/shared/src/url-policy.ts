@@ -28,7 +28,7 @@ export function evaluateTargetUrl(raw: string, policy: UrlPolicy): UrlDecision {
   if (!allowed.includes(host)) {
     return {
       allowed: false,
-      reason: `host "${host}" is not in UI_OBSERVER_ALLOWED_HOSTS (${allowed.join(', ')})`,
+      reason: `host "${host}" is not in RAVENEYE_ALLOWED_HOSTS (${allowed.join(', ')})`,
     };
   }
 

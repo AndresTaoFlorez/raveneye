@@ -1,7 +1,7 @@
 import http from 'node:http';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { OBSERVER_VERSION, isNetworkProblem } from '@ui-observer/shared';
+import { OBSERVER_VERSION, isNetworkProblem } from '@raveneye/shared';
 import type { ObserverConfig } from './config.js';
 import type { SharedBrowser } from './browser.js';
 import { navigateShared } from './browser.js';

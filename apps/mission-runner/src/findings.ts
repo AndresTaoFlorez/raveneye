@@ -1,4 +1,4 @@
-import { isNetworkProblem, type ConsoleEntry, type NetworkEntry } from '@ui-observer/shared';
+import { isNetworkProblem, type ConsoleEntry, type NetworkEntry } from '@raveneye/shared';
 import type { NormalizedCheck } from './schema.js';
 import type { ActionRecord, Finding, Inspection } from './types.js';
 

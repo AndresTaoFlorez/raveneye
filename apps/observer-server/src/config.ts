@@ -1,4 +1,4 @@
-import { parseAllowedHosts } from '@ui-observer/shared';
+import { parseAllowedHosts } from '@raveneye/shared';
 
 export interface ObserverConfig {
   display: string;
@@ -23,22 +23,22 @@ function intEnv(name: string, fallback: number): number {
 }
 
 export function loadConfig(): ObserverConfig {
-  const profileMode = process.env.UI_OBSERVER_PROFILE_MODE === 'persistent' ? 'persistent' : 'ephemeral';
+  const profileMode = process.env.RAVENEYE_PROFILE_MODE === 'persistent' ? 'persistent' : 'ephemeral';
   return {
     display: process.env.DISPLAY ?? ':99',
-    targetUrl: process.env.UI_OBSERVER_TARGET_URL ?? 'http://sample-app:3000',
+    targetUrl: process.env.RAVENEYE_TARGET_URL ?? 'http://sample-app:3000',
     allowedHosts: parseAllowedHosts(
-      process.env.UI_OBSERVER_ALLOWED_HOSTS ?? 'sample-app,host.docker.internal,localhost,127.0.0.1',
+      process.env.RAVENEYE_ALLOWED_HOSTS ?? 'sample-app,host.docker.internal,localhost,127.0.0.1',
     ),
-    viewportWidth: intEnv('UI_OBSERVER_VIEWPORT_WIDTH', 1440),
-    viewportHeight: intEnv('UI_OBSERVER_VIEWPORT_HEIGHT', 900),
+    viewportWidth: intEnv('RAVENEYE_VIEWPORT_WIDTH', 1440),
+    viewportHeight: intEnv('RAVENEYE_VIEWPORT_HEIGHT', 900),
     profileMode,
-    headless: process.env.UI_OBSERVER_HEADLESS === 'true' || process.env.UI_OBSERVER_HEADLESS === '1',
+    headless: process.env.RAVENEYE_HEADLESS === 'true' || process.env.RAVENEYE_HEADLESS === '1',
     apiPort: 8090,
     cdpInternalPort: 9221,
     novncInternalPort: 6080,
     vncInternalPort: 5900,
-    artifactsDir: process.env.UI_OBSERVER_ARTIFACTS_DIR ?? '/artifacts',
+    artifactsDir: process.env.RAVENEYE_ARTIFACTS_DIR ?? '/artifacts',
     persistentProfileDir: '/browser-profile/chromium',
   };
 }

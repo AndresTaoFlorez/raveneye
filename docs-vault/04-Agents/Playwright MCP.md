@@ -9,14 +9,14 @@ For agents that speak the Model Context Protocol, attach the official Playwright
 ## Claude Code
 
 ```bash
-claude mcp add ui-observer -- npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222
+claude mcp add raveneye -- npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222
 ```
 
 ## Codex (one example; any MCP client works alike)
 
 ```toml
 # ~/.codex/config.toml
-[mcp_servers.ui-observer]
+[mcp_servers.raveneye]
 command = "npx"
 args = ["@playwright/mcp@latest", "--cdp-endpoint", "http://127.0.0.1:9222"]
 ```

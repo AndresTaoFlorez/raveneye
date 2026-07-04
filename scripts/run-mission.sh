@@ -14,8 +14,8 @@ commit="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 
 code=0
 docker compose exec \
-  -e UI_OBSERVER_GIT_COMMIT="$commit" \
-  ui-observer \
+  -e RAVENEYE_GIT_COMMIT="$commit" \
+  raveneye \
   node /app/apps/mission-runner/dist/cli.js run "$mission" "$@" || code=$?
 echo "exit code: $code (0 pass, 1 findings, 2 mission error, 3 browser error)"
 exit $code

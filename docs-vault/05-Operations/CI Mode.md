@@ -16,7 +16,7 @@ echo $?    # mission exit code: 0 pass · 1 findings · 2 config · 3 browser
 `docker compose run --rm` starts a **one-off container** from the observer image with `node` as the entrypoint, running the [[Mission Runner]] CLI directly:
 
 - **No ports are published** — `compose run` skips port mappings by design, so noVNC/CDP/API never exist in CI.
-- **No supervisord / X11** — Chromium runs truly headless (`UI_OBSERVER_HEADLESS=true`).
+- **No supervisord / X11** — Chromium runs truly headless (`RAVENEYE_HEADLESS=true`).
 - **Ephemeral only** — a clean context per run, as [[Profiles]] requires for automation.
 - [[Artifacts]] land in the mounted `artifacts/` exactly as in interactive runs — archive them on failure.
 - The git commit is stamped into `manifest.json` for traceability.

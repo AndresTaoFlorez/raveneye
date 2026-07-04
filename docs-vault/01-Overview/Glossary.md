@@ -17,7 +17,7 @@ tags: [overview]
 - **Trace** — Playwright's recorded timeline (`trace.zip`), opened with `make trace RUN_ID=…`.
 - **Profile** — Chromium user data; `ephemeral` (default) or `persistent`; see [[Profiles]].
 - **URL policy** — scheme + hostname allow-list enforced at every navigation; see [[URL Policy]].
-- **Allowed hosts** — the `UI_OBSERVER_ALLOWED_HOSTS` list, see [[Configuration]].
+- **Allowed hosts** — the `RAVENEYE_ALLOWED_HOSTS` list, see [[Configuration]].
 - **Sample app** — "Meridian Notes", the built-in validation target; see [[Sample App]].
 - **host.docker.internal** — hostname that lets the container reach applications on the host; see [[Fedora Notes]].
 - **CI mode** — headless mission execution with no published ports; see [[CI Mode]].

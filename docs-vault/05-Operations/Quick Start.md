@@ -7,10 +7,10 @@ tags: [operations]
 From zero to a watchable shared browser in four commands:
 
 ```bash
-cd ~/Projects/ui-observer
+cd ~/Projects/raveneye
 cp .env.example .env
 make build          # builds both images (first run pulls the Playwright base)
-make up             # starts sample-app + ui-observer
+make up             # starts sample-app + raveneye
 ```
 
 Open **http://127.0.0.1:6080** — you will see Chromium displaying the [[Sample App]]. That page auto-connects and scales; you are now watching the shared session ([[Shared Browser Model]]).
@@ -29,8 +29,8 @@ Full recipe (dockerized apps, network options, per-agent hookup, review mission)
 
 ```dotenv
 # App running on your host:
-UI_OBSERVER_TARGET_URL=http://host.docker.internal:5173
-UI_OBSERVER_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
+RAVENEYE_TARGET_URL=http://host.docker.internal:5173
+RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
 ```
 
 Then `docker compose up -d` (recreates with the new env). The host app must listen on `0.0.0.0`, not just `127.0.0.1` — see [[Fedora Notes]].

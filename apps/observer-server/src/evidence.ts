@@ -5,7 +5,7 @@ import {
   redactText,
   type ConsoleEntry,
   type NetworkEntry,
-} from '@ui-observer/shared';
+} from '@raveneye/shared';
 
 const MAX_ENTRIES = 2000;
 

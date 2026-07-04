@@ -32,7 +32,7 @@ Our verification needed no changes — Docker 29's `docker` zone policies suffic
 
 ## Ports & access
 
-Everything binds to host loopback ([[Security Model]]). Port 6080 busy? Change `UI_OBSERVER_NOVNC_PORT` in [[Configuration]]. `scripts/verify-workspace.sh` checks this (and knows when the listener is this project's own observer).
+Everything binds to host loopback ([[Security Model]]). Port 6080 busy? Change `RAVENEYE_NOVNC_PORT` in [[Configuration]]. `scripts/verify-workspace.sh` checks this (and knows when the listener is this project's own observer).
 
 ## Chromium specifics
 

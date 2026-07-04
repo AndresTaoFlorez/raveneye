@@ -41,17 +41,17 @@ npm run dev -- --host 0.0.0.0        # vite
 # python manage.py runserver 0.0.0.0:8000   # django
 ```
 
-**2.** Tell the observer where it is — edit `~/Projects/ui-observer/.env`:
+**2.** Tell the observer where it is — edit `~/Projects/raveneye/.env`:
 
 ```dotenv
-UI_OBSERVER_TARGET_URL=http://host.docker.internal:5173
-UI_OBSERVER_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
+RAVENEYE_TARGET_URL=http://host.docker.internal:5173
+RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
 ```
 
 **3.** Apply:
 
 ```bash
-cd ~/Projects/ui-observer
+cd ~/Projects/raveneye
 docker compose up -d
 ```
 
@@ -69,13 +69,13 @@ If it shows an error page instead, jump to *If something fails* below.
 Say `docker ps` shows your frontend as `127.0.0.1:8080->80/tcp`. Then your app is already knocking-distance from the observer via door 8080 of your machine:
 
 ```dotenv
-# ~/Projects/ui-observer/.env
-UI_OBSERVER_TARGET_URL=http://host.docker.internal:8080
-UI_OBSERVER_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
+# ~/Projects/raveneye/.env
+RAVENEYE_TARGET_URL=http://host.docker.internal:8080
+RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
 ```
 
 ```bash
-cd ~/Projects/ui-observer && docker compose up -d
+cd ~/Projects/raveneye && docker compose up -d
 ```
 
 ✅ **Check**: `scripts/observer screenshot mi-app` → open the PNG it names under `artifacts/screenshots/` — you should see your app.
@@ -85,21 +85,21 @@ cd ~/Projects/ui-observer && docker compose up -d
 Your front container (say it's named `mi-front` and serves on its internal port 80) publishes nothing. Plug it into the observer's private network so they can talk directly:
 
 ```bash
-docker network connect ui-observer_default mi-front
+docker network connect raveneye_default mi-front
 ```
 
 Now the observer can reach it **by container name**. Two things must use that name:
 
 ```dotenv
-# ~/Projects/ui-observer/.env
-UI_OBSERVER_TARGET_URL=http://mi-front:80
-UI_OBSERVER_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1,mi-front
+# ~/Projects/raveneye/.env
+RAVENEYE_TARGET_URL=http://mi-front:80
+RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1,mi-front
 ```
 
 ⚠️ Without `mi-front` in the allowed list, navigation is refused with a 422 — that's the [[URL Policy]] doing its job.
 
 ```bash
-cd ~/Projects/ui-observer && docker compose up -d
+cd ~/Projects/raveneye && docker compose up -d
 ```
 
 Caveats: give the container a fixed name in your app's compose (`container_name: mi-front`), and re-run the `network connect` if you recreate that container.
@@ -126,8 +126,8 @@ Pick by what your agent can do — full matrix in [[Agent Integration]]:
 
 | Your agent | Use | One-liner |
 |---|---|---|
-| **Claude Code** | [[Playwright MCP]] | `claude mcp add ui-observer -- npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222` |
-| **Codex** | [[Playwright MCP]] | add the `[mcp_servers.ui-observer]` block shown in that note |
+| **Claude Code** | [[Playwright MCP]] | `claude mcp add raveneye -- npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222` |
+| **Codex** | [[Playwright MCP]] | add the `[mcp_servers.raveneye]` block shown in that note |
 | **minimax / GLM / any CLI agent** | [[Observer CLI]] | tell it to run `scripts/observer navigate/screenshot/console/network` |
 | **Anything that can run Node** | [[Playwright over CDP]] | `chromium.connectOverCDP('http://127.0.0.1:9222')` |
 
@@ -190,7 +190,7 @@ Fix something, run the same mission again, compare — that's the [[Reasoning Lo
 
 | Symptom | Cause & fix |
 |---|---|
-| `422` on navigate | host not in `UI_OBSERVER_ALLOWED_HOSTS` → add it ([[URL Policy]]) |
+| `422` on navigate | host not in `RAVENEYE_ALLOWED_HOSTS` → add it ([[URL Policy]]) |
 | Timeout / `ERR_CONNECTION_REFUSED` to a host app | app listening only on `127.0.0.1` → bind `0.0.0.0` (Scenario 1 step 1), or firewall ([[Fedora Notes]]) |
 | `mi-front` unreachable in Scenario 3 | container recreated → re-run `docker network connect`; name changed → fix `container_name` |
 | Anything else | [[Troubleshooting]] |

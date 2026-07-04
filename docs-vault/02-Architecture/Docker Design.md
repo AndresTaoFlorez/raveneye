@@ -8,7 +8,7 @@ Two services in `compose.yaml`:
 
 | Service | Image | Ports (all host-loopback) |
 |---|---|---|
-| `ui-observer` | built from `mcr.microsoft.com/playwright:v1.61.1-noble` | 6080 noVNC · 9222 CDP · 8090 API |
+| `raveneye` | built from `mcr.microsoft.com/playwright:v1.61.1-noble` | 6080 noVNC · 9222 CDP · 8090 API |
 | `sample-app` | built from `node:22.22.0-alpine3.22` | 3000 |
 
 ## Why the Playwright base image
@@ -31,13 +31,13 @@ On top of the base, the observer Dockerfile adds the [[Display Stack]] packages 
 |---|---|
 | `./artifacts:/artifacts:z` | evidence output ([[Artifacts]]); `:z` for SELinux, see [[Fedora Notes]] |
 | `./config:/config:ro,z` | mission YAML, read-only ([[Mission Format]]) |
-| `ui-observer-profile:/browser-profile` | named volume for the persistent profile ([[Profiles]]) |
+| `raveneye-profile:/browser-profile` | named volume for the persistent profile ([[Profiles]]) |
 
 ## Reaching targets
 
 - Compose services by name: `http://sample-app:3000` (the [[Sample App]]).
 - Host applications: `http://host.docker.internal:<port>` via `extra_hosts: host-gateway` — demonstrated with a live host app (see [[Project History]]).
-- Containers from other compose projects: attach them with `docker network connect ui-observer_default <container>` — full recipe in [[Observing Your Own App]].
+- Containers from other compose projects: attach them with `docker network connect raveneye_default <container>` — full recipe in [[Observing Your Own App]].
 - Anything else must pass the [[URL Policy]].
 
 Related: [[Architecture Overview]] · [[Commands Reference]] · [[CI Mode]]

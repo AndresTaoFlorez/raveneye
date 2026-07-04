@@ -4,7 +4,7 @@ tags: [agents, overview]
 
 # Reasoning Loop
 
-The workflow UI Observer exists to enable — and the one demonstrated end-to-end with a real bug:
+The workflow RavenEye exists to enable — and the one demonstrated end-to-end with a real bug:
 
 ```
 Agent opens target application
@@ -47,4 +47,4 @@ Both run directories remain in [[Artifacts]] as a diffable before/after pair —
 - Findings carry `reproduction_steps`, `expected_behavior` vs `actual_behavior`, and `suspected_component` — enough context to jump into the right file.
 - Exit codes make the loop scriptable, including as a gate in [[CI Mode]].
 
-Related: [[Agent Integration]] · [[What is UI Observer]]
+Related: [[Agent Integration]] · [[What is RavenEye]]

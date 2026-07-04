@@ -1,5 +1,5 @@
 import type { Locator, Page } from 'playwright';
-import { evaluateTargetUrl, type UrlPolicy } from '@ui-observer/shared';
+import { evaluateTargetUrl, type UrlPolicy } from '@raveneye/shared';
 import type { MissionStep } from './schema.js';
 import type { Inspection } from './types.js';
 import {

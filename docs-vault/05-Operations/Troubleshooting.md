@@ -24,7 +24,7 @@ The shared browser died; the [[Observer Server]] watchdog relaunched a fresh ses
 
 ## Navigation rejected (HTTP 422)
 
-Working as intended: the [[URL Policy]] refused the scheme or host. Add the hostname to `UI_OBSERVER_ALLOWED_HOSTS` ([[Configuration]]) and `docker compose up -d`.
+Working as intended: the [[URL Policy]] refused the scheme or host. Add the hostname to `RAVENEYE_ALLOWED_HOSTS` ([[Configuration]]) and `docker compose up -d`.
 
 ## Mission problems
 

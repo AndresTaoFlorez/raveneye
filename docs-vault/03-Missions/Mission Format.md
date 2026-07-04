@@ -9,7 +9,7 @@ A mission is declarative YAML: identity, viewport, ordered steps, named checks. 
 ```yaml
 name: generic-smoke              # kebab-case, required
 description: Basic validation
-target_url: http://sample-app:3000   # optional; falls back to UI_OBSERVER_TARGET_URL
+target_url: http://sample-app:3000   # optional; falls back to RAVENEYE_TARGET_URL
 
 viewport: { width: 1440, height: 900 }   # default shown
 

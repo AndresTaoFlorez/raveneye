@@ -9,8 +9,8 @@ mission="${1:?usage: ci-run.sh <mission-name>}"
 commit="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 
 docker compose run --rm --no-TTY \
-  -e UI_OBSERVER_HEADLESS=true \
-  -e UI_OBSERVER_GIT_COMMIT="$commit" \
+  -e RAVENEYE_HEADLESS=true \
+  -e RAVENEYE_GIT_COMMIT="$commit" \
   --entrypoint node \
-  ui-observer \
+  raveneye \
   /app/apps/mission-runner/dist/cli.js run "/config/missions/${mission%.yaml}.yaml"

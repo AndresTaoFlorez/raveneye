@@ -4,8 +4,8 @@ import { runMission, loadMission, EXIT } from './runner.js';
 
 function usage(): never {
   console.error(`usage:
-  ui-observer-mission run <mission.yaml> [--target-url=URL] [--headless] [--no-video] [--no-trace]
-  ui-observer-mission validate <mission.yaml>`);
+  raveneye-mission run <mission.yaml> [--target-url=URL] [--headless] [--no-video] [--no-trace]
+  raveneye-mission validate <mission.yaml>`);
   process.exit(EXIT.MISSION_ERROR);
 }
 
@@ -38,12 +38,12 @@ const envTrue = (v: string | undefined, fallback: boolean) =>
 const code = await runMission({
   missionFile: file,
   targetUrlOverride: typeof flags.get('target-url') === 'string' ? String(flags.get('target-url')) : undefined,
-  artifactsRoot: process.env.UI_OBSERVER_ARTIFACTS_DIR ?? '/artifacts',
+  artifactsRoot: process.env.RAVENEYE_ARTIFACTS_DIR ?? '/artifacts',
   headless:
     flags.has('headless') ||
-    process.env.UI_OBSERVER_HEADLESS === 'true' ||
-    process.env.UI_OBSERVER_HEADLESS === '1',
-  recordVideo: !flags.has('no-video') && envTrue(process.env.UI_OBSERVER_RECORD_VIDEO, true),
-  recordTrace: !flags.has('no-trace') && envTrue(process.env.UI_OBSERVER_RECORD_TRACE, true),
+    process.env.RAVENEYE_HEADLESS === 'true' ||
+    process.env.RAVENEYE_HEADLESS === '1',
+  recordVideo: !flags.has('no-video') && envTrue(process.env.RAVENEYE_RECORD_VIDEO, true),
+  recordTrace: !flags.has('no-trace') && envTrue(process.env.RAVENEYE_RECORD_TRACE, true),
 });
 process.exit(code);

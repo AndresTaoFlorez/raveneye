@@ -5,7 +5,7 @@ tags: [architecture]
 # Architecture Overview
 
 ```
-Host (Fedora)                            ui-observer container
+Host (Fedora)                            raveneye container
 ─────────────                            ─────────────────────────────────
 Browser → 127.0.0.1:6080 ──────────────► websockify/noVNC → x11vnc → Xvfb :99
 Agent   → 127.0.0.1:9222 (CDP) ────────► socat → Chromium devtools
@@ -18,7 +18,7 @@ Host apps ◄──── host.docker.internal (extra_hosts: host-gateway)
 
 Two containers (see [[Docker Design]]):
 
-- **ui-observer** — the [[Display Stack]] plus the [[Observer Server]], managed by supervisord as a non-root user.
+- **raveneye** — the [[Display Stack]] plus the [[Observer Server]], managed by supervisord as a non-root user.
 - **sample-app** — the [[Sample App]] used for validation.
 
 ## Control planes

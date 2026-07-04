@@ -35,12 +35,12 @@ COPY apps/mission-runner/src apps/mission-runner/src
 RUN npx tsc -b apps/shared apps/observer-server apps/mission-runner \
     && chown -R pwuser:pwuser /app
 
-COPY apps/observer-server/supervisord.conf /etc/ui-observer/supervisord.conf
+COPY apps/observer-server/supervisord.conf /etc/raveneye/supervisord.conf
 
 ENV DISPLAY=:99 \
-    UI_OBSERVER_VIEWPORT_WIDTH=1440 \
-    UI_OBSERVER_VIEWPORT_HEIGHT=900 \
-    UI_OBSERVER_PROFILE_MODE=ephemeral
+    RAVENEYE_VIEWPORT_WIDTH=1440 \
+    RAVENEYE_VIEWPORT_HEIGHT=900 \
+    RAVENEYE_PROFILE_MODE=ephemeral
 
 USER pwuser
 EXPOSE 6080 8090 9222
@@ -48,4 +48,4 @@ EXPOSE 6080 8090 9222
 HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
   CMD curl -fsS http://127.0.0.1:8090/health || exit 1
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/ui-observer/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/raveneye/supervisord.conf"]

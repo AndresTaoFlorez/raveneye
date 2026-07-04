@@ -1,5 +1,5 @@
-import type { ConsoleEntry, NetworkEntry } from '@ui-observer/shared';
-import { isNetworkProblem } from '@ui-observer/shared';
+import type { ConsoleEntry, NetworkEntry } from '@raveneye/shared';
+import { isNetworkProblem } from '@raveneye/shared';
 import type { Mission } from './schema.js';
 import type { ActionRecord, Finding, RunManifest } from './types.js';
 

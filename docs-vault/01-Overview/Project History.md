@@ -28,4 +28,4 @@ Built from scratch on 2026-07-03 in five demonstrated phases. Nothing was declar
 - Playwright's bundled ffmpeg lacks `x11grab` → `scrot` added for display-level captures.
 - All 23 mandatory demonstrations, each with evidence, are tabulated in `.status/current.md`.
 
-Related: [[What is UI Observer]] · [[Architecture Overview]]
+Related: [[What is RavenEye]] · [[Architecture Overview]]

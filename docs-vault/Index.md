@@ -2,12 +2,12 @@
 tags: [moc]
 ---
 
-# UI Observer — Documentation Vault
+# RavenEye — Documentation Vault
 
-**UI Observer** lets a coding agent and a human developer watch and control the **same real Chromium session** — like a screen-share with a browser. Start with [[What is UI Observer]] if you are new, or [[Quick Start]] if you want it running in two minutes.
+**RavenEye** lets a coding agent and a human developer watch and control the **same real Chromium session** — like a screen-share with a browser. Start with [[What is RavenEye]] if you are new, or [[Quick Start]] if you want it running in two minutes.
 
 ## 🧭 Overview
-- [[What is UI Observer]] — purpose and the problems it catches
+- [[What is RavenEye]] — purpose and the problems it catches
 - [[Absolute Basics]] — Docker, ports, localhost explained with zero assumptions
 - [[Shared Browser Model]] — the core concept: one browser, two controllers
 - [[Project History]] — the five implementation phases and their evidence

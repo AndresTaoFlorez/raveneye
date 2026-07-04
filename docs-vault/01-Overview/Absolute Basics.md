@@ -14,7 +14,7 @@ A window where you type commands instead of clicking. On Fedora it is the app ca
 make up
 ```
 
-means: open the terminal, go to the project folder (`cd ~/Projects/ui-observer`), type the command, press Enter.
+means: open the terminal, go to the project folder (`cd ~/Projects/raveneye`), type the command, press Enter.
 
 ## What is Docker?
 
@@ -22,14 +22,14 @@ Think of Docker as a way to run a program inside a **sealed box** that carries e
 
 - **Image** = the frozen recipe/template (like a cake recipe).
 - **Container** = a running copy made from the image (like an actual cake).
-- Why it matters here: UI Observer ships a whole browser + screen + streaming setup as one image, so you never install any of that on your computer. `make build` bakes the images, `make up` starts the containers, `make down` stops them.
+- Why it matters here: RavenEye ships a whole browser + screen + streaming setup as one image, so you never install any of that on your computer. `make build` bakes the images, `make up` starts the containers, `make down` stops them.
 
 ## What is a port?
 
 A computer can run many programs that talk over the network; **ports are numbered doors** so traffic finds the right program. A web address like `http://127.0.0.1:6080` means: "talk to door **6080**".
 
-- `127.0.0.1` (also called **localhost** or *loopback*) means **this same computer**. Nothing on the internet can reach it — that is why UI Observer uses it everywhere ([[Security Model]]).
-- UI Observer's doors: **6080** = watch the browser · **9222** = agents control the browser · **8090** = simple commands · **3000** = the built-in demo app. See [[Configuration]].
+- `127.0.0.1` (also called **localhost** or *loopback*) means **this same computer**. Nothing on the internet can reach it — that is why RavenEye uses it everywhere ([[Security Model]]).
+- RavenEye's doors: **6080** = watch the browser · **9222** = agents control the browser · **8090** = simple commands · **3000** = the built-in demo app. See [[Configuration]].
 
 ## "Publishing a port" (the key Docker idea for you)
 

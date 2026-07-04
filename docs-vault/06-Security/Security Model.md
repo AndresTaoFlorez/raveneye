@@ -4,7 +4,7 @@ tags: [security]
 
 # Security Model
 
-UI Observer is a **local development tool**: the trust model assumes a trusted developer workstation and *untrusted target page content*.
+RavenEye is a **local development tool**: the trust model assumes a trusted developer workstation and *untrusted target page content*.
 
 ## Network: loopback everywhere
 

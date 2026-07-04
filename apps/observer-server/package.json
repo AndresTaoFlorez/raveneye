@@ -1,11 +1,11 @@
 {
-  "name": "@ui-observer/observer-server",
+  "name": "@raveneye/observer-server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "./dist/main.js",
   "dependencies": {
-    "@ui-observer/shared": "0.1.0",
+    "@raveneye/shared": "0.1.0",
     "playwright": "1.61.1"
   }
 }

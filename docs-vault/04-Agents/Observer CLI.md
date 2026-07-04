@@ -36,7 +36,7 @@ scripts/observer screenshot host-app
 
 ## Notes
 
-- Port comes from `UI_OBSERVER_API_PORT` (default 8090, see [[Configuration]]).
+- Port comes from `RAVENEYE_API_PORT` (default 8090, see [[Configuration]]).
 - Navigation failures return the [[URL Policy]] reason verbatim — useful for agents to self-correct.
 - For journeys that need durable evidence, use the [[Mission Runner]] instead; the CLI is for interactive poking.
 

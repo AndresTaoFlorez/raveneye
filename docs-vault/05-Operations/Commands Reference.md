@@ -39,8 +39,8 @@ tags: [operations, reference]
 ## Component-level operations
 
 ```bash
-docker compose exec ui-observer supervisorctl -c /etc/ui-observer/supervisord.conf status
-docker compose exec ui-observer supervisorctl -c /etc/ui-observer/supervisord.conf restart <program>
+docker compose exec raveneye supervisorctl -c /etc/raveneye/supervisord.conf status
+docker compose exec raveneye supervisorctl -c /etc/raveneye/supervisord.conf restart <program>
 ```
 
 Programs: `xvfb`, `openbox`, `x11vnc`, `novnc`, `cdp-proxy`, `observer-server` — see [[Display Stack]].

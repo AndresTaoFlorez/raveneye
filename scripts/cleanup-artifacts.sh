@@ -2,9 +2,9 @@
 # Removes mission runs older than the retention window.
 set -euo pipefail
 
-days="${UI_OBSERVER_ARTIFACT_RETENTION_DAYS:-}"
+days="${RAVENEYE_ARTIFACT_RETENTION_DAYS:-}"
 if [[ -z "$days" && -f .env ]]; then
-  days="$(grep -E '^UI_OBSERVER_ARTIFACT_RETENTION_DAYS=' .env | cut -d= -f2 || true)"
+  days="$(grep -E '^RAVENEYE_ARTIFACT_RETENTION_DAYS=' .env | cut -d= -f2 || true)"
 fi
 days="${days:-14}"
 

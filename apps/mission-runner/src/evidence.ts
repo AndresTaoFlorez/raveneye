@@ -5,7 +5,7 @@ import {
   redactText,
   type ConsoleEntry,
   type NetworkEntry,
-} from '@ui-observer/shared';
+} from '@raveneye/shared';
 
 /** Collects console output, page errors and network activity for one run. */
 export class RunEvidence {

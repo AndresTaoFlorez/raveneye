@@ -13,7 +13,7 @@ curl -fsS http://127.0.0.1:8090/health
 
 - HTTP 200 + `"status":"ok"` → proceed.
 - HTTP 503 → observer degraded; the failing component is named in `components[]`. Try
-  `docker compose exec ui-observer supervisorctl -c /etc/ui-observer/supervisord.conf restart <component>`.
+  `docker compose exec raveneye supervisorctl -c /etc/raveneye/supervisord.conf restart <component>`.
 - Connection refused → stack is down. Run `make up` (from this repo's root), wait ~15 s, re-check.
 
 ## 1. Your control surfaces (pick one, they all drive the SAME visible browser)
@@ -46,7 +46,7 @@ GET  /network?problems=1&clear=1→ {count, entries:[{ts,method,url,status,failu
 ## 3. Rules (hard constraints)
 
 1. **Navigate only to authorized targets.** The URL policy allows `http/https` to hosts in
-   `UI_OBSERVER_ALLOWED_HOSTS` only. A 422 response means blocked — do NOT try to bypass;
+   `RAVENEYE_ALLOWED_HOSTS` only. A 422 response means blocked — do NOT try to bypass;
    ask the human to add the host to `.env` if it is legitimate.
 2. **Never expose the ports.** 6080/9222/8090 are loopback-only by design. Do not publish,
    tunnel, or bind them elsewhere.
@@ -107,7 +107,7 @@ keyboard_navigation_available — each accepts `allow: [substrings]` for expecte
   self-testing: `/console-error`, `/network-fail`, `/responsive?broken=1`).
 - App on the human's machine: `http://host.docker.internal:<port>` (it must listen on
   0.0.0.0).
-- Another container: `docker network connect ui-observer_default <container>` then
+- Another container: `docker network connect raveneye_default <container>` then
   `http://<container>:<port>` — and the hostname must be added to allowed hosts.
 
 ## 8. Repo conventions (if you are asked to modify THIS repository)

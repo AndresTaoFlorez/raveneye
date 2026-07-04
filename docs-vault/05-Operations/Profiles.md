@@ -14,9 +14,9 @@ Browser profiles hold cookies, storage and login state for the **shared session*
 
 ## Persistent
 
-- Profile lives in the `ui-observer-profile` named Docker volume (`/browser-profile`), never in the image, never in Git.
+- Profile lives in the `raveneye-profile` named Docker volume (`/browser-profile`), never in the image, never in Git.
 - Enables the manual-login workflow: a human logs in through noVNC once; agents then operate the authenticated session ([[Shared Browser Model]]).
-- Enable in `.env`: `UI_OBSERVER_PROFILE_MODE=persistent`, then `docker compose up -d`.
+- Enable in `.env`: `RAVENEYE_PROFILE_MODE=persistent`, then `docker compose up -d`.
 - **Demonstrated**: a login cookie survived a graceful restart.
 
 ## The cookie-flush gotcha

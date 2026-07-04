@@ -21,7 +21,7 @@ wait for X socket (/tmp/.X11-unix/X99)
   → launch persistent context (headed)
   → attach evidence collector
   → start Control API
-  → navigate to UI_OBSERVER_TARGET_URL (best-effort: a dead target
+  → navigate to RAVENEYE_TARGET_URL (best-effort: a dead target
     must never take the observer down — see Health Model)
 ```
 

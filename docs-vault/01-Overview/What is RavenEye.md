@@ -2,9 +2,9 @@
 tags: [overview]
 ---
 
-# What is UI Observer
+# What is RavenEye
 
-UI Observer is a standalone development tool that gives a coding agent **eyes and hands in a real browser** while a human watches the same session live. It exists because many real problems are invisible to code inspection, unit tests, and even basic E2E tests:
+RavenEye is a standalone development tool that gives a coding agent **eyes and hands in a real browser** while a human watches the same session live. It exists because many real problems are invisible to code inspection, unit tests, and even basic E2E tests:
 
 - broken layouts, horizontal overflow, clipped or hidden controls
 - elements rendered outside the viewport, wrong stacking, broken modals
@@ -20,7 +20,7 @@ The tool packages a visible Chromium inside Docker (see [[Docker Design]]) with 
 
 This combination enables the [[Reasoning Loop]]: the agent observes rendered reality, captures evidence, fixes the target application (when authorized), reruns the same mission, and proves the fix.
 
-UI Observer is **generic**: it contains no knowledge of any particular product. It works against the bundled [[Sample App]], applications on the host (via `host.docker.internal`), and any authorized URL permitted by the [[URL Policy]].
+RavenEye is **generic**: it contains no knowledge of any particular product. It works against the bundled [[Sample App]], applications on the host (via `host.docker.internal`), and any authorized URL permitted by the [[URL Policy]].
 
 ## What it is not
 

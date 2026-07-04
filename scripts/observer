@@ -7,7 +7,7 @@
 #   scripts/observer network [--problems] [--clear]
 set -euo pipefail
 
-API="http://127.0.0.1:${UI_OBSERVER_API_PORT:-8090}"
+API="http://127.0.0.1:${RAVENEYE_API_PORT:-8090}"
 cmd="${1:-help}"
 shift || true
 

@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 COMPOSE := docker compose
-NOVNC_PORT ?= $(shell grep -E '^UI_OBSERVER_NOVNC_PORT=' .env 2>/dev/null | cut -d= -f2)
+NOVNC_PORT ?= $(shell grep -E '^RAVENEYE_NOVNC_PORT=' .env 2>/dev/null | cut -d= -f2)
 NOVNC_PORT := $(if $(NOVNC_PORT),$(NOVNC_PORT),6080)
 
 .PHONY: build up down restart logs open health reset-profile smoke mission artifacts trace cleanup test lint format verify
@@ -25,7 +25,7 @@ open:
 	@echo "Watch the shared browser at: http://127.0.0.1:$(NOVNC_PORT)"
 
 health:
-	@curl -fsS http://127.0.0.1:$${UI_OBSERVER_API_PORT:-8090}/health | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>console.log(JSON.stringify(JSON.parse(d),null,2)))'
+	@curl -fsS http://127.0.0.1:$${RAVENEYE_API_PORT:-8090}/health | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>console.log(JSON.stringify(JSON.parse(d),null,2)))'
 
 reset-profile:
 	./scripts/reset-profile.sh

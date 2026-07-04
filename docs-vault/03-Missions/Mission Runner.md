@@ -9,7 +9,7 @@ The evaluation engine (`apps/mission-runner/`): it executes a [[Mission Format]]
 ## Execution model
 
 1. Parse + validate the YAML (strict zod schema) — invalid missions exit `2` immediately.
-2. Resolve the target URL (mission `target_url` → `--target-url` flag → `UI_OBSERVER_TARGET_URL`) and enforce the [[URL Policy]].
+2. Resolve the target URL (mission `target_url` → `--target-url` flag → `RAVENEYE_TARGET_URL`) and enforce the [[URL Policy]].
 3. Launch a **headed** Chromium context on the same display as the shared session — the human watches the mission live in noVNC ([[Shared Browser Model]] explains why it is a separate context).
 4. Start tracing and video recording; attach redacted evidence collectors ([[Secret Redaction]]).
 5. Execute steps sequentially ([[Actions Reference]]); **the first failed step stops the run** and becomes a high `functional` finding.

@@ -1,4 +1,4 @@
-// Generic sample application used to validate ui-observer.
+// Generic sample application used to validate raveneye.
 // Zero dependencies: plain node:http + inline templates.
 // Every route exists to exercise one observable behavior (loading state,
 // controlled error, overflow, console error, failed request, ...).
@@ -39,7 +39,7 @@ ${nav}
 <main id="main">
 ${body}
 </main>
-<footer class="site-footer">Meridian Notes — sample application for ui-observer validation</footer>
+<footer class="site-footer">Meridian Notes — sample application for raveneye validation</footer>
 </body>
 </html>`;
 }

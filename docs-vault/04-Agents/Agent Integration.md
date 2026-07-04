@@ -4,7 +4,7 @@ tags: [agents]
 
 # Agent Integration
 
-UI Observer is **agent-neutral**: any coding agent that can run a shell command, speak HTTP, or drive Playwright can use it. The human always watches the same session ([[Shared Browser Model]]).
+RavenEye is **agent-neutral**: any coding agent that can run a shell command, speak HTTP, or drive Playwright can use it. The human always watches the same session ([[Shared Browser Model]]).
 
 ## The five surfaces
 

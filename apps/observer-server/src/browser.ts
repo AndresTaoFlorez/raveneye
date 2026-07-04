@@ -1,6 +1,6 @@
 import { chromium, type BrowserContext } from 'playwright';
 import { mkdtemp, rm, mkdir } from 'node:fs/promises';
-import { evaluateTargetUrl } from '@ui-observer/shared';
+import { evaluateTargetUrl } from '@raveneye/shared';
 import type { ObserverConfig } from './config.js';
 
 export interface SharedBrowser {
@@ -19,7 +19,7 @@ export async function launchSharedBrowser(cfg: ObserverConfig): Promise<SharedBr
   const userDataDir =
     cfg.profileMode === 'persistent'
       ? cfg.persistentProfileDir
-      : await mkdtemp('/tmp/ui-observer-profile-');
+      : await mkdtemp('/tmp/raveneye-profile-');
   if (cfg.profileMode === 'persistent') {
     await mkdir(userDataDir, { recursive: true });
   }

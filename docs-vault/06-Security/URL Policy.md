@@ -9,14 +9,14 @@ The gate every observer-driven navigation passes: startup target, [[Control API]
 ## Rules
 
 1. **Scheme allow-list** — only `http:` and `https:`. `file:`, `javascript:` and `data:` are always rejected (the observer must never read local files or execute injected script URLs).
-2. **Host allow-list** — the hostname must appear in `UI_OBSERVER_ALLOWED_HOSTS` ([[Configuration]]); matching is exact and case-insensitive, ports are free.
+2. **Host allow-list** — the hostname must appear in `RAVENEYE_ALLOWED_HOSTS` ([[Configuration]]); matching is exact and case-insensitive, ports are free.
 3. Malformed URLs are rejected outright.
 
 Rejections return the reason verbatim, e.g.:
 
 ```
 scheme "file:" is not allowed (only http/https)
-host "example.com" is not in UI_OBSERVER_ALLOWED_HOSTS (sample-app, host.docker.internal, localhost, 127.0.0.1)
+host "example.com" is not in RAVENEYE_ALLOWED_HOSTS (sample-app, host.docker.internal, localhost, 127.0.0.1)
 ```
 
 The [[Control API]] answers HTTP 422; the [[Mission Runner]] exits 2 for a rejected target.
