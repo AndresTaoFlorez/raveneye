@@ -43,5 +43,5 @@ Awaiting the developer opening `http://127.0.0.1:6080` and confirming the visibl
 - Headed Chromium binds CDP to container-loopback only; socat republishes it on 9222 so the
   loopback-published host port works. Raw VNC (5900) is never published.
 - Chromium runs with `chromiumSandbox: false`: the container (non-root, no-new-privileges)
-  is the isolation boundary. Documented in docs/security.md (Phase 5).
+  is the isolation boundary. Documented in docs-vault/06-Security/Security Model.md (Phase 5).
 - Playwright's bundled ffmpeg has no x11grab; `scrot` added to the image for display-level captures.

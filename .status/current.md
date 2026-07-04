@@ -17,19 +17,19 @@ Updated: 2026-07-03 — **ALL PHASES COMPLETE**
 
 - **Architecture**: one shared visible Chromium in Docker (Xvfb + Openbox + x11vnc +
   noVNC, supervisord, non-root). Humans watch via noVNC :6080; agents control via CDP
-  :9222 / HTTP API :8090 / CLI / YAML missions. Details: docs/architecture.md.
+  :9222 / HTTP API :8090 / CLI / YAML missions. Details: docs-vault/02-Architecture/Architecture Overview.md.
 - **Versions**: Playwright 1.61.1, Chromium 149.0.7827.55, Node 22, image
   `mcr.microsoft.com/playwright:v1.61.1-noble`, sample app on `node:22.22.0-alpine3.22`.
 - **Services**: `ui-observer`, `sample-app`. Loopback ports: 6080 noVNC, 9222 CDP,
   8090 API, 3000 sample app.
 - **Commands**: make build/up/down/restart/logs/open/health/smoke/mission/artifacts/
   trace/reset-profile/cleanup/test; scripts/observer CLI; scripts/ci-run.sh.
-- **Security**: docs/security.md (loopback-only, URL policy, capture-time redaction,
+- **Security**: docs-vault/06-Security/Security Model.md (loopback-only, URL policy, capture-time redaction,
   non-root, no-new-privileges, profile volume, retention).
 - **Shared browser**: true shared control demonstrated over CDP; missions use their own
   human-visible context for native trace/video (documented trade-off).
 - **Agent integration**: CDP, Playwright MCP (--cdp-endpoint), HTTP API, CLI, missions —
-  docs/agent-integration.md, with Claude Code and Codex examples.
+  docs-vault/04-Agents/Agent Integration.md, with Claude Code and Codex examples.
 - **Sample missions**: generic-smoke, error-hunt, responsive-sweep.
 - **Tests**: 37 passing (unit + integration + e2e on real Chromium).
 - **Limitations & future work**: .status/phase-5-hardening.md.

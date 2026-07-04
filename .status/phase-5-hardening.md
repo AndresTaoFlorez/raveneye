@@ -39,7 +39,7 @@ no-new-privileges, 4 GB memory limit, 2 GB shm; URL scheme+host allowlist at eve
 navigation entry; capture-time secret redaction (headers/params/bearer text, bodies never
 stored) verified end-to-end; profiles in a named volume, never in Git; artifacts
 git-ignored with retention cleanup. Known accepted risk: Chromium sandbox disabled inside
-the container (documented rationale in docs/security.md).
+the container (documented rationale in docs-vault/06-Security/Security Model.md).
 
 ## Known limitations
 

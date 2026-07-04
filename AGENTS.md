@@ -118,5 +118,5 @@ keyboard_navigation_available — each accepts `allow: [substrings]` for expecte
   integration tests live in `tests/integration` and `tests/e2e` — never replace them with mocks.
 - Playwright version and the Docker base image tag must move together (both 1.61.1).
 - Lint before committing: `npm run lint`. Human-facing docs live in `docs-vault/` (Obsidian
-  vault — the single source of truth; keep wikilinks resolving). `docs/*.md` are pointer
-  stubs only — never add content there.
+  vault — the single source of truth; keep wikilinks resolving). Do not create a separate
+  `docs/` directory.

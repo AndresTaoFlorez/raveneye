@@ -11,4 +11,4 @@ Quick orientation:
   agents control via CDP `127.0.0.1:9222`).
 - Health first: `curl http://127.0.0.1:8090/health`; stack up/down via `make up` / `make down`.
 - Full test suite (`npm test`) needs the stack running; `npm run test:unit` does not.
-- Human documentation: `docs-vault/Index.md` (Obsidian vault) and `docs/`.
+- Human documentation: `docs-vault/Index.md` (Obsidian vault — the single source of truth).

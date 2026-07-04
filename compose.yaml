@@ -27,7 +27,7 @@ services:
       - "127.0.0.1:${UI_OBSERVER_CDP_PORT:-9222}:9222"
       - "127.0.0.1:${UI_OBSERVER_API_PORT:-8090}:8090"
     volumes:
-      # :z relabels for SELinux (Fedora) — see docs/fedora.md.
+      # :z relabels for SELinux (Fedora) — see docs-vault/05-Operations/Fedora Notes.md.
       - ./artifacts:/artifacts:z
       - ./config:/config:ro,z
       - ui-observer-profile:/browser-profile

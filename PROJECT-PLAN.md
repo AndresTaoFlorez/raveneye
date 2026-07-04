@@ -13,7 +13,7 @@ Hard constraints from the spec:
 ## Environment facts (verified)
 
 - Fedora 44, Docker 29.6.0, Compose v2.40.2, Node v22.22.2, git 2.54.0.
-- SELinux **Enforcing** → bind mounts need `:z` labels; documented in `docs/fedora.md`.
+- SELinux **Enforcing** → bind mounts need `:z` labels; documented in `docs-vault/05-Operations/Fedora Notes.md`.
 - Port 6080 freed by stopping `tyba-platform-ui-observer-1` (user-approved; old repo files untouched). Ports 3000/9222 free.
 
 ## Technology stack (pinned)
@@ -53,7 +53,7 @@ Host apps ◄── host.docker.internal (extra_hosts: host-gateway)
 
 **Shared-browser design (the core requirement):**
 - **Interactive mode**: observer-server launches one long-lived visible Chromium (`launchPersistentContext`, `headless: false`, on DISPLAY `:99`) with CDP exposed on `:9222` (published to loopback only). The human watches via noVNC; any agent (host-side Playwright via `connectOverCDP`, Playwright MCP with `--cdp-endpoint`, or the HTTP control API) drives the **same** browser. This is true shared control and will be demonstrated, not claimed.
-- **Evaluation mode**: the mission runner (executed inside the container via `docker compose exec`) launches its **own clean Playwright context** — still on DISPLAY `:99`, so still human-visible in noVNC — with full native trace/video/HAR support. Rationale: `connectOverCDP` has documented feature limitations (e.g. video recording reliability); a runner-owned context gives reproducible, complete evidence. The human still watches the exact browser the runner controls, which satisfies the spec's fallback clause; both modes are documented honestly in `docs/architecture.md`.
+- **Evaluation mode**: the mission runner (executed inside the container via `docker compose exec`) launches its **own clean Playwright context** — still on DISPLAY `:99`, so still human-visible in noVNC — with full native trace/video/HAR support. Rationale: `connectOverCDP` has documented feature limitations (e.g. video recording reliability); a runner-owned context gives reproducible, complete evidence. The human still watches the exact browser the runner controls, which satisfies the spec's fallback clause; both modes are documented honestly in `docs-vault/02-Architecture/Architecture Overview.md`.
 
 **Control API (observer-server, Fastify-or-plain-http on :8090, loopback-published):**
 `GET /health` (component-by-component: xvfb, wm, x11vnc, novnc, chromium, playwright, artifacts dir — target app health is separate and never fails observer health), `GET /status`, `POST /navigate`, `POST /screenshot`, `GET /console`, `GET /network`, `POST /reset-profile`, `GET /cdp-info`. All target URLs pass the URL policy (scheme allowlist http/https — rejects `file:`/`javascript:`/`data:`; host allowlist from `UI_OBSERVER_ALLOWED_HOSTS`).
@@ -72,7 +72,7 @@ ui-observer/
 ├── config/
 │   ├── missions/                 # generic-smoke.yaml, responsive-sweep.yaml, error-hunt.yaml, ...
 │   └── policies/                 # allowed-hosts.yaml, redaction-rules.yaml
-├── docs/                         # architecture, security, missions, agent-integration, fedora, troubleshooting
+├── docs-vault/                   # Obsidian vault — single documentation source (39 notes)
 ├── scripts/                      # verify-workspace, start, stop, reset-profile, run-mission, cleanup-artifacts
 ├── artifacts/                    # runs/<run-id>/... (host-mounted, :z)
 ├── tests/                        # unit/ integration/ e2e/
@@ -106,9 +106,9 @@ noVNC/CDP/API published to `127.0.0.1` only · no raw VNC port published (x11vnc
 
 **Phase 3 — Mission runner**: zod schema, action executor, evidence pipeline, findings, `report.md` generation, sample missions (`generic-smoke`, `responsive-sweep`, `error-hunt`), `make mission MISSION=...`. Demo: run `generic-smoke` against sample-app → full artifact tree incl. trace.zip + video; run `error-hunt` → console/network findings actually generated.
 
-**Phase 4 — Agent integration**: `docs/agent-integration.md` (CDP endpoint for any Playwright client, Playwright MCP `--cdp-endpoint` config example, HTTP API, CLI, mission repeat loop; Codex documented as one example, architecture agent-neutral). Demo: the observe → evidence → fix (sample app bug I plant) → re-run mission → compare findings loop, end to end.
+**Phase 4 — Agent integration**: `docs-vault/04-Agents/Agent Integration.md` (CDP endpoint for any Playwright client, Playwright MCP `--cdp-endpoint` config example, HTTP API, CLI, mission repeat loop; Codex documented as one example, architecture agent-neutral). Demo: the observe → evidence → fix (sample app bug I plant) → re-run mission → compare findings loop, end to end.
 
-**Phase 5 — Hardening + tests + docs**: full unit suite (schema, URL policy, redaction, findings), integration tests (real Chromium: control, artifacts, health), e2e mission test against sample-app, Docker smoke test script; CI headless mode (`UI_OBSERVER_HEADLESS=1`, no noVNC publish, ephemeral only, non-zero exit on critical findings); persistent-profile demo (login state survives restart, then `make reset-profile` clears it); observer-vs-target health separation demo (stop sample-app → observer stays healthy); artifact retention; finish all docs incl. `docs/fedora.md` (SELinux `:z`, host-gateway, firewalld, shm); final `.status/current.md` covering the 23 mandatory demonstrations with evidence paths.
+**Phase 5 — Hardening + tests + docs**: full unit suite (schema, URL policy, redaction, findings), integration tests (real Chromium: control, artifacts, health), e2e mission test against sample-app, Docker smoke test script; CI headless mode (`UI_OBSERVER_HEADLESS=1`, no noVNC publish, ephemeral only, non-zero exit on critical findings); persistent-profile demo (login state survives restart, then `make reset-profile` clears it); observer-vs-target health separation demo (stop sample-app → observer stays healthy); artifact retention; finish all docs incl. `docs-vault/05-Operations/Fedora Notes.md` (SELinux `:z`, host-gateway, firewalld, shm); final `.status/current.md` covering the 23 mandatory demonstrations with evidence paths.
 
 ## Verification approach
 

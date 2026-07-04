@@ -4,7 +4,7 @@ Date: 2026-07-03
 
 ## Delivered
 
-- `docs/agent-integration.md`: the five integration surfaces (CDP, Playwright MCP,
+- `docs-vault/04-Agents/Agent Integration.md`: the five integration surfaces (CDP, Playwright MCP,
   HTTP API, CLI, mission runner), the 7-step observation workflow, Claude Code and
   Codex configuration examples (architecture remains agent-neutral), limitations.
 

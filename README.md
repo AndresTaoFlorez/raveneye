@@ -65,8 +65,6 @@ the graph). Key entry points:
 - [Agent Integration](docs-vault/04-Agents/Agent%20Integration.md) — and **[AGENTS.md](AGENTS.md)** for the agents themselves
 - [Security Model](docs-vault/06-Security/Security%20Model.md) · [Fedora Notes](docs-vault/05-Operations/Fedora%20Notes.md) · [Troubleshooting](docs-vault/05-Operations/Troubleshooting.md)
 
-The legacy `docs/*.md` files are pointer stubs kept for link stability.
-
 ## Repository layout
 
 ```text

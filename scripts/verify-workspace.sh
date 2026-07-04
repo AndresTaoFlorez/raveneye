@@ -38,7 +38,7 @@ else
 fi
 
 if command -v getenforce >/dev/null 2>&1 && [[ "$(getenforce)" == "Enforcing" ]]; then
-  echo "note  SELinux is Enforcing: compose bind mounts use :z labels (see docs/fedora.md)"
+  echo "note  SELinux is Enforcing: compose bind mounts use :z labels (see docs-vault/05-Operations/Fedora Notes.md)"
 fi
 
 exit $fail
