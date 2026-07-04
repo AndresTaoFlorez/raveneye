@@ -4,6 +4,7 @@ import { loadConfig } from './config.js';
 import { launchSharedBrowser, navigateShared, cleanupEphemeralProfile } from './browser.js';
 import type { SharedBrowser } from './browser.js';
 import { startApi } from './api.js';
+import { EvidenceCollector } from './evidence.js';
 
 const cfg = loadConfig();
 let browser: SharedBrowser | null = null;
@@ -28,7 +29,10 @@ async function main() {
   browser = await launchSharedBrowser(cfg);
   console.log(`[observer] chromium launched (profile dir: ${browser.userDataDir})`);
 
-  startApi({ cfg, getBrowser: () => browser });
+  const collector = new EvidenceCollector();
+  collector.attach(browser.context);
+
+  startApi({ cfg, getBrowser: () => browser, collector });
 
   // Opening the target is best-effort: a broken target application must not
   // bring the observer down or mark it unhealthy.

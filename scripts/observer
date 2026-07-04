@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Thin CLI over the observer control API. Usage:
+#   scripts/observer health | status | cdp-info
+#   scripts/observer navigate <url>
+#   scripts/observer screenshot [name] [--full]
+#   scripts/observer console [--clear]
+#   scripts/observer network [--problems] [--clear]
+set -euo pipefail
+
+API="http://127.0.0.1:${UI_OBSERVER_API_PORT:-8090}"
+cmd="${1:-help}"
+shift || true
+
+pretty() { node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{try{console.log(JSON.stringify(JSON.parse(d),null,2))}catch{console.log(d)}})'; }
+
+case "$cmd" in
+  health)    curl -fsS "$API/health" | pretty ;;
+  status)    curl -fsS "$API/status" | pretty ;;
+  cdp-info)  curl -fsS "$API/cdp-info" | pretty ;;
+  navigate)
+    [[ $# -ge 1 ]] || { echo "usage: observer navigate <url>" >&2; exit 2; }
+    curl -fsS -X POST "$API/navigate" -H 'content-type: application/json' \
+      -d "{\"url\":\"$1\"}" | pretty
+    ;;
+  screenshot)
+    name="${1:-capture}"; full=false
+    [[ "${2:-}" == "--full" || "${1:-}" == "--full" ]] && full=true
+    [[ "$name" == "--full" ]] && name="capture"
+    curl -fsS -X POST "$API/screenshot" -H 'content-type: application/json' \
+      -d "{\"name\":\"$name\",\"full_page\":$full}" | pretty
+    ;;
+  console)
+    q=""; [[ "${1:-}" == "--clear" ]] && q="?clear=1"
+    curl -fsS "$API/console$q" | pretty
+    ;;
+  network)
+    q="?"; for a in "$@"; do
+      [[ "$a" == "--problems" ]] && q="${q}problems=1&"
+      [[ "$a" == "--clear" ]] && q="${q}clear=1&"
+    done
+    curl -fsS "$API/network${q%\?}" | pretty
+    ;;
+  *)
+    sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'
+    ;;
+esac
