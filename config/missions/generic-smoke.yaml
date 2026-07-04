@@ -1,0 +1,46 @@
+# Basic visual and interaction validation of any target application's
+# happy path. Uses only generic behaviors (navigation, a modal, scrolling).
+name: generic-smoke
+description: Basic visual and interaction validation
+
+viewport:
+  width: 1440
+  height: 900
+
+steps:
+  - action: goto
+    path: /
+  - action: wait_for_ready
+  - action: screenshot
+    name: home
+  - action: inspect_accessibility
+    name: home
+  - action: click
+    role: button
+    name: Open dialog
+  - action: screenshot
+    name: modal-open
+  - action: press
+    key: Escape
+  - action: navigate
+    path: /long-content
+  - action: wait_for_ready
+  - action: scroll
+    to: bottom
+  - action: screenshot
+    name: long-content-bottom
+  - action: check_horizontal_overflow
+  - action: back
+  - action: forward
+  - action: capture_console
+  - action: capture_network
+
+checks:
+  - no_unhandled_page_errors
+  - name: no_critical_console_errors
+    allow: ["favicon.ico"]
+  - name: no_unexpected_failed_requests
+    allow: ["favicon.ico"]
+  - no_horizontal_overflow
+  - interactive_controls_visible
+  - keyboard_navigation_available

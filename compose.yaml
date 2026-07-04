@@ -29,6 +29,7 @@ services:
     volumes:
       # :z relabels for SELinux (Fedora) — see docs/fedora.md.
       - ./artifacts:/artifacts:z
+      - ./config:/config:ro,z
       - ui-observer-profile:/browser-profile
     extra_hosts:
       - "host.docker.internal:host-gateway"

@@ -1,0 +1,34 @@
+# Visits the routes that intentionally misbehave. Expected outcome: the run
+# FAILS with console, page-error and network findings — this mission proves
+# the observer detects real problems.
+name: error-hunt
+description: Detect console errors, page errors and failed requests
+
+viewport:
+  width: 1440
+  height: 900
+
+steps:
+  - action: goto
+    path: /console-error
+  - action: wait_for_ready
+  - action: wait
+    ms: 500
+  - action: screenshot
+    name: console-error-page
+  - action: navigate
+    path: /network-fail
+  - action: wait_for_ready
+  - action: wait
+    ms: 1500
+  - action: screenshot
+    name: network-fail-page
+  - action: capture_console
+  - action: capture_network
+
+checks:
+  - no_unhandled_page_errors
+  - name: no_critical_console_errors
+    allow: ["favicon.ico"]
+  - name: no_unexpected_failed_requests
+    allow: ["favicon.ico"]

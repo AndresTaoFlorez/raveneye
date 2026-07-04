@@ -1,0 +1,33 @@
+# Exercises the same page at desktop, tablet and phone widths and checks
+# for horizontal overflow at each size. Targets the intentionally broken
+# variant of the gallery.
+name: responsive-sweep
+description: Layout behavior across viewport widths
+
+viewport:
+  width: 1440
+  height: 900
+
+steps:
+  - action: goto
+    path: /responsive?broken=1
+  - action: wait_for_ready
+  - action: screenshot
+    name: desktop-1440
+  - action: check_horizontal_overflow
+  - action: set_viewport
+    width: 820
+    height: 1180
+  - action: screenshot
+    name: tablet-820
+  - action: check_horizontal_overflow
+  - action: set_viewport
+    width: 390
+    height: 844
+  - action: screenshot
+    name: phone-390
+  - action: check_horizontal_overflow
+
+checks:
+  - no_horizontal_overflow
+  - interactive_controls_visible

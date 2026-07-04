@@ -9,7 +9,7 @@ Updated: 2026-07-03
 | 0 — Scaffold | **done** (commit 4001e99) |
 | 1 — Visible browser | **done** (commit f434e9b) |
 | 2 — Programmatic control | **done** |
-| 3 — Mission runner | pending |
+| 3 — Mission runner | **done** |
 | 4 — Agent integration | pending |
 | 5 — Hardening | pending |
 
@@ -29,13 +29,13 @@ Each item is checked only with a recorded command and evidence path.
 | 8 | Sample app opens | done | shared browser page at `http://sample-app:3000/`; screenshots above |
 | 9 | Host app opens via host.docker.internal | done | host python http.server via host.docker.internal → `artifacts/screenshots/2026-07-04T02-12-22-409Z-host-app-via-gateway.png` |
 | 10 | Screenshot generated | done | `artifacts/phase1-visible-browser-proof.png` via host-side connectOverCDP |
-| 11 | Trace generated | pending | |
-| 12 | Video generated | pending | |
-| 13 | Console errors captured | done | `GET /console` captured 404/500/403 resource errors (interactive); mission-level capture in Phase 3 |
+| 11 | Trace generated | done | `artifacts/runs/2026-07-04T0220-*/trace.zip` (all three sample missions) |
+| 12 | Video generated | done | `artifacts/runs/2026-07-04T0220-*/video/*.webm` |
+| 13 | Console errors captured | done | interactive `GET /console` + mission `console.json`/`page-errors.json` (error-hunt) |
 | 14 | Network failures captured | done | `GET /network?problems=1` captured 404, 500, 403, ERR_ABORTED with timing |
-| 15 | Accessibility data captured | pending | |
-| 16 | Findings generated | pending | |
-| 17 | Human-readable report generated | pending | |
+| 15 | Accessibility data captured | done | `accessibility.json` aria snapshots + issue heuristics per run |
+| 16 | Findings generated | done | error-hunt: 9 findings (3 high) in `findings.json`; responsive-sweep: 3 overflow findings |
+| 17 | Human-readable report generated | done | `report.md` per run — see `artifacts/runs/2026-07-04T0220-error-hunt/report.md` |
 | 18 | Secrets redacted | done | Authorization header recorded as `[REDACTED]` in network capture; unit tests in tests/unit/redaction.test.ts |
 | 19 | Ephemeral mode starts clean | pending | |
 | 20 | Persistent mode retains session | pending | |
