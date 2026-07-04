@@ -1,0 +1,16 @@
+{
+  "name": "@ui-observer/mission-runner",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/cli.js",
+  "bin": {
+    "ui-observer-mission": "./dist/cli.js"
+  },
+  "dependencies": {
+    "@ui-observer/shared": "0.1.0",
+    "playwright": "1.61.1",
+    "yaml": "2.9.0",
+    "zod": "4.4.3"
+  }
+}
