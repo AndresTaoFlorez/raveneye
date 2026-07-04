@@ -25,7 +25,11 @@ check "node >= 22" $?
 
 port="${UI_OBSERVER_NOVNC_PORT:-6080}"
 if command -v ss >/dev/null 2>&1 && ss -tln "sport = :$port" 2>/dev/null | grep -q ":$port"; then
-  check "port $port free" 1 "(something is already listening)"
+  if docker compose ps --format '{{.Name}}' 2>/dev/null | grep -q 'ui-observer'; then
+    check "port $port" 0 "(in use by this project's running observer)"
+  else
+    check "port $port free" 1 "(something else is already listening)"
+  fi
 else
   check "port $port free" 0
 fi

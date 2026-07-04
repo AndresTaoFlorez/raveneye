@@ -34,6 +34,9 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     shm_size: "2gb"
+    # Chromium needs a graceful window to flush profile data (cookies etc.)
+    # through supervisord's ordered shutdown.
+    stop_grace_period: 30s
     security_opt:
       - no-new-privileges:true
     deploy:
