@@ -10,7 +10,7 @@ Updated: 2026-07-03
 | 1 — Visible browser | **done** (commit f434e9b) |
 | 2 — Programmatic control | **done** |
 | 3 — Mission runner | **done** |
-| 4 — Agent integration | pending |
+| 4 — Agent integration | **done** |
 | 5 — Hardening | pending |
 
 ## Mandatory demonstrations (from PROJECT-PLAN.md / master prompt)
