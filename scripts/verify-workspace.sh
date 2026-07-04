@@ -2,7 +2,10 @@
 # Verifies the host is ready to build and run ui-observer.
 set -uo pipefail
 
-EXPECTED_DIR="${UI_OBSERVER_HOME:-$HOME/Projects/ui-observer}"
+# The workspace is wherever this repository lives — detected from the
+# script's own location, overridable with UI_OBSERVER_HOME.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+EXPECTED_DIR="${UI_OBSERVER_HOME:-$(dirname "$SCRIPT_DIR")}"
 fail=0
 
 check() {
