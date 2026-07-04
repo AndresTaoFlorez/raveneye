@@ -28,6 +28,9 @@ All surfaces funnel navigation through the [[URL Policy]].
 6. **Read findings** — `findings.json` (machine) / `report.md` (human).
 7. **Repeat after changes** — rerun the *same* mission; compare findings and exit codes. This is the [[Reasoning Loop]].
 
+> [!tip] Give your agent the manual
+> `AGENTS.md` at the repo root contains these instructions written *for the agent itself* — exact commands, JSON shapes, rules. See [[Instructions for AI Agents]].
+
 ## Ground rules for agents
 
 - The observer never modifies target applications; code changes require explicit authorization and repo access.

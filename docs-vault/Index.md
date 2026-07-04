@@ -8,6 +8,7 @@ tags: [moc]
 
 ## 🧭 Overview
 - [[What is UI Observer]] — purpose and the problems it catches
+- [[Absolute Basics]] — Docker, ports, localhost explained with zero assumptions
 - [[Shared Browser Model]] — the core concept: one browser, two controllers
 - [[Project History]] — the five implementation phases and their evidence
 - [[Glossary]] — every term in one place
@@ -33,6 +34,7 @@ tags: [moc]
 
 ## 🤖 Agents
 - [[Agent Integration]] — the five integration surfaces
+- [[Instructions for AI Agents]] — the machine-facing manual (AGENTS.md)
 - [[Playwright over CDP]] — full-control scripting
 - [[Playwright MCP]] — for MCP-capable agents (Claude Code, Codex)
 - [[Observer CLI]] — shell-friendly control

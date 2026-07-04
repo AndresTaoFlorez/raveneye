@@ -1,18 +1,75 @@
 ---
-tags: [operations, agents]
+tags: [operations, agents, beginner]
 ---
 
 # Observing Your Own App
 
-The end-to-end recipe for the real use case: **your web application lives in another folder** (its frontend possibly in its own Docker container) and you want an agent — Claude, Codex, minimax, GLM, anything — to navigate it realistically while you watch, "like a Zoom call" ([[Shared Browser Model]]), to find layout bugs, console errors, broken flows.
+The complete recipe for the main use case: **you have a web project in some other folder** and you want an AI agent — Claude, Codex, minimax, GLM, any of them — to open it in a real browser and hunt for problems **while you watch live**, like a screen-share call ([[Shared Browser Model]]).
 
-## Step 1 — Make the app reachable from the observer
+New to Docker or ports? Read [[Absolute Basics]] first (5 minutes) — this note assumes those concepts.
 
-### Option A — host-published port (recommended, simplest)
+The whole thing is 4 steps: **reach → watch → connect an agent → hunt bugs**.
 
-Your app's own compose (or `docker run -p`) already publishes a port on the host, e.g. `8080:80`. Then in the **ui-observer** `.env` ([[Configuration]]):
+---
+
+## Step 0 — Which scenario are you in?
+
+Run your app the way you always do, then answer one question: *how does it run?*
+
+| How your app runs | You are in | Example |
+|---|---|---|
+| Directly on your machine (`npm run dev`, `python manage.py runserver`, …) | **Scenario 1** | Vite dev server on `http://localhost:5173` |
+| In Docker, and `docker ps` shows a `PORTS` arrow like `0.0.0.0:8080->80/tcp` | **Scenario 2** | a compose file with `ports: ["8080:80"]` |
+| In Docker, and `docker ps` shows **no arrow** for it | **Scenario 3** | an internal-only frontend container |
+
+Not sure? Run `docker ps` and look at the PORTS column ([[Absolute Basics]] shows how to read it).
+
+---
+
+## Step 1 — Make the app reachable by the observer
+
+### Scenario 1 — app running directly on your machine
+
+Say your project is at `~/Projects/mi-tienda` and starts with `npm run dev` on port 5173.
+
+**1.** Start it listening on all interfaces, not just localhost (the observer lives in a container and must "call back" to your machine — see `host.docker.internal` in [[Absolute Basics]]):
+
+```bash
+cd ~/Projects/mi-tienda
+npm run dev -- --host 0.0.0.0        # vite
+# next dev -H 0.0.0.0                # next.js
+# python manage.py runserver 0.0.0.0:8000   # django
+```
+
+**2.** Tell the observer where it is — edit `~/Projects/ui-observer/.env`:
 
 ```dotenv
+UI_OBSERVER_TARGET_URL=http://host.docker.internal:5173
+UI_OBSERVER_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
+```
+
+**3.** Apply:
+
+```bash
+cd ~/Projects/ui-observer
+docker compose up -d
+```
+
+✅ **Check it worked**: from the observer's point of view —
+
+```bash
+scripts/observer status
+# "pages" should show http://host.docker.internal:5173/
+```
+
+If it shows an error page instead, jump to *If something fails* below.
+
+### Scenario 2 — app in Docker with a published port
+
+Say `docker ps` shows your frontend as `127.0.0.1:8080->80/tcp`. Then your app is already knocking-distance from the observer via door 8080 of your machine:
+
+```dotenv
+# ~/Projects/ui-observer/.env
 UI_OBSERVER_TARGET_URL=http://host.docker.internal:8080
 UI_OBSERVER_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
 ```
@@ -21,47 +78,71 @@ UI_OBSERVER_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
 cd ~/Projects/ui-observer && docker compose up -d
 ```
 
-Requirement: the app must listen on `0.0.0.0` inside its container (port publishing already guarantees this). If the app runs *directly* on the host (e.g. `vite dev`), bind it to `0.0.0.0`, not only `127.0.0.1` — see [[Fedora Notes]].
+✅ **Check**: `scripts/observer screenshot mi-app` → open the PNG it names under `artifacts/screenshots/` — you should see your app.
 
-### Option B — shared Docker network (no published port)
+### Scenario 3 — app in Docker, no published port
 
-Attach your front container to the observer's network and reach it by name:
+Your front container (say it's named `mi-front` and serves on its internal port 80) publishes nothing. Plug it into the observer's private network so they can talk directly:
 
 ```bash
 docker network connect ui-observer_default mi-front
 ```
 
-Then use `UI_OBSERVER_TARGET_URL=http://mi-front:80` and **add `mi-front` to `UI_OBSERVER_ALLOWED_HOSTS`** — otherwise the [[URL Policy]] answers 422.
+Now the observer can reach it **by container name**. Two things must use that name:
 
-Caveats: give the container a stable `container_name:` in your app's compose, and redo the `network connect` if that container is recreated.
-
-## Step 2 — Watch it
-
-Open **http://127.0.0.1:6080**. You now see your app inside the shared Chromium. You can point at things with your mouse while the agent works — that is the Zoom-call experience.
-
-To switch the running browser without restarting:
-
-```bash
-scripts/observer navigate http://host.docker.internal:8080/
+```dotenv
+# ~/Projects/ui-observer/.env
+UI_OBSERVER_TARGET_URL=http://mi-front:80
+UI_OBSERVER_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1,mi-front
 ```
 
-## Step 3 — Hook up your agent (pick by capability)
+⚠️ Without `mi-front` in the allowed list, navigation is refused with a 422 — that's the [[URL Policy]] doing its job.
 
-| Agent kind | Surface | How |
+```bash
+cd ~/Projects/ui-observer && docker compose up -d
+```
+
+Caveats: give the container a fixed name in your app's compose (`container_name: mi-front`), and re-run the `network connect` if you recreate that container.
+
+✅ **Check**: `scripts/observer navigate http://mi-front:80/` should answer `"ok": true`.
+
+---
+
+## Step 2 — Watch it (your side of the Zoom call)
+
+Open **http://127.0.0.1:6080** in your normal browser. You'll see a real Chromium showing your app. You can move your own mouse in it, scroll, even log in by hand ([[Profiles]] explains keeping that login). When an agent acts, you see every click happen live.
+
+Change page anytime without touching `.env`:
+
+```bash
+scripts/observer navigate http://host.docker.internal:8080/checkout
+```
+
+---
+
+## Step 3 — Connect the agent (their side of the call)
+
+Pick by what your agent can do — full matrix in [[Agent Integration]]:
+
+| Your agent | Use | One-liner |
 |---|---|---|
-| MCP-capable (Claude Code, Codex, …) | [[Playwright MCP]] | `--cdp-endpoint http://127.0.0.1:9222`; snapshot/click/type on the shared session |
-| Can run a Node script (any model) | [[Playwright over CDP]] | `connectOverCDP('http://127.0.0.1:9222')` — full Playwright power |
-| Shell-only agents (minimax/GLM-style CLIs) | [[Observer CLI]] / [[Control API]] | `scripts/observer navigate/screenshot/console/network` — plain commands + JSON |
-| Any of them, for systematic bug-hunting | [[Mission Runner]] | write a mission (below), read `report.md` + `findings.json` |
+| **Claude Code** | [[Playwright MCP]] | `claude mcp add ui-observer -- npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222` |
+| **Codex** | [[Playwright MCP]] | add the `[mcp_servers.ui-observer]` block shown in that note |
+| **minimax / GLM / any CLI agent** | [[Observer CLI]] | tell it to run `scripts/observer navigate/screenshot/console/network` |
+| **Anything that can run Node** | [[Playwright over CDP]] | `chromium.connectOverCDP('http://127.0.0.1:9222')` |
 
-## Step 4 — A mission for "problemillas"
+There are also **instructions written directly for the agents themselves** — `AGENTS.md` at the repo root; see [[Instructions for AI Agents]]. Point your agent at that file and it knows the whole protocol.
 
-`config/missions/my-app-review.yaml`:
+---
+
+## Step 4 — Hunt for "problemillas" systematically
+
+One-off poking is Step 3. For a repeatable review that leaves evidence, give the agent (or yourself) a mission. Create `config/missions/mi-app-review.yaml`:
 
 ```yaml
-name: my-app-review
+name: mi-app-review
 description: Visual and console review of my app
-target_url: http://host.docker.internal:8080
+target_url: http://host.docker.internal:8080   # ← your Step-1 URL
 
 steps:
   - action: goto
@@ -71,7 +152,7 @@ steps:
     name: home
   - action: inspect_accessibility
   - action: check_horizontal_overflow
-  - action: set_viewport
+  - action: set_viewport        # same page, phone-sized
     width: 390
     height: 844
   - action: screenshot
@@ -91,13 +172,25 @@ checks:
 ```
 
 ```bash
-make mission MISSION=my-app-review
+make mission MISSION=mi-app-review
 ```
 
-Exit 1 means critical/high [[Findings]]; the full evidence (screenshots, trace, video, console/network) is in [[Artifacts]]. Rerun the same mission after each fix — that is the [[Reasoning Loop]].
+You watch the whole run live in noVNC. At the end:
+
+- terminal prints `PASSED` or `FAILED` and the report path;
+- `artifacts/runs/<run-id>/report.md` — readable summary;
+- `findings.json` — each problem with severity, the exact element/request, and reproduction steps ([[Findings]]);
+- screenshots, `trace.zip` and a **video** of the run ([[Artifacts]]).
+
+Fix something, run the same mission again, compare — that's the [[Reasoning Loop]].
+
+---
 
 ## If something fails
 
-- **422 on navigate** → host missing from the allow-list ([[URL Policy]]).
-- **Timeout to a host app** → listener bound to 127.0.0.1 only, or firewall — [[Fedora Notes]].
-- Anything else → [[Troubleshooting]].
+| Symptom | Cause & fix |
+|---|---|
+| `422` on navigate | host not in `UI_OBSERVER_ALLOWED_HOSTS` → add it ([[URL Policy]]) |
+| Timeout / `ERR_CONNECTION_REFUSED` to a host app | app listening only on `127.0.0.1` → bind `0.0.0.0` (Scenario 1 step 1), or firewall ([[Fedora Notes]]) |
+| `mi-front` unreachable in Scenario 3 | container recreated → re-run `docker network connect`; name changed → fix `container_name` |
+| Anything else | [[Troubleshooting]] |
