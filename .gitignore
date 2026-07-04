@@ -14,6 +14,7 @@ artifacts/*.png
 browser-profile/
 
 # Editor/OS noise
+docs-vault/.obsidian/
 .DS_Store
 *.swp
 .idea/
