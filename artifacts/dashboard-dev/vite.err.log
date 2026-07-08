@@ -316,3 +316,281 @@ Error: socket hang up
     at Socket.emit (node:events:531:35)
     at endReadableNT (node:internal/streams/readable:1698:12)
     at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m5:56:20 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: session has no live context
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > watchApp src/presentation/views/OverviewView.tsx:34:19
+
+[2m6:01:05 AM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: socket hang up
+    at Socket.socketOnEnd (node:_http_client:599:25)
+    at Socket.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m6:01:05 AM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: socket hang up
+    at Socket.socketOnEnd (node:_http_client:599:25)
+    at Socket.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m6:01:05 AM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: socket hang up
+    at Socket.socketOnEnd (node:_http_client:599:25)
+    at Socket.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m6:01:05 AM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: socket hang up
+    at Socket.socketOnEnd (node:_http_client:599:25)
+    at Socket.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m6:01:05 AM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: socket hang up
+    at Socket.socketOnEnd (node:_http_client:599:25)
+    at Socket.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m6:01:05 AM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: socket hang up
+    at Socket.socketOnEnd (node:_http_client:599:25)
+    at Socket.emit (node:events:531:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2m6:02:38 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mIn HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <Provider store={{...}}>
+    <App>
+      <AppShell activeView="overview" onViewChange={function bound dispatchSetState}>
+        <div className="_shell_x6o...">
+          <aside>
+          <main className="_main_x6o4...">
+            <header>
+            <button>
+            <OverviewView>
+              <section ref={{...}} className="_view_uy00g_1">
+                <div>
+                <div className="_operating...">
+                  <article className="_browserPa...">
+                    <div>
+                    <div>
+                    <div className="_windowGri..." aria-label="Observed b...">
+>                     <button
+>                       type="button"
+>                       className="_miniWindow_uy00g_226"
+>                       onClick={function onClick}
+>                       aria-label="Open and preview Codex App B"
+>                     >
+                        <div>
+                        <div className="_windowBod...">
+                          <p>
+                          <small>
+                          <div className="_windowAct...">
+>                           <button
+>                             type="button"
+>                             aria-label="Open and preview Codex App B"
+>                             title="Open and preview"
+>                             onClick={function onClick}
+>                           >
+                            ...
+                      ...
+                  ...
+                ...
+
+[2m6:02:38 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+[2m6:04:37 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:53:19
+
+[2m6:04:48 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:53:19
+
+[2m6:05:58 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:05:58 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:04 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:07 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:07 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:14 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:14 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:26 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:33 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:34 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:06:35 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:07:02 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:07:06 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:07:06 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:07:09 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mDashboardError[22m: maximum of 3 dynamic app sessions reached
+[39m > ControlApiClient.request src/infrastructure/http/controlApiClient.ts:31:12
+    29 |      const data = (await res.json().catch(() => ({}))) as { detail?: string; error?: string };
+    30 |      if (!res.ok) {
+    31 |        throw new DashboardError(data.detail ?? data.error ?? `Request failed with ${res.status}`);
+       |              ^
+    32 |      }
+    33 |      return data as T;
+ > ../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:964:26
+ > openAppSession src/presentation/views/OverviewView.tsx:56:19
+
+[2m6:15:56 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[vite] Failed to reload /src/presentation/views/DocsView.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
