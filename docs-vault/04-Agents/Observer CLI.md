@@ -4,7 +4,7 @@ tags: [agents, operations]
 
 # Observer CLI
 
-`scripts/observer` — a dependency-free bash wrapper over the [[Control API]], ideal for shell-driven agents and quick human checks.
+`scripts/observer` — a dependency-free bash wrapper over the [Control API](../02-Architecture/Control%20API.md), ideal for shell-driven agents and quick human checks.
 
 ```bash
 scripts/observer health                # component health, pretty-printed
@@ -36,8 +36,8 @@ scripts/observer screenshot host-app
 
 ## Notes
 
-- Port comes from `RAVENEYE_API_PORT` (default 8090, see [[Configuration]]).
-- Navigation failures return the [[URL Policy]] reason verbatim — useful for agents to self-correct.
-- For journeys that need durable evidence, use the [[Mission Runner]] instead; the CLI is for interactive poking.
+- Port comes from `RAVENEYE_API_PORT` (default 8090, see [Configuration](../05-Operations/Configuration.md)).
+- Navigation failures return the [URL Policy](../06-Security/URL%20Policy.md) reason verbatim — useful for agents to self-correct.
+- For journeys that need durable evidence, use the [Mission Runner](../03-Missions/Mission%20Runner.md) instead; the CLI is for interactive poking.
 
-Related: [[Agent Integration]] · [[Commands Reference]]
+Related: [Agent Integration](./Agent%20Integration.md) · [Commands Reference](../05-Operations/Commands%20Reference.md)

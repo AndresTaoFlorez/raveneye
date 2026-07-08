@@ -4,7 +4,7 @@ tags: [operations]
 
 # Profiles
 
-Browser profiles hold cookies, storage and login state for the **shared session** (missions always run clean ephemeral contexts — see [[Mission Runner]]).
+Browser profiles hold cookies, storage and login state for the **shared session** (missions always run clean ephemeral contexts — see [Mission Runner](../03-Missions/Mission%20Runner.md)).
 
 ## Ephemeral (default)
 
@@ -15,7 +15,7 @@ Browser profiles hold cookies, storage and login state for the **shared session*
 ## Persistent
 
 - Profile lives in the `raveneye-profile` named Docker volume (`/browser-profile`), never in the image, never in Git.
-- Enables the manual-login workflow: a human logs in through noVNC once; agents then operate the authenticated session ([[Shared Browser Model]]).
+- Enables the manual-login workflow: a human logs in through noVNC once; agents then operate the authenticated session ([Shared Browser Model](../01-Overview/Shared%20Browser%20Model.md)).
 - Enable in `.env`: `RAVENEYE_PROFILE_MODE=persistent`, then `docker compose up -d`.
 - **Demonstrated**: a login cookie survived a graceful restart.
 
@@ -23,7 +23,7 @@ Browser profiles hold cookies, storage and login state for the **shared session*
 
 Chromium writes cookies to disk **lazily (~30 s)**. A hard kill right after login loses the session. Mitigations in place:
 
-- `stop_grace_period: 30s` in compose gives supervisord's ordered shutdown time to close Chromium cleanly ([[Docker Design]]).
+- `stop_grace_period: 30s` in compose gives supervisord's ordered shutdown time to close Chromium cleanly ([Docker Design](../02-Architecture/Docker%20Design.md)).
 - After logging in manually, give it half a minute before `make down`.
 
 ## Reset
@@ -32,6 +32,6 @@ Chromium writes cookies to disk **lazily (~30 s)**. A hard kill right after logi
 make reset-profile     # stop → wipe volume → restart
 ```
 
-**Demonstrated**: the retained login cookie was gone after reset. Use it before switching accounts and before sharing evidence, and treat the profile volume as credential storage ([[Security Model]]).
+**Demonstrated**: the retained login cookie was gone after reset. Use it before switching accounts and before sharing evidence, and treat the profile volume as credential storage ([Security Model](../06-Security/Security%20Model.md)).
 
-Related: [[Configuration]] · [[Troubleshooting]]
+Related: [Configuration](./Configuration.md) · [Troubleshooting](./Troubleshooting.md)

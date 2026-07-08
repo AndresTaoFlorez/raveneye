@@ -16,7 +16,7 @@ tags: [architecture, missions]
 | `/responsive` | tile grid; `?broken=1` inserts a fixed 1200 px element that breaks small viewports |
 | `/form` | labeled fields **plus one intentionally unlabeled input** (a11y finding bait) |
 | `/console-error` | intentional `console.error` + uncaught exception |
-| `/network-fail` | fires requests that 404, 500, 403 (with a `Bearer sample-secret-token-12345` header for [[Secret Redaction]] proof) and one aborted request |
+| `/network-fail` | fires requests that 404, 500, 403 (with a `Bearer sample-secret-token-12345` header for [Secret Redaction](../06-Security/Secret%20Redaction.md) proof) and one aborted request |
 | `/api/slow` | 3 s response for slow-request observation |
 | `/healthz` | liveness for the Docker healthcheck |
 
@@ -24,8 +24,8 @@ tags: [architecture, missions]
 
 - **Zero npm dependencies** — plain `node:http`, inline templates, one CSS file.
 - **Generic naming** — no concepts borrowed from any real product (project-independence requirement).
-- The intentional defects are *stable*, so [[Sample Missions]] have deterministic expectations: `error-hunt` must always find them, `generic-smoke` must always pass.
+- The intentional defects are *stable*, so [Sample Missions](../03-Missions/Sample%20Missions.md) have deterministic expectations: `error-hunt` must always find them, `generic-smoke` must always pass.
 
-It also served as the target for the [[Reasoning Loop]] demonstration, where a bug was planted in the dialog handler and caught by a mission.
+It also served as the target for the [Reasoning Loop](../04-Agents/Reasoning%20Loop.md) demonstration, where a bug was planted in the dialog handler and caught by a mission.
 
-Related: [[Docker Design]] · [[Mission Runner]] · [[Testing]]
+Related: [Docker Design](./Docker%20Design.md) · [Mission Runner](../03-Missions/Mission%20Runner.md) · [Testing](../05-Operations/Testing.md)

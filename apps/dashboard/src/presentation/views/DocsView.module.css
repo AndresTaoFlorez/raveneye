@@ -1,0 +1,299 @@
+.view {
+  display: grid;
+  gap: 12px;
+}
+
+.heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-right: 54px;
+}
+
+.heading p,
+.pageHeader p {
+  margin: 0 0 4px;
+  color: #667085;
+}
+
+.heading h2,
+.pageHeader h1 {
+  margin: 0;
+  color: #111820;
+  line-height: 1.1;
+}
+
+.heading h2 {
+  font-size: 24px;
+}
+
+.heading > span {
+  border: 1px solid #dbe1e8;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #475467;
+  font-size: 13px;
+  padding: 6px 10px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(210px, 280px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.index,
+.page {
+  background: #ffffff;
+  border: 1px solid #dbe1e8;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(15, 23, 32, 0.05);
+}
+
+.index {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+}
+
+.indexHeader {
+  display: grid;
+  gap: 4px;
+  border-bottom: 1px solid #e4eaf1;
+  padding: 14px;
+}
+
+.indexHeader small {
+  color: #667085;
+  overflow-wrap: anywhere;
+}
+
+.index nav {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+}
+
+.index button {
+  width: 100%;
+  min-height: 42px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #26313d;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  padding: 9px 10px;
+}
+
+.index button:hover {
+  background: #eaf0f6;
+}
+
+.index .active {
+  background: #edfdf5;
+  color: #126341;
+  box-shadow: inset 3px 0 0 #22c55e;
+}
+
+.index small {
+  display: block;
+  color: #6f7b89;
+  font-size: 12px;
+}
+
+.page {
+  min-width: 0;
+  padding: 0;
+}
+
+.pageHeader {
+  border-bottom: 1px solid #e4eaf1;
+  padding: 18px 24px 14px;
+}
+
+.pageHeader h1 {
+  font-size: 26px;
+}
+
+.markdown {
+  max-width: 860px;
+  padding: 20px 24px 30px;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  color: #15191f;
+  line-height: 1.2;
+}
+
+.markdown h1 {
+  margin: 28px 0 14px;
+  font-size: 26px;
+}
+
+.markdown h2 {
+  margin: 26px 0 12px;
+  font-size: 22px;
+}
+
+.markdown h3 {
+  margin: 22px 0 10px;
+  font-size: 18px;
+}
+
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  margin: 18px 0 8px;
+  font-size: 15px;
+}
+
+.markdown p,
+.markdown li {
+  color: #27313c;
+  line-height: 1.68;
+}
+
+.markdown p {
+  margin: 0 0 14px;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 0 0 16px;
+  padding-left: 22px;
+}
+
+.markdown li + li {
+  margin-top: 6px;
+}
+
+.tableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 18px 0;
+  border: 1px solid #dbe1e8;
+  border-radius: 8px;
+}
+
+.markdown table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.markdown th,
+.markdown td {
+  border-bottom: 1px solid #e4eaf1;
+  color: #27313c;
+  line-height: 1.5;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.markdown th {
+  background: #f8fafc;
+  color: #111820;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.markdown tr:last-child td {
+  border-bottom: 0;
+}
+
+.markdown pre {
+  overflow: auto;
+  background: #101820;
+  color: #f7fafc;
+  border-radius: 8px;
+  margin: 18px 0;
+  padding: 16px;
+  line-height: 1.55;
+}
+
+.markdown code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.92em;
+}
+
+.markdown p code,
+.markdown li code {
+  background: #eef2f6;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.markdown blockquote {
+  margin: 18px 0;
+  border-left: 4px solid #22c55e;
+  background: #f4fbf7;
+  color: #234337;
+  padding: 12px 16px;
+}
+
+.markdown hr {
+  border: 0;
+  border-top: 1px solid #dbe1e8;
+  margin: 24px 0;
+}
+
+.docLink {
+  border: 0;
+  background: transparent;
+  color: #0f6fb6;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.docLink:hover,
+.markdown a:hover {
+  color: #0b5489;
+}
+
+.docLink:focus-visible,
+.markdown a:focus-visible {
+  outline: 3px solid rgba(31, 111, 235, 0.22);
+  outline-offset: 2px;
+}
+
+.missing {
+  color: #8a4b00;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .index {
+    position: static;
+    max-height: 280px;
+  }
+}
+
+@media (max-width: 620px) {
+  .heading {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .pageHeader,
+  .markdown {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}

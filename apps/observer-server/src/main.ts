@@ -1,59 +1,88 @@
-import { existsSync } from 'node:fs';
-import { setTimeout as sleep } from 'node:timers/promises';
+import { mergeAllowedHosts } from '@raveneye/shared';
 import { loadConfig } from './config.js';
-import { launchSharedBrowser, navigateShared, cleanupEphemeralProfile } from './browser.js';
-import type { SharedBrowser } from './browser.js';
+import { SessionManager, SessionStore } from './sessions.js';
 import { startApi } from './api.js';
 import { EvidenceCollector } from './evidence.js';
+import { AppRegistry } from './apps.js';
+import { evaluateTargetUrl } from '@raveneye/shared';
+import { SettingsStore } from './settings.js';
 
 const cfg = loadConfig();
-let browser: SharedBrowser | null = null;
+const registry = new AppRegistry(cfg.databasePath);
+const sessionStore = new SessionStore(cfg.databasePath);
+const settings = new SettingsStore(cfg.databasePath, { max_dynamic_sessions: cfg.maxSessions });
+registry.ensureSeedApp({
+  id: 'sample-app',
+  name: 'Sample App',
+  description: 'Bundled RavenEye validation target.',
+  target_url: 'http://sample-app:3000',
+  allowed_hosts: ['sample-app'],
+  run_mode: 'container',
+  default_viewport_width: 1440,
+  default_viewport_height: 900,
+});
 
-async function waitForDisplay(timeoutMs = 30_000) {
-  const socket = `/tmp/.X11-unix/X${cfg.display.replace(':', '')}`;
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    if (existsSync(socket)) return;
-    await sleep(250);
-  }
-  throw new Error(`X display ${cfg.display} did not appear within ${timeoutMs}ms (${socket})`);
+function configuredTargetSeed(): ReturnType<typeof registry.get> {
+  const target = new URL(cfg.targetUrl);
+  if (target.href === 'http://sample-app:3000/') return null;
+  return registry.ensureSeedApp({
+    id: 'configured-target',
+    name: 'Configured Target',
+    description: 'Target declared through RAVENEYE_TARGET_URL.',
+    target_url: target.toString(),
+    allowed_hosts: mergeAllowedHosts([target.hostname], cfg.allowedHosts),
+    run_mode: target.hostname === 'host.docker.internal' ? 'host' : 'container',
+    default_viewport_width: cfg.viewportWidth,
+    default_viewport_height: cfg.viewportHeight,
+  });
 }
 
 async function main() {
   console.log(`[observer] starting; profile=${cfg.profileMode} headless=${cfg.headless}`);
-  if (!cfg.headless) {
-    await waitForDisplay();
-    console.log(`[observer] display ${cfg.display} is up`);
-  }
 
-  browser = await launchSharedBrowser(cfg);
-  console.log(`[observer] chromium launched (profile dir: ${browser.userDataDir})`);
+  const sessions = new SessionManager(cfg, sessionStore, () => settings.getMaxDynamicSessions());
+
+  const initialApp = configuredTargetSeed() ?? registry.get('sample-app');
+  const initialUrl = initialApp?.target_url ?? cfg.targetUrl;
+  const initialHosts = initialApp
+    ? mergeAllowedHosts([new URL(initialApp.target_url).hostname], initialApp.allowed_hosts)
+    : cfg.allowedHosts;
 
   const collector = new EvidenceCollector();
-  collector.attach(browser.context);
+  let baseSessionId = '';
+  try {
+    const baseSession = await sessions.startBase({
+      appId: initialApp?.id ?? 'shared',
+      targetUrl: initialUrl,
+      allowedHosts: initialHosts,
+      viewportWidth: initialApp?.default_viewport_width ?? cfg.viewportWidth,
+      viewportHeight: initialApp?.default_viewport_height ?? cfg.viewportHeight,
+    });
+    baseSessionId = baseSession.id;
+    console.log(`[observer] base session up: ${baseSession.novncUrl}`);
+    const baseContext = sessions.contextOf(baseSession.id);
+    if (baseContext) collector.attach(baseContext);
+  } catch (err) {
+    console.error(`[observer] base session failed to start: ${(err as Error).message}`);
+    console.error('[observer] API will run without a base session; dynamic sessions may still be created');
+  }
 
-  startApi({ cfg, getBrowser: () => browser, collector });
+  startApi({ cfg, registry, sessions, collector, baseSessionId, settings });
 
-  // Opening the target is best-effort: a broken target application must not
-  // bring the observer down or mark it unhealthy.
-  const nav = await navigateShared(browser, cfg, cfg.targetUrl);
-  console.log(`[observer] initial navigation: ${nav.ok ? 'ok' : 'FAILED'} — ${nav.detail}`);
-
-  // If the browser dies (crash, or a human closes the window through noVNC),
-  // exit non-zero so supervisord relaunches a fresh session.
-  const watchdog = setInterval(() => {
-    if (browser?.closed()) {
-      console.error('[observer] browser session closed; exiting for supervisor restart');
-      process.exit(1);
-    }
-  }, 2000);
-  watchdog.unref();
+  // Best-effort target validation: log a warning if the policy rejects the
+  // initial URL, but never fail startup over it (the user can correct it).
+  const decision = evaluateTargetUrl(initialUrl, { allowedHosts: initialHosts });
+  if (!decision.allowed) {
+    console.warn(`[observer] initial target rejected by URL policy: ${decision.reason}`);
+  }
 
   const shutdown = async (signal: string) => {
     console.log(`[observer] ${signal} received; shutting down`);
     try {
-      if (browser && !browser.closed()) await browser.context.close();
-      if (browser) await cleanupEphemeralProfile(browser, cfg);
+      await sessions.stopAll();
+      registry.close();
+      sessionStore.close();
+      settings.close();
     } finally {
       process.exit(0);
     }

@@ -1,0 +1,201 @@
+.form {
+  display: grid;
+  gap: 18px;
+}
+
+.intro {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #475569;
+  padding: 0 2px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 18px;
+  row-gap: 16px;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: 0.01em;
+}
+
+.required {
+  color: #dc2626;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.hint {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.fieldError {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #b91c1c;
+  font-weight: 500;
+}
+
+.form input,
+.form select,
+.form textarea {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  color: #0f172a;
+  background: #ffffff;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    background-color 140ms ease;
+}
+
+.form textarea {
+  min-height: 72px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.form input:disabled,
+.form select:disabled,
+.form textarea:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.form input:hover:not(:disabled),
+.form select:hover:not(:disabled),
+.form textarea:hover:not(:disabled) {
+  border-color: #94a3b8;
+}
+
+.form input:focus-visible,
+.form select:focus-visible,
+.form textarea:focus-visible {
+  outline: none;
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.18);
+}
+
+.form input[aria-invalid='true'],
+.form select[aria-invalid='true'],
+.form textarea[aria-invalid='true'] {
+  border-color: #f87171;
+}
+
+.form input[aria-invalid='true']:focus-visible,
+.form select[aria-invalid='true']:focus-visible,
+.form textarea[aria-invalid='true']:focus-visible {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.22);
+}
+
+.error {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid #eef2f7;
+}
+
+.primaryButton,
+.secondaryButton {
+  min-height: 38px;
+  border-radius: 8px;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    transform 80ms ease;
+}
+
+.primaryButton {
+  background: #1f6feb;
+  color: #ffffff;
+  border: 1px solid #1f6feb;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #175ec6;
+  border-color: #175ec6;
+}
+
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible {
+  outline: 2px solid #1f6feb;
+  outline-offset: 2px;
+}
+
+.primaryButton:active:not(:disabled),
+.secondaryButton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.secondaryButton {
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.submitContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

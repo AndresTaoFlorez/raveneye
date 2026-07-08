@@ -4,13 +4,13 @@ tags: [missions, reference]
 
 # Actions Reference
 
-All 22 actions accepted by the [[Mission Format]] schema. Interaction steps use the locator strategies described there.
+All 22 actions accepted by the [Mission Format](./Mission%20Format.md) schema. Interaction steps use the locator strategies described there.
 
 ## Navigation
 
 | Action | Parameters | Notes |
 |---|---|---|
-| `goto` / `navigate` | `path` or `url` | checked by the [[URL Policy]] |
+| `goto` / `navigate` | `path` or `url` | checked by the [URL Policy](../06-Security/URL%20Policy.md) |
 | `reload` | — | |
 | `back` / `forward` | — | browser history |
 
@@ -39,16 +39,16 @@ All 22 actions accepted by the [[Mission Format]] schema. Interaction steps use 
 
 | Action | Parameters | Output |
 |---|---|---|
-| `screenshot` | `name`, `full_page?` | PNG in the run's `screenshots/` ([[Artifacts]]) |
-| `inspect_accessibility` | `name?` | aria snapshot + heuristic issues → `accessibility.json`, feeds [[Findings]] |
-| `capture_console` / `capture_network` | — | markers; evidence is collected continuously with [[Secret Redaction]] |
+| `screenshot` | `name`, `full_page?` | PNG in the run's `screenshots/` ([Artifacts](./Artifacts.md)) |
+| `inspect_accessibility` | `name?` | aria snapshot + heuristic issues → `accessibility.json`, feeds [Findings](./Findings.md) |
+| `capture_console` / `capture_network` | — | markers; evidence is collected continuously with [Secret Redaction](../06-Security/Secret%20Redaction.md) |
 | `check_horizontal_overflow` | — | scroll vs client width + offending elements → `inspections.json` |
-| `set_viewport` | `width`, `height` | for responsive sweeps, see [[Sample Missions]] |
+| `set_viewport` | `width`, `height` | for responsive sweeps, see [Sample Missions](./Sample%20Missions.md) |
 
 ## Failure semantics
 
-Any action that throws (element not found, timeout, policy rejection) **stops the mission** and produces a high `functional` finding with the reproduction steps so far — see [[Mission Runner]].
+Any action that throws (element not found, timeout, policy rejection) **stops the mission** and produces a high `functional` finding with the reproduction steps so far — see [Mission Runner](./Mission%20Runner.md).
 
 ## Deliberately unsupported
 
-File uploads, drag-and-drop, multi-tab orchestration, conditionals/loops. Use [[Playwright over CDP]] for those.
+File uploads, drag-and-drop, multi-tab orchestration, conditionals/loops. Use [Playwright over CDP](../04-Agents/Playwright%20over%20CDP.md) for those.

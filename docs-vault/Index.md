@@ -4,54 +4,58 @@ tags: [moc]
 
 # RavenEye — Documentation Vault
 
-**RavenEye** lets a coding agent and a human developer watch and control the **same real Chromium session** — like a screen-share with a browser. Start with [[What is RavenEye]] if you are new, or [[Quick Start]] if you want it running in two minutes.
+**RavenEye** lets a coding agent and a human developer watch and control real local Chromium sessions — from the historical base shared browser to isolated app workspaces. Start with [What is RavenEye](./01-Overview/What%20is%20RavenEye.md) if you are new, or [Quick Start](./05-Operations/Quick%20Start.md) if you want it running in two minutes.
 
 ## 🧭 Overview
-- [[What is RavenEye]] — purpose and the problems it catches
-- [[Absolute Basics]] — Docker, ports, localhost explained with zero assumptions
-- [[Shared Browser Model]] — the core concept: one browser, two controllers
-- [[Project History]] — the five implementation phases and their evidence
-- [[Glossary]] — every term in one place
+- [What is RavenEye](./01-Overview/What%20is%20RavenEye.md) — purpose and the problems it catches
+- [Absolute Basics](./01-Overview/Absolute%20Basics.md) — Docker, ports, localhost explained with zero assumptions
+- [Shared Browser Model](./01-Overview/Shared%20Browser%20Model.md) — the core concept: one browser, two controllers
+- [Project History](./01-Overview/Project%20History.md) — the five implementation phases and their evidence
+- [Glossary](./01-Overview/Glossary.md) — every term in one place
 
 ## 🏗 Architecture
-- [[Architecture Overview]] — the big picture and data flow
-- [[Observer Server]] — the Node process that owns the shared browser
-- [[Display Stack]] — Xvfb, Openbox, x11vnc, noVNC
-- [[CDP Endpoint]] — how agents attach to the visible browser
-- [[Control API]] — the HTTP surface on port 8090
-- [[Health Model]] — component health vs target health vs mission results
-- [[Docker Design]] — images, ports, volumes, limits
-- [[Sample App]] — the built-in validation application
+- [Architecture Overview](./02-Architecture/Architecture%20Overview.md) — the big picture and data flow
+- [Observer Server](./02-Architecture/Observer%20Server.md) — the Node process that owns the shared browser
+- [Display Stack](./02-Architecture/Display%20Stack.md) — Xvfb, Openbox, x11vnc, noVNC
+- [CDP Endpoint](./02-Architecture/CDP%20Endpoint.md) — how agents attach to the visible browser
+- [Control API](./02-Architecture/Control%20API.md) — the HTTP surface on port 8090
+- [Local Dashboard](./02-Architecture/Local%20Dashboard.md) — React UI for status, registered apps, and recent runs
+- [Application Registry](./02-Architecture/Application%20Registry.md) — local SQLite registry for observed apps
+- [Session Model](./02-Architecture/Session%20Model.md) — base vs dynamic observed sessions
+- [Multi Observer](./02-Architecture/Multi%20Observer.md) — isolated app workspaces and backend-owned watch/CDP URLs
+- [Health Model](./02-Architecture/Health%20Model.md) — component health vs target health vs mission results
+- [Docker Design](./02-Architecture/Docker%20Design.md) — images, ports, volumes, limits
+- [Sample App](./02-Architecture/Sample%20App.md) — the built-in validation application
 
 ## 🎯 Missions
-- [[Mission Runner]] — the evaluation engine
-- [[Mission Format]] — the declarative YAML schema
-- [[Actions Reference]] — all 22 supported actions
-- [[Checks Reference]] — checks and their severities
-- [[Findings]] — the structured problem records
-- [[Artifacts]] — what every run leaves on disk
-- [[Sample Missions]] — generic-smoke, error-hunt, responsive-sweep
+- [Mission Runner](./03-Missions/Mission%20Runner.md) — the evaluation engine
+- [Mission Format](./03-Missions/Mission%20Format.md) — the declarative YAML schema
+- [Actions Reference](./03-Missions/Actions%20Reference.md) — all 22 supported actions
+- [Checks Reference](./03-Missions/Checks%20Reference.md) — checks and their severities
+- [Findings](./03-Missions/Findings.md) — the structured problem records
+- [Artifacts](./03-Missions/Artifacts.md) — what every run leaves on disk
+- [Sample Missions](./03-Missions/Sample%20Missions.md) — generic-smoke, error-hunt, responsive-sweep
 
 ## 🤖 Agents
-- [[Agent Integration]] — the five integration surfaces
-- [[Instructions for AI Agents]] — the machine-facing manual (AGENTS.md)
-- [[Playwright over CDP]] — full-control scripting
-- [[Playwright MCP]] — for MCP-capable agents (Claude Code, Codex)
-- [[Observer CLI]] — shell-friendly control
-- [[Reasoning Loop]] — observe → fix → verify, demonstrated
+- [Agent Integration](./04-Agents/Agent%20Integration.md) — the five integration surfaces
+- [Instructions for AI Agents](./04-Agents/Instructions%20for%20AI%20Agents.md) — the machine-facing manual (AGENTS.md)
+- [Playwright over CDP](./04-Agents/Playwright%20over%20CDP.md) — full-control scripting
+- [Playwright MCP](./04-Agents/Playwright%20MCP.md) — for MCP-capable agents (Claude Code, Codex)
+- [Observer CLI](./04-Agents/Observer%20CLI.md) — shell-friendly control
+- [Reasoning Loop](./04-Agents/Reasoning%20Loop.md) — observe → fix → verify, demonstrated
 
 ## ⚙️ Operations
-- [[Quick Start]] — from clone to visible browser
-- [[Observing Your Own App]] — point the observer at your real project (the Zoom-call recipe)
-- [[Commands Reference]] — every make target and script
-- [[Configuration]] — all environment variables
-- [[Profiles]] — ephemeral vs persistent sessions
-- [[CI Mode]] — headless missions without exposed ports
-- [[Testing]] — the 37-test suite on real Chromium
-- [[Fedora Notes]] — SELinux, firewall, host gateway
-- [[Troubleshooting]] — symptom → fix
+- [Quick Start](./05-Operations/Quick%20Start.md) — from clone to visible browser
+- [Observing Your Own App](./05-Operations/Observing%20Your%20Own%20App.md) — point the observer at your real project (the Zoom-call recipe)
+- [Commands Reference](./05-Operations/Commands%20Reference.md) — every make target and script
+- [Configuration](./05-Operations/Configuration.md) — all environment variables
+- [Profiles](./05-Operations/Profiles.md) — ephemeral vs persistent sessions
+- [CI Mode](./05-Operations/CI%20Mode.md) — headless missions without exposed ports
+- [Testing](./05-Operations/Testing.md) — unit, integration, and real-Chromium validation
+- [Fedora Notes](./05-Operations/Fedora%20Notes.md) — SELinux, firewall, host gateway
+- [Troubleshooting](./05-Operations/Troubleshooting.md) — symptom → fix
 
 ## 🔒 Security
-- [[Security Model]] — the overall posture
-- [[URL Policy]] — scheme and host allow-listing
-- [[Secret Redaction]] — how credentials stay out of evidence
+- [Security Model](./06-Security/Security%20Model.md) — the overall posture
+- [URL Policy](./06-Security/URL%20Policy.md) — scheme and host allow-listing
+- [Secret Redaction](./06-Security/Secret%20Redaction.md) — how credentials stay out of evidence

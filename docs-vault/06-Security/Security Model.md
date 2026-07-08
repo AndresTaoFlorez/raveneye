@@ -8,28 +8,28 @@ RavenEye is a **local development tool**: the trust model assumes a trusted deve
 
 ## Network: loopback everywhere
 
-- Every published port binds to `127.0.0.1` — noVNC 6080, [[CDP Endpoint]] 9222, [[Control API]] 8090, [[Sample App]] 3000. Nothing is a network service.
-- Raw VNC (5900) is **never** published; x11vnc runs `-localhost` inside the container ([[Display Stack]]).
+- Every published port binds to `127.0.0.1` — noVNC 6080, [CDP Endpoint](../02-Architecture/CDP%20Endpoint.md) 9222, [Control API](../02-Architecture/Control%20API.md) 8090, [Sample App](../02-Architecture/Sample%20App.md) 3000. Nothing is a network service.
+- Raw VNC (5900) is **never** published; x11vnc runs `-localhost` inside the container ([Display Stack](../02-Architecture/Display%20Stack.md)).
 - CDP is unauthenticated by nature — loopback binding *is* the control. Never re-publish or tunnel it to shared machines.
 
 ## Container hardening
 
 - Non-root `pwuser` (uid 1000); no privileged mode; no Docker socket mount.
-- `no-new-privileges:true`; 4 GB memory limit; 2 GB `/dev/shm` ([[Docker Design]]).
+- `no-new-privileges:true`; 4 GB memory limit; 2 GB `/dev/shm` ([Docker Design](../02-Architecture/Docker%20Design.md)).
 - **Chromium sandbox disabled** — it demands privileges we refuse the container (unprivileged userns / SYS_ADMIN). The container boundary + non-root + loopback-only is the isolation model. Consequence: only point the observer at **authorized targets**.
 
 ## Navigation control
 
-Every observer-driven navigation passes the [[URL Policy]] — `http/https` only, hostname allow-list. The observer never fetches on behalf of callers; it is not a proxy.
+Every observer-driven navigation passes the [URL Policy](./URL%20Policy.md) — `http/https` only, hostname allow-list. The observer never fetches on behalf of callers; it is not a proxy.
 
 ## Evidence hygiene
 
-All captured evidence passes [[Secret Redaction]] **at capture time**; request/response bodies are never stored. Verified end-to-end with a real bearer token.
+All captured evidence passes [Secret Redaction](./Secret%20Redaction.md) **at capture time**; request/response bodies are never stored. Verified end-to-end with a real bearer token.
 
 ## Credentials & artifacts
 
-- Profiles (login state) live in a named volume, never in images or Git; explicit reset available ([[Profiles]]).
-- `.env` and `artifacts/` are git-ignored; artifacts can contain screenshots of authorized apps — treat as sensitive, prune with retention cleanup ([[Configuration]]).
+- Profiles (login state) live in a named volume, never in images or Git; explicit reset available ([Profiles](../05-Operations/Profiles.md)).
+- `.env` and `artifacts/` are git-ignored; artifacts can contain screenshots of authorized apps — treat as sensitive, prune with retention cleanup ([Configuration](../05-Operations/Configuration.md)).
 
 ## Accepted risks (documented, not hidden)
 
@@ -37,4 +37,4 @@ All captured evidence passes [[Secret Redaction]] **at capture time**; request/r
 2. Unauthenticated CDP on loopback.
 3. Artifacts are plaintext on the host — protection is filesystem-level.
 
-Related: [[Architecture Overview]] · [[CI Mode]]
+Related: [Architecture Overview](../02-Architecture/Architecture%20Overview.md) · [CI Mode](../05-Operations/CI%20Mode.md)

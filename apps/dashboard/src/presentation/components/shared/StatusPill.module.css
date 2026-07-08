@@ -1,0 +1,24 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.good {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.bad {
+  background: #fee2e2;
+  color: #991b1b;
+}

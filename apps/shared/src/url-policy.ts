@@ -41,3 +41,17 @@ export function parseAllowedHosts(value: string | undefined): string[] {
     .map((h) => h.trim())
     .filter(Boolean);
 }
+
+export function mergeAllowedHosts(...groups: string[][]): string[] {
+  const seen = new Set<string>();
+  const hosts: string[] = [];
+  for (const group of groups) {
+    for (const host of group) {
+      const normalized = host.trim().toLowerCase();
+      if (!normalized || seen.has(normalized)) continue;
+      seen.add(normalized);
+      hosts.push(normalized);
+    }
+  }
+  return hosts;
+}

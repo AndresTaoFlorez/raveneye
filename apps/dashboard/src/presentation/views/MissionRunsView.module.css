@@ -1,0 +1,13 @@
+.view {
+  display: grid;
+  gap: 18px;
+}
+
+.heading p {
+  margin: 0 0 4px;
+  color: #667085;
+}
+
+.heading h2 {
+  margin: 0;
+}

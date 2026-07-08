@@ -4,9 +4,9 @@ tags: [operations, agents, beginner]
 
 # Observing Your Own App
 
-The complete recipe for the main use case: **you have a web project in some other folder** and you want an AI agent — Claude, Codex, minimax, GLM, any of them — to open it in a real browser and hunt for problems **while you watch live**, like a screen-share call ([[Shared Browser Model]]).
+The complete recipe for the main use case: **you have a web project in some other folder** and you want an AI agent — Claude, Codex, minimax, GLM, any of them — to open it in a real browser and hunt for problems **while you watch live**, like a screen-share call ([Shared Browser Model](../01-Overview/Shared%20Browser%20Model.md)).
 
-New to Docker or ports? Read [[Absolute Basics]] first (5 minutes) — this note assumes those concepts.
+New to Docker or ports? Read [Absolute Basics](../01-Overview/Absolute%20Basics.md) first (5 minutes) — this note assumes those concepts.
 
 The whole thing is 4 steps: **reach → watch → connect an agent → hunt bugs**.
 
@@ -22,7 +22,7 @@ Run your app the way you always do, then answer one question: *how does it run?*
 | In Docker, and `docker ps` shows a `PORTS` arrow like `0.0.0.0:8080->80/tcp` | **Scenario 2** | a compose file with `ports: ["8080:80"]` |
 | In Docker, and `docker ps` shows **no arrow** for it | **Scenario 3** | an internal-only frontend container |
 
-Not sure? Run `docker ps` and look at the PORTS column ([[Absolute Basics]] shows how to read it).
+Not sure? Run `docker ps` and look at the PORTS column ([Absolute Basics](../01-Overview/Absolute%20Basics.md) shows how to read it).
 
 ---
 
@@ -32,7 +32,7 @@ Not sure? Run `docker ps` and look at the PORTS column ([[Absolute Basics]] show
 
 Say your project is at `~/Projects/mi-tienda` and starts with `npm run dev` on port 5173.
 
-**1.** Start it listening on all interfaces, not just localhost (the observer lives in a container and must "call back" to your machine — see `host.docker.internal` in [[Absolute Basics]]):
+**1.** Start it listening on all interfaces, not just localhost (the observer lives in a container and must "call back" to your machine — see `host.docker.internal` in [Absolute Basics](../01-Overview/Absolute%20Basics.md)):
 
 ```bash
 cd ~/Projects/mi-tienda
@@ -41,7 +41,15 @@ npm run dev -- --host 0.0.0.0        # vite
 # python manage.py runserver 0.0.0.0:8000   # django
 ```
 
-**2.** Tell the observer where it is — edit `~/Projects/raveneye/.env`:
+**2.** Tell the observer where it is. In RavenEye v0.2, the easiest path is the [Local Dashboard](../02-Architecture/Local%20Dashboard.md):
+
+```text
+http://127.0.0.1:8090/
+```
+
+Go to Overview, create an app with `target_url=http://host.docker.internal:5173`, add `host.docker.internal` as an allowed host, then click the app tile. RavenEye returns a real session `watchUrl` and `cdpUrl`; the dashboard uses those URLs directly.
+
+The `.env` fallback still works for startup defaults and advanced setup:
 
 ```dotenv
 RAVENEYE_TARGET_URL=http://host.docker.internal:5173
@@ -59,7 +67,7 @@ docker compose up -d
 
 ```bash
 scripts/observer status
-# "pages" should show http://host.docker.internal:5173/
+# "sessions" should include the target and its backend-owned noVNC/CDP URLs
 ```
 
 If it shows an error page instead, jump to *If something fails* below.
@@ -96,7 +104,7 @@ RAVENEYE_TARGET_URL=http://mi-front:80
 RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1,mi-front
 ```
 
-⚠️ Without `mi-front` in the allowed list, navigation is refused with a 422 — that's the [[URL Policy]] doing its job.
+⚠️ Without `mi-front` in the allowed list, navigation is refused with a 422 — that's the [URL Policy](../06-Security/URL%20Policy.md) doing its job.
 
 ```bash
 cd ~/Projects/raveneye && docker compose up -d
@@ -110,7 +118,7 @@ Caveats: give the container a fixed name in your app's compose (`container_name:
 
 ## Step 2 — Watch it (your side of the Zoom call)
 
-Open **http://127.0.0.1:6080** in your normal browser. You'll see a real Chromium showing your app. You can move your own mouse in it, scroll, even log in by hand ([[Profiles]] explains keeping that login). When an agent acts, you see every click happen live.
+Open **http://127.0.0.1:6080** in your normal browser to watch the base session. For registered apps opened from the dashboard, use the Watch button for that app's backend-provided `watchUrl`. Each dynamic app session has its own Chromium; navigating one app session does not change another.
 
 Change page anytime without touching `.env`:
 
@@ -118,20 +126,24 @@ Change page anytime without touching `.env`:
 scripts/observer navigate http://host.docker.internal:8080/checkout
 ```
 
+Or open a registered target from the dashboard Overview.
+
 ---
 
 ## Step 3 — Connect the agent (their side of the call)
 
-Pick by what your agent can do — full matrix in [[Agent Integration]]:
+Pick by what your agent can do — full matrix in [Agent Integration](../04-Agents/Agent%20Integration.md):
 
 | Your agent | Use | One-liner |
 |---|---|---|
-| **Claude Code** | [[Playwright MCP]] | `claude mcp add raveneye -- npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222` |
-| **Codex** | [[Playwright MCP]] | add the `[mcp_servers.raveneye]` block shown in that note |
-| **minimax / GLM / any CLI agent** | [[Observer CLI]] | tell it to run `scripts/observer navigate/screenshot/console/network` |
-| **Anything that can run Node** | [[Playwright over CDP]] | `chromium.connectOverCDP('http://127.0.0.1:9222')` |
+| **Claude Code** | [Playwright MCP](../04-Agents/Playwright%20MCP.md) | `claude mcp add raveneye -- npx @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9222` |
+| **Codex** | [Playwright MCP](../04-Agents/Playwright%20MCP.md) | add the `[mcp_servers.raveneye]` block shown in that note |
+| **minimax / GLM / any CLI agent** | [Observer CLI](../04-Agents/Observer%20CLI.md) | tell it to run `scripts/observer navigate/screenshot/console/network` |
+| **Anything that can run Node** | [Playwright over CDP](../04-Agents/Playwright%20over%20CDP.md) | `chromium.connectOverCDP('http://127.0.0.1:9222')` |
 
-There are also **instructions written directly for the agents themselves** — `AGENTS.md` at the repo root; see [[Instructions for AI Agents]]. Point your agent at that file and it knows the whole protocol.
+There are also **instructions written directly for the agents themselves** — `AGENTS.md` at the repo root; see [Instructions for AI Agents](../04-Agents/Instructions%20for%20AI%20Agents.md). Point your agent at that file and it knows the whole protocol.
+
+For a dynamic app session, read `cdpUrl` from `POST /api/apps/:id/open`, `GET /api/sessions`, or `GET /cdp-info`, then connect Playwright to that URL instead of the base `9222` endpoint.
 
 ---
 
@@ -179,10 +191,10 @@ You watch the whole run live in noVNC. At the end:
 
 - terminal prints `PASSED` or `FAILED` and the report path;
 - `artifacts/runs/<run-id>/report.md` — readable summary;
-- `findings.json` — each problem with severity, the exact element/request, and reproduction steps ([[Findings]]);
-- screenshots, `trace.zip` and a **video** of the run ([[Artifacts]]).
+- `findings.json` — each problem with severity, the exact element/request, and reproduction steps ([Findings](../03-Missions/Findings.md));
+- screenshots, `trace.zip` and a **video** of the run ([Artifacts](../03-Missions/Artifacts.md)).
 
-Fix something, run the same mission again, compare — that's the [[Reasoning Loop]].
+Fix something, run the same mission again, compare — that's the [Reasoning Loop](../04-Agents/Reasoning%20Loop.md).
 
 ---
 
@@ -190,7 +202,7 @@ Fix something, run the same mission again, compare — that's the [[Reasoning Lo
 
 | Symptom | Cause & fix |
 |---|---|
-| `422` on navigate | host not in `RAVENEYE_ALLOWED_HOSTS` → add it ([[URL Policy]]) |
-| Timeout / `ERR_CONNECTION_REFUSED` to a host app | app listening only on `127.0.0.1` → bind `0.0.0.0` (Scenario 1 step 1), or firewall ([[Fedora Notes]]) |
+| `422` on navigate | host not in `RAVENEYE_ALLOWED_HOSTS` → add it ([URL Policy](../06-Security/URL%20Policy.md)) |
+| Timeout / `ERR_CONNECTION_REFUSED` to a host app | app listening only on `127.0.0.1` → bind `0.0.0.0` (Scenario 1 step 1), or firewall ([Fedora Notes](./Fedora%20Notes.md)) |
 | `mi-front` unreachable in Scenario 3 | container recreated → re-run `docker network connect`; name changed → fix `container_name` |
-| Anything else | [[Troubleshooting]] |
+| Anything else | [Troubleshooting](./Troubleshooting.md) |

@@ -1,9 +1,10 @@
 # AGENTS.md — Operating manual for AI agents
 
-You are an AI agent. This repository gives you **eyes and hands in a real browser**:
-a visible Chromium in Docker that a human is watching live at `http://127.0.0.1:6080`.
-Everything you do in this browser is seen by the human in real time. Use it to observe
-rendered reality, reproduce problems, capture evidence, and verify fixes.
+You are an AI agent. This repository gives you **eyes and hands in real browsers**:
+a base visible Chromium in Docker that a human is watching live at `http://127.0.0.1:6080`,
+plus optional isolated app sessions with backend-owned noVNC/CDP URLs. Everything you do
+in a watched session is seen by the human in real time. Use it to observe rendered reality,
+reproduce problems, capture evidence, and verify fixes.
 
 ## 0. Preconditions — always check first
 
@@ -16,12 +17,13 @@ curl -fsS http://127.0.0.1:8090/health
   `docker compose exec raveneye supervisorctl -c /etc/raveneye/supervisord.conf restart <component>`.
 - Connection refused → stack is down. Run `make up` (from this repo's root), wait ~15 s, re-check.
 
-## 1. Your control surfaces (pick one, they all drive the SAME visible browser)
+## 1. Your control surfaces
 
 | Surface | When to use | How |
 |---|---|---|
-| **CDP + Playwright** | complex interaction, assertions | `chromium.connectOverCDP('http://127.0.0.1:9222')` → `browser.contexts()[0].pages()[0]` |
-| **Playwright MCP** | if you have MCP tools loaded | server config uses `--cdp-endpoint http://127.0.0.1:9222` |
+| **Base CDP + Playwright** | legacy/shared-browser interaction, assertions | `chromium.connectOverCDP('http://127.0.0.1:9222')` → `browser.contexts()[0].pages()[0]` |
+| **Dynamic session CDP** | app-specific isolated sessions | read `cdpUrl` from `POST /api/apps/:id/open`, `GET /api/sessions`, or `GET /cdp-info` |
+| **Playwright MCP** | if you have MCP tools loaded | server config uses the relevant `--cdp-endpoint` |
 | **HTTP API** | quick ops without Playwright | `http://127.0.0.1:8090` — routes below |
 | **CLI** | shell-only capability | `scripts/observer <cmd>` from repo root |
 | **Missions** | reproducible evidence, before/after proof | `scripts/run-mission.sh <name>` |
@@ -30,7 +32,7 @@ curl -fsS http://127.0.0.1:8090/health
 
 ```
 GET  /health                    → {status: ok|degraded, components:[{component,ok,detail}]}
-GET  /status                    → {target_url, allowed_hosts, viewport, pages:[urls]}
+GET  /status                    → {target_url, allowed_hosts, viewport, sessions:[...]}
 GET  /cdp-info                  → how to attach over CDP
 POST /navigate  {"url":"..."}   → 200 {ok:true} | 422 {ok:false, detail:"<policy reason>"}
 POST /screenshot {"name":"x","full_page":false}
@@ -38,6 +40,16 @@ POST /screenshot {"name":"x","full_page":false}
 GET  /console?clear=1           → {count, entries:[{ts,kind,level,text,page_url,location}]}
 GET  /network?problems=1&clear=1→ {count, entries:[{ts,method,url,status,failure,duration_ms,
                                    request_headers,response_headers}]}
+GET  /api/apps                  → {apps:[registered observed apps]}
+POST /api/apps                  → create observed app
+PATCH/DELETE /api/apps/:id      → update/delete observed app
+POST /api/apps/:id/open         → {app, session, watchUrl, cdpUrl}
+GET  /api/sessions              → active sessions
+GET  /api/sessions/:id          → one active session or 404
+DELETE /api/sessions/:id        → stop one dynamic session
+GET  /api/runs                  → recent mission run summaries
+GET  /api/docs                  → docs-vault Markdown note index
+GET  /api/docs/:slug            → one docs-vault Markdown note
 ```
 
 `?problems=1` filters to failures/4xx/5xx/aborted. Headers/params arrive already redacted
@@ -45,17 +57,19 @@ GET  /network?problems=1&clear=1→ {count, entries:[{ts,method,url,status,failu
 
 ## 3. Rules (hard constraints)
 
-1. **Navigate only to authorized targets.** The URL policy allows `http/https` to hosts in
-   `RAVENEYE_ALLOWED_HOSTS` only. A 422 response means blocked — do NOT try to bypass;
-   ask the human to add the host to `.env` if it is legitimate.
-2. **Never expose the ports.** 6080/9222/8090 are loopback-only by design. Do not publish,
+1. **Navigate only to authorized targets.** Direct `/navigate` uses registered/global effective hosts.
+   Registered app opens use global + app allowed hosts. A 422 response
+   means blocked — do NOT try to bypass; ask the human to add the host to `.env` or the app registry
+   if it is legitimate.
+2. **Never expose the ports.** 6080/9222/8090 and dynamic session ports are loopback-only by design. Do not publish,
    tunnel, or bind them elsewhere.
-3. **Detach, don't kill.** `browser.close()` on your CDP client detaches; never terminate
+3. **Use backend-owned watch URLs.** Do not fabricate `6080/?app=id` or similar noVNC URLs. noVNC/websockify do not use that query string to select a session.
+4. **Detach, don't kill.** `browser.close()` on your CDP client detaches; never terminate
    the Chromium process or the observer container mid-session unless asked.
-4. **You do not modify target applications** through this tool. Code fixes require explicit
+5. **You do not modify target applications** through this tool. Code fixes require explicit
    human authorization and happen in the target's own repository.
-5. **Treat `artifacts/` as sensitive.** Screenshots/video may show real application data.
-6. The human can grab the mouse at any time — if the page state changes unexpectedly,
+6. **Treat `artifacts/` as sensitive.** Screenshots/video may show real application data.
+7. The human can grab the mouse at any time — if the page state changes unexpectedly,
    re-read state (`GET /status`, snapshot) instead of assuming your last action failed.
 
 ## 4. Standard workflow: find and fix a UI problem
@@ -109,11 +123,13 @@ keyboard_navigation_available — each accepts `allow: [substrings]` for expecte
   0.0.0.0).
 - Another container: `docker network connect raveneye_default <container>` then
   `http://<container>:<port>` — and the hostname must be added to allowed hosts.
+- Local dashboard, app registry, sessions, and docs-vault browser: open `http://127.0.0.1:8090/`
+  to register, edit, delete, open, watch, or stop observed apps without changing `.env`.
 
 ## 8. Repo conventions (if you are asked to modify THIS repository)
 
 - TypeScript strict, npm workspaces (`apps/shared` → `apps/observer-server`,
-  `apps/mission-runner`). Build: `npx tsc -b apps/shared apps/observer-server apps/mission-runner`.
+  `apps/mission-runner`, `apps/dashboard`). Build: `npm run build`.
 - Tests: `npm run test:unit` (no stack) · `npm test` (needs `make up`). Real-Chromium
   integration tests live in `tests/integration` and `tests/e2e` — never replace them with mocks.
 - Playwright version and the Docker base image tag must move together (both 1.61.1).

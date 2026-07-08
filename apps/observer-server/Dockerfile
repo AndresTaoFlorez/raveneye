@@ -16,8 +16,8 @@ RUN userdel -r ubuntu 2>/dev/null || true \
     && usermod -u 1000 -g 1000 pwuser \
     && chown -R pwuser:pwuser /home/pwuser
 
-RUN mkdir -p /app /artifacts /browser-profile \
-    && chown pwuser:pwuser /app /artifacts /browser-profile
+RUN mkdir -p /app /artifacts /browser-profile /tmp/.X11-unix \
+    && chown pwuser:pwuser /app /artifacts /browser-profile /tmp/.X11-unix
 
 WORKDIR /app
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
@@ -26,13 +26,16 @@ COPY package.json package-lock.json tsconfig.base.json ./
 COPY apps/shared/package.json apps/shared/tsconfig.json apps/shared/
 COPY apps/observer-server/package.json apps/observer-server/tsconfig.json apps/observer-server/
 COPY apps/mission-runner/package.json apps/mission-runner/tsconfig.json apps/mission-runner/
+COPY apps/dashboard/package.json apps/dashboard/tsconfig.json apps/dashboard/vite.config.ts apps/dashboard/index.html apps/dashboard/
 COPY apps/sample-app/package.json apps/sample-app/
 RUN npm ci
 
 COPY apps/shared/src apps/shared/src
 COPY apps/observer-server/src apps/observer-server/src
 COPY apps/mission-runner/src apps/mission-runner/src
-RUN npx tsc -b apps/shared apps/observer-server apps/mission-runner \
+COPY apps/dashboard/src apps/dashboard/src
+COPY docs-vault docs-vault
+RUN npm run build \
     && chown -R pwuser:pwuser /app
 
 COPY apps/observer-server/supervisord.conf /etc/raveneye/supervisord.conf

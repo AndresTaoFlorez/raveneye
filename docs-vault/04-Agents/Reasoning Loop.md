@@ -30,7 +30,7 @@ Agent compares evidence → confirms or reverts
 
 ## The demonstrated instance
 
-A defect was planted in the [[Sample App]]: `dlg.showModal()` → `dlg.showModa()`, silently breaking the home-page dialog.
+A defect was planted in the [Sample App](../02-Architecture/Sample%20App.md): `dlg.showModal()` → `dlg.showModa()`, silently breaking the home-page dialog.
 
 | Step | Run | Outcome |
 |---|---|---|
@@ -39,12 +39,12 @@ A defect was planted in the [[Sample App]]: `dlg.showModal()` → `dlg.showModa(
 | Fix | — | one-line revert in `apps/sample-app/server.mjs`, rebuild |
 | Same mission again | `2026-07-04T0224-generic-smoke` | **PASSED, exit 0**, findings empty |
 
-Both run directories remain in [[Artifacts]] as a diffable before/after pair — mechanical comparison via `findings.json`, visual comparison via the two `modal-open.png` files.
+Both run directories remain in [Artifacts](../03-Missions/Artifacts.md) as a diffable before/after pair — mechanical comparison via `findings.json`, visual comparison via the two `modal-open.png` files.
 
 ## Why it works
 
-- Missions are **deterministic**: same steps, same viewport, clean context every run ([[Mission Runner]]).
+- Missions are **deterministic**: same steps, same viewport, clean context every run ([Mission Runner](../03-Missions/Mission%20Runner.md)).
 - Findings carry `reproduction_steps`, `expected_behavior` vs `actual_behavior`, and `suspected_component` — enough context to jump into the right file.
-- Exit codes make the loop scriptable, including as a gate in [[CI Mode]].
+- Exit codes make the loop scriptable, including as a gate in [CI Mode](../05-Operations/CI%20Mode.md).
 
-Related: [[Agent Integration]] · [[What is RavenEye]]
+Related: [Agent Integration](./Agent%20Integration.md) · [What is RavenEye](../01-Overview/What%20is%20RavenEye.md)

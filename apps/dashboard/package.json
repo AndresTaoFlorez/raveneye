@@ -1,0 +1,25 @@
+{
+  "name": "@raveneye/dashboard",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && vite build",
+    "dev": "vite --host 127.0.0.1",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "latest",
+    "gsap": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-redux": "latest"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "typescript": "5.9.3",
+    "@types/react": "latest",
+    "@types/react-dom": "latest"
+  }
+}

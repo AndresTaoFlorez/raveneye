@@ -12,20 +12,28 @@ services:
     depends_on:
       - sample-app
     environment:
-      DISPLAY: ":99"
       RAVENEYE_TARGET_URL: "${RAVENEYE_TARGET_URL:-http://sample-app:3000}"
-      RAVENEYE_ALLOWED_HOSTS: "${RAVENEYE_ALLOWED_HOSTS:-sample-app,host.docker.internal,localhost,127.0.0.1}"
+      RAVENEYE_ALLOWED_HOSTS: "${RAVENEYE_ALLOWED_HOSTS:-}"
       RAVENEYE_VIEWPORT_WIDTH: "${RAVENEYE_VIEWPORT_WIDTH:-1440}"
       RAVENEYE_VIEWPORT_HEIGHT: "${RAVENEYE_VIEWPORT_HEIGHT:-900}"
       RAVENEYE_PROFILE_MODE: "${RAVENEYE_PROFILE_MODE:-ephemeral}"
       RAVENEYE_RECORD_VIDEO: "${RAVENEYE_RECORD_VIDEO:-true}"
       RAVENEYE_RECORD_TRACE: "${RAVENEYE_RECORD_TRACE:-true}"
+      RAVENEYE_MAX_SESSIONS: "${RAVENEYE_MAX_SESSIONS:-10}"
+      RAVENEYE_SESSION_DISPLAY_START: "${RAVENEYE_SESSION_DISPLAY_START:-98}"
+      RAVENEYE_SESSION_VNC_PORT_START: "${RAVENEYE_SESSION_VNC_PORT_START:-5901}"
+      RAVENEYE_SESSION_NOVNC_PORT_START: "${RAVENEYE_SESSION_NOVNC_PORT_START:-6081}"
+      RAVENEYE_SESSION_CDP_PORT_START: "${RAVENEYE_SESSION_CDP_PORT_START:-9223}"
     ports:
       # Everything binds to loopback only: watching and controlling the
       # browser is a local-development capability, never a network service.
       - "127.0.0.1:${RAVENEYE_NOVNC_PORT:-6080}:6080"
       - "127.0.0.1:${RAVENEYE_CDP_PORT:-9222}:9222"
       - "127.0.0.1:${RAVENEYE_API_PORT:-8090}:8090"
+      # Per-session noVNC ports for up to 10 dynamic sessions.
+      - "127.0.0.1:6081-6100:6081-6100"
+      # Per-session CDP ports for up to 10 dynamic sessions.
+      - "127.0.0.1:9223-9232:9223-9232"
     volumes:
       # :z relabels for SELinux (Fedora) — see docs-vault/05-Operations/Fedora Notes.md.
       - ./artifacts:/artifacts:z

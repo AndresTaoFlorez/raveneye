@@ -4,7 +4,7 @@ tags: [missions, reference]
 
 # Checks Reference
 
-Checks run **after** the steps, against the evidence collected during the run, and emit [[Findings]]. Declared in the `checks:` list of the [[Mission Format]].
+Checks run **after** the steps, against the evidence collected during the run, and emit [Findings](./Findings.md). Declared in the `checks:` list of the [Mission Format](./Mission%20Format.md).
 
 | Check | Trigger | Finding severity |
 |---|---|---|
@@ -29,11 +29,11 @@ Patterns match against the message, URL **and** console location (so a favicon 4
 
 ## Automatic end-of-run inspections
 
-If a mission declares `interactive_controls_visible`, `keyboard_navigation_available`, or `no_horizontal_overflow` but never ran the corresponding inspection step, the [[Mission Runner]] performs it automatically on the final page.
+If a mission declares `interactive_controls_visible`, `keyboard_navigation_available`, or `no_horizontal_overflow` but never ran the corresponding inspection step, the [Mission Runner](./Mission%20Runner.md) performs it automatically on the final page.
 
 ## Beyond the named checks
 
 - A failed **step** always yields a high `functional` finding (no check needed).
 - `inspect_accessibility` issues (missing labels/accessible names/alt) are emitted as low-severity accessibility findings — a development aid, not WCAG certification.
 
-Related: [[Actions Reference]] · [[Artifacts]]
+Related: [Actions Reference](./Actions%20Reference.md) · [Artifacts](./Artifacts.md)

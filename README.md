@@ -2,13 +2,13 @@
 
 _See what tests can’t_.
 
-A standalone development tool that lets a **coding agent and a human developer watch and control the same real Chromium session** — like a screen-share with a browser.
+A standalone development tool that lets a **coding agent and a human developer watch and control real local Chromium sessions** — from the historical shared base browser to isolated app workspaces.
 
 ```text
 Human developer
         │ watches through noVNC (http://127.0.0.1:6080)
         ▼
-Shared visible Chromium session (in Docker)
+Visible Chromium session(s) (in Docker)
         ▲
         │ controlled through Playwright / CDP / HTTP API / missions
 Coding agent
@@ -27,11 +27,11 @@ make health
 make smoke       # runs the generic-smoke mission against the sample app
 ```
 
-Open `http://127.0.0.1:6080` and you will see Chromium displaying the target application (the bundled sample app by default).
+Open `http://127.0.0.1:6080` and you will see the base Chromium session displaying the target application (the bundled sample app by default). Open `http://127.0.0.1:8090/overview` for the local dashboard: Overview app registry, live session preview, sessions, mission runs, settings, and docs.
 
 ## Pointing it at your application
 
-Set `RAVENEYE_TARGET_URL` in `.env`:
+Use the dashboard Overview at `http://127.0.0.1:8090/overview` to register apps and open isolated observed sessions. `.env` remains the startup fallback:
 
 | Target | URL |
 |---|---|
@@ -59,8 +59,7 @@ make test                                 # unit + integration tests
 ## Documentation
 
 **[docs-vault/](docs-vault/Index.md)** is the single source of truth — a full user guide as an
-Obsidian-ready vault (39 interlinked notes; open the `docs-vault` folder as a vault to browse
-the graph). Key entry points:
+Obsidian-ready Markdown vault using standard `[label](path.md)` links. Key entry points:
 
 - [Quick Start](docs-vault/05-Operations/Quick%20Start.md) · [Observing Your Own App](docs-vault/05-Operations/Observing%20Your%20Own%20App.md)
 - [Architecture Overview](docs-vault/02-Architecture/Architecture%20Overview.md) · [Mission Format](docs-vault/03-Missions/Mission%20Format.md)

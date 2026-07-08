@@ -4,7 +4,7 @@ tags: [security]
 
 # Secret Redaction
 
-Credentials must never reach disk or agent context via captured evidence. Redaction happens **at capture time** — inside the evidence collectors of the [[Observer Server]] and the [[Mission Runner]] — so secrets never exist in [[Artifacts]], API responses, or ring buffers.
+Credentials must never reach disk or agent context via captured evidence. Redaction happens **at capture time** — inside the evidence collectors of the [Observer Server](../02-Architecture/Observer%20Server.md) and the [Mission Runner](../03-Missions/Mission%20Runner.md) — so secrets never exist in [Artifacts](../03-Missions/Artifacts.md), API responses, or ring buffers.
 
 ## What gets redacted (→ `[REDACTED]`)
 
@@ -21,12 +21,12 @@ Implementation: `apps/shared/src/redaction.ts`, shared by both capture paths.
 
 ## Verified, not assumed
 
-- The [[Sample App]]'s `/network-fail` page sends `Authorization: Bearer sample-secret-token-12345`.
-- Interactive capture ([[Control API]] `GET /network`) records `authorization: [REDACTED]`.
+- The [Sample App](../02-Architecture/Sample%20App.md)'s `/network-fail` page sends `Authorization: Bearer sample-secret-token-12345`.
+- Interactive capture ([Control API](../02-Architecture/Control%20API.md) `GET /network`) records `authorization: [REDACTED]`.
 - Mission evidence: asserted that the secret substring appears **nowhere** in `network.json`.
-- Unit tests cover each rule; an integration test re-verifies against the live stack ([[Testing]]).
+- Unit tests cover each rule; an integration test re-verifies against the live stack ([Testing](../05-Operations/Testing.md)).
 
 ## Boundaries
 
-- Redaction is pattern-based: an app that leaks a credential inside ordinary prose under a non-suspicious key can evade it. Treat [[Artifacts]] as sensitive regardless ([[Security Model]]).
-- Screenshots and video are pixels — a page that *displays* a secret will show it. Prefer test accounts; reset [[Profiles]] before sharing evidence.
+- Redaction is pattern-based: an app that leaks a credential inside ordinary prose under a non-suspicious key can evade it. Treat [Artifacts](../03-Missions/Artifacts.md) as sensitive regardless ([Security Model](./Security%20Model.md)).
+- Screenshots and video are pixels — a page that *displays* a secret will show it. Prefer test accounts; reset [Profiles](../05-Operations/Profiles.md) before sharing evidence.

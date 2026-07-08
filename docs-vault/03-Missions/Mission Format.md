@@ -4,7 +4,7 @@ tags: [missions]
 
 # Mission Format
 
-A mission is declarative YAML: identity, viewport, ordered steps, named checks. Deliberately **not** a programming language — no conditionals, loops or variables. Complex logic belongs in [[Playwright over CDP]] scripts.
+A mission is declarative YAML: identity, viewport, ordered steps, named checks. Deliberately **not** a programming language — no conditionals, loops or variables. Complex logic belongs in [Playwright over CDP](../04-Agents/Playwright%20over%20CDP.md) scripts.
 
 ```yaml
 name: generic-smoke              # kebab-case, required
@@ -30,7 +30,7 @@ checks:
 
 ## Validation
 
-The zod schema is **strict**: unknown actions, unknown checks, extra fields, or a `click` without a locator all fail with a precise error before any browser starts (exit code 2 — see [[Mission Runner]]). Validate standalone:
+The zod schema is **strict**: unknown actions, unknown checks, extra fields, or a `click` without a locator all fail with a precise error before any browser starts (exit code 2 — see [Mission Runner](./Mission%20Runner.md)). Validate standalone:
 
 ```bash
 node apps/mission-runner/dist/cli.js validate config/missions/<name>.yaml
@@ -49,6 +49,6 @@ Exactly one per interaction step:
 
 ## Files
 
-Missions live in `config/missions/` (mounted read-only at `/config`, see [[Docker Design]]). The bundled ones are described in [[Sample Missions]].
+Missions live in `config/missions/` (mounted read-only at `/config`, see [Docker Design](../02-Architecture/Docker%20Design.md)). The bundled ones are described in [Sample Missions](./Sample%20Missions.md).
 
-Related: [[Actions Reference]] · [[Checks Reference]] · [[Findings]]
+Related: [Actions Reference](./Actions%20Reference.md) · [Checks Reference](./Checks%20Reference.md) · [Findings](./Findings.md)

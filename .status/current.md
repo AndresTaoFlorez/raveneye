@@ -1,6 +1,6 @@
-# ui-observer — implementation status
+# RavenEye — implementation status
 
-Updated: 2026-07-03 — **ALL PHASES COMPLETE**
+Updated: 2026-07-08 — **v0.2/v0.3 dashboard + multi observer phase in progress**
 
 ## Phase progress
 
@@ -12,6 +12,7 @@ Updated: 2026-07-03 — **ALL PHASES COMPLETE**
 | 3 — Mission runner | done (7cb766a) | [phase-3](phase-3-missions.md) |
 | 4 — Agent integration | done (4726106) | [phase-4](phase-4-agent-integration.md) |
 | 5 — Hardening | done | [phase-5](phase-5-hardening.md) |
+| 6 — Local dashboard + app registry + multi observer | in progress | [phase-6](phase-6-local-dashboard-app-registry.md) |
 
 ## Final summary
 
@@ -20,8 +21,11 @@ Updated: 2026-07-03 — **ALL PHASES COMPLETE**
   :9222 / HTTP API :8090 / CLI / YAML missions. Details: docs-vault/02-Architecture/Architecture Overview.md.
 - **Versions**: Playwright 1.61.1, Chromium 149.0.7827.55, Node 22, image
   `mcr.microsoft.com/playwright:v1.61.1-noble`, sample app on `node:22.22.0-alpine3.22`.
-- **Services**: `ui-observer`, `sample-app`. Loopback ports: 6080 noVNC, 9222 CDP,
+- **Services**: `raveneye`, `sample-app`. Loopback ports: 6080 noVNC, 9222 CDP,
   8090 API, 3000 sample app.
+- **v0.2/v0.3 additions**: local dashboard at `http://127.0.0.1:8090/`, SQLite observed-app
+  registry and session lifecycle rows, `/api/apps`, `/api/sessions`, `/api/runs`,
+  real dynamic app sessions with backend-owned noVNC/CDP URLs.
 - **Commands**: make build/up/down/restart/logs/open/health/smoke/mission/artifacts/
   trace/reset-profile/cleanup/test; scripts/observer CLI; scripts/ci-run.sh.
 - **Security**: docs-vault/06-Security/Security Model.md (loopback-only, URL policy, capture-time redaction,
@@ -31,8 +35,8 @@ Updated: 2026-07-03 — **ALL PHASES COMPLETE**
 - **Agent integration**: CDP, Playwright MCP (--cdp-endpoint), HTTP API, CLI, missions —
   docs-vault/04-Agents/Agent Integration.md, with Claude Code and Codex examples.
 - **Sample missions**: generic-smoke, error-hunt, responsive-sweep.
-- **Tests**: 37 passing (unit + integration + e2e on real Chromium).
-- **Limitations & future work**: .status/phase-5-hardening.md.
+- **Tests**: unit suite now has 50 passing tests; full stack validation remains required before merge.
+- **Limitations & future work**: .status/phase-6-local-dashboard-app-registry.md.
 
 ## Mandatory demonstrations — all 23 verified
 

@@ -2,12 +2,53 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**', 'artifacts/**'] },
+  { ignores: ['**/dist/**', '**/dist-types/**', '**/node_modules/**', 'artifacts/**'] },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
+    files: ['apps/dashboard/src/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: {
+        document: 'readonly',
+        fetch: 'readonly',
+        window: 'readonly',
+      },
+    },
+  },
+  {
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    files: ['apps/dashboard/src/domain/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            '@/application/*',
+            '@/infrastructure/*',
+            '@/presentation/*',
+            'react',
+            'react-*',
+            '@reduxjs/*',
+            'gsap',
+            '*.css',
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['apps/dashboard/src/application/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: ['@/infrastructure/*', '@/presentation/*', 'react', 'react-*', '@reduxjs/*', 'gsap', '*.css'],
+        },
+      ],
     },
   },
   {

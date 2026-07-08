@@ -4,7 +4,7 @@ tags: [overview, beginner]
 
 # Absolute Basics
 
-Zero-assumptions explanations of every technical concept the rest of this vault uses. If terms like "container" or "port" are new to you, read this first, then go to [[Quick Start]].
+Zero-assumptions explanations of every technical concept the rest of this vault uses. If terms like "container" or "port" are new to you, read this first, then go to [Quick Start](../05-Operations/Quick%20Start.md).
 
 ## The terminal
 
@@ -28,8 +28,8 @@ Think of Docker as a way to run a program inside a **sealed box** that carries e
 
 A computer can run many programs that talk over the network; **ports are numbered doors** so traffic finds the right program. A web address like `http://127.0.0.1:6080` means: "talk to door **6080**".
 
-- `127.0.0.1` (also called **localhost** or *loopback*) means **this same computer**. Nothing on the internet can reach it — that is why RavenEye uses it everywhere ([[Security Model]]).
-- RavenEye's doors: **6080** = watch the browser · **9222** = agents control the browser · **8090** = simple commands · **3000** = the built-in demo app. See [[Configuration]].
+- `127.0.0.1` (also called **localhost** or *loopback*) means **this same computer**. Nothing on the internet can reach it — that is why RavenEye uses it everywhere ([Security Model](../06-Security/Security%20Model.md)).
+- RavenEye's doors: **6080** = watch the browser · **9222** = agents control the browser · **8090** = simple commands · **3000** = the built-in demo app. See [Configuration](../05-Operations/Configuration.md).
 
 ## "Publishing a port" (the key Docker idea for you)
 
@@ -42,7 +42,7 @@ docker ps
 # ...  PORTS: 127.0.0.1:8080->80/tcp   ← published: your 8080 goes to its 80
 ```
 
-If the PORTS column shows nothing like `->`, that container publishes nothing — that's Option B territory in [[Observing Your Own App]].
+If the PORTS column shows nothing like `->`, that container publishes nothing — that's Option B territory in [Observing Your Own App](../05-Operations/Observing%20Your%20Own%20App.md).
 
 ## host.docker.internal — the container calling *you* back
 
@@ -50,8 +50,8 @@ Inside a container, `localhost` means *the container itself*, not your computer.
 
 ## The .env file
 
-A plain text file of `NAME=value` lines in the project folder — the project's settings. You copy the example once (`cp .env.example .env`), edit values with any text editor, and apply changes with `docker compose up -d`. Every setting is explained in [[Configuration]].
+A plain text file of `NAME=value` lines in the project folder — the project's settings. You copy the example once (`cp .env.example .env`), edit values with any text editor, and apply changes with `docker compose up -d`. Every setting is explained in [Configuration](../05-Operations/Configuration.md).
 
 ## Putting it together
 
-Watching `http://127.0.0.1:6080` = "knock on my own door 6080, which Docker forwards into the observer box, where a streaming program shows me the browser's screen" — the [[Shared Browser Model]] in plumbing terms.
+Watching `http://127.0.0.1:6080` = "knock on my own door 6080, which Docker forwards into the observer box, where a streaming program shows me the browser's screen" — the [Shared Browser Model](./Shared%20Browser%20Model.md) in plumbing terms.

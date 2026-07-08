@@ -4,7 +4,7 @@ tags: [missions]
 
 # Findings
 
-A finding is the structured record of one detected problem, written to `findings.json` in the run's [[Artifacts]] and summarized in `report.md`.
+A finding is the structured record of one detected problem, written to `findings.json` in the run's [Artifacts](./Artifacts.md) and summarized in `report.md`.
 
 ## Fields
 
@@ -25,15 +25,15 @@ A finding is the structured record of one detected problem, written to `findings
 
 ## How findings are born
 
-- Each [[Checks Reference]] rule converts matching evidence into findings.
-- A failed step becomes a high `functional` finding automatically ([[Mission Runner]]).
+- Each [Checks Reference](./Checks%20Reference.md) rule converts matching evidence into findings.
+- A failed step becomes a high `functional` finding automatically ([Mission Runner](./Mission%20Runner.md)).
 - `inspect_accessibility` issues surface as low accessibility findings.
 
 ## Severity → exit code
 
-Critical/high findings (or a failed step) make the run exit `1`; medium and below exit `0` but remain in the report. This is what makes missions usable as gates in [[CI Mode]].
+Critical/high findings (or a failed step) make the run exit `1`; medium and below exit `0` but remain in the report. This is what makes missions usable as gates in [CI Mode](../05-Operations/CI%20Mode.md).
 
-## Example (real, from the [[Reasoning Loop]] demo)
+## Example (real, from the [Reasoning Loop](../04-Agents/Reasoning%20Loop.md) demo)
 
 ```json
 {
