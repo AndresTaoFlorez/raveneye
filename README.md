@@ -1,4 +1,6 @@
-# raveneye
+# RavenEye
+
+_See what tests can’t_.
 
 A standalone development tool that lets a **coding agent and a human developer watch and control the same real Chromium session** — like a screen-share with a browser.
 
