@@ -8,12 +8,12 @@ tags: [operations, reference]
 
 | Target | Action |
 |---|---|
-| `make build` | build both Docker images ([Docker Design](../02-Architecture/Docker%20Design.md)) |
-| `make up` / `make down` / `make restart` | lifecycle |
+| `make build` | build the default RavenEye image ([Docker Design](../02-Architecture/Docker%20Design.md)) |
+| `make up` / `make down` / `make restart` | default lifecycle; `make up` starts only `raveneye` |
 | `make logs` | follow container logs |
 | `make open` | print the noVNC URL |
 | `make health` | pretty [Health Model](../02-Architecture/Health%20Model.md) report |
-| `make smoke` | run the generic-smoke mission |
+| `make smoke` | start the optional sample app and run the generic-smoke mission against it |
 | `make mission MISSION=<name>` | run `config/missions/<name>.yaml` ([Mission Runner](../03-Missions/Mission%20Runner.md)) |
 | `make artifacts` | list recent runs |
 | `make trace RUN_ID=<run-id>` | open a recorded Playwright trace ([Artifacts](../03-Missions/Artifacts.md)) |

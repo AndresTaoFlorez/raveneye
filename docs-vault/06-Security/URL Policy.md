@@ -16,7 +16,7 @@ Rejections return the reason verbatim, e.g.:
 
 ```
 scheme "file:" is not allowed (only http/https)
-host "example.com" is not in RAVENEYE_ALLOWED_HOSTS (sample-app, host.docker.internal, localhost, 127.0.0.1)
+host "example.com" is not in RAVENEYE_ALLOWED_HOSTS (host.docker.internal, localhost, 127.0.0.1)
 ```
 
 The [Control API](../02-Architecture/Control%20API.md) answers HTTP 422; the [Mission Runner](../03-Missions/Mission%20Runner.md) exits 2 for a rejected target.

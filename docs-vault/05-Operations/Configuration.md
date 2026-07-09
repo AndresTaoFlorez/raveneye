@@ -8,12 +8,12 @@ All configuration is environment-driven. Copy `.env.example` → `.env`; compose
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `RAVENEYE_TARGET_URL` | `http://sample-app:3000` | URL the shared browser opens at startup and the default mission target — [Sample App](../02-Architecture/Sample%20App.md), host apps, or any authorized URL |
-| `RAVENEYE_ALLOWED_HOSTS` | `sample-app,host.docker.internal,localhost,127.0.0.1` | hostname allow-list enforced by the [URL Policy](../06-Security/URL%20Policy.md) |
+| `RAVENEYE_TARGET_URL` | `http://127.0.0.1:8090/overview` | URL the shared browser opens at startup and the default mission target — RavenEye dashboard, host apps, or any authorized URL |
+| `RAVENEYE_ALLOWED_HOSTS` | `host.docker.internal,localhost,127.0.0.1` | hostname allow-list enforced by the [URL Policy](../06-Security/URL%20Policy.md) |
 | `RAVENEYE_NOVNC_PORT` | `6080` | host loopback port for noVNC ([Display Stack](../02-Architecture/Display%20Stack.md)) |
 | `RAVENEYE_CDP_PORT` | `9222` | host loopback port for the [CDP Endpoint](../02-Architecture/CDP%20Endpoint.md) |
 | `RAVENEYE_API_PORT` | `8090` | host loopback port for the [Control API](../02-Architecture/Control%20API.md) |
-| `RAVENEYE_SAMPLE_APP_PORT` | `3000` | host loopback port for the sample app |
+| `RAVENEYE_SAMPLE_APP_PORT` | `3000` | host loopback port for the optional sample app profile |
 | `RAVENEYE_VIEWPORT_WIDTH` / `_HEIGHT` | `1440` / `900` | Xvfb screen size and default mission viewport |
 | `RAVENEYE_PROFILE_MODE` | `ephemeral` | `ephemeral` or `persistent` — see [Profiles](./Profiles.md) |
 | `RAVENEYE_RECORD_VIDEO` | `true` | mission video recording ([Artifacts](../03-Missions/Artifacts.md)) |
@@ -36,5 +36,16 @@ All configuration is environment-driven. Copy `.env.example` → `.env`; compose
 - The [Application Registry](../02-Architecture/Application%20Registry.md) supplements `.env`; it does not replace startup defaults or global security settings.
 - The base noVNC/CDP/API ports stay 6080/9222/8090. Dynamic app sessions use their configured ranges and return real URLs through the [Control API](../02-Architecture/Control%20API.md).
 - Dashboard Settings can update the effective dynamic-session limit through `PATCH /api/settings`; that value is persisted in SQLite and survives restart.
+
+## Optional sample app
+
+The sample app is not part of the default stack. Start it only for RavenEye self-tests:
+
+```bash
+docker compose --profile sample up -d sample-app
+scripts/run-mission.sh generic-smoke --target-url http://sample-app:3000
+```
+
+When targeting the sample, include `sample-app` in the relevant allowed-host list.
 
 Related: [Quick Start](./Quick%20Start.md) · [Commands Reference](./Commands%20Reference.md)

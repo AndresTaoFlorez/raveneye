@@ -69,7 +69,7 @@ The same [URL Policy](../06-Security/URL%20Policy.md) still blocks `file:`, `jav
 
 ## Registering a local app
 
-RavenEye ships with a seeded `Sample App` entry pointing at `http://sample-app:3000`. It gives a known-good target immediately after `make up` and keeps the product usable without editing `.env`.
+RavenEye ships with a seeded `Sample App` entry pointing at `http://sample-app:3000`, but the sample container is not part of the default stack. Start it with `make smoke` or `docker compose --profile sample up -d sample-app` when you want a known validation target.
 
 1. Run the app so the container can reach it, usually on `0.0.0.0`.
 2. Open `http://127.0.0.1:8090/`.
@@ -78,7 +78,7 @@ RavenEye ships with a seeded `Sample App` entry pointing at `http://sample-app:3
 5. Add `host.docker.internal` to that app's allowed hosts.
 6. Click the app tile to preview it. Use the open-in-new-tab icon to open the backend-provided noVNC URL for that session.
 
-`.env` remains the startup fallback and advanced configuration surface. Repository defaults should stay clean and agnostic: the committed target is the bundled Sample App, while project-specific targets belong in registry rows or a developer's local uncommitted environment.
+`.env` remains the startup fallback and advanced configuration surface. Repository defaults should stay clean and agnostic: the committed target is RavenEye's local dashboard, while project-specific targets belong in registry rows or a developer's local uncommitted environment.
 
 ## Current limitations
 

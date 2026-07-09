@@ -117,8 +117,9 @@ keyboard_navigation_available — each accepts `allow: [substrings]` for expecte
 
 ## 7. Reaching targets
 
-- Bundled sample app: `http://sample-app:3000` (routes with intentional defects for
-  self-testing: `/console-error`, `/network-fail`, `/responsive?broken=1`).
+- Optional bundled sample app: run `docker compose --profile sample up -d sample-app`,
+  then use `http://sample-app:3000` (routes with intentional defects for self-testing:
+  `/console-error`, `/network-fail`, `/responsive?broken=1`).
 - App on the human's machine: `http://host.docker.internal:<port>` (it must listen on
   0.0.0.0).
 - Another container: `docker network connect raveneye_default <container>` then

@@ -48,9 +48,10 @@ The dashboard must use `watchUrl` and `session.novncUrl` exactly as returned. It
 
 The default compose experience is intentionally project-agnostic:
 
-- `RAVENEYE_TARGET_URL` defaults to `http://sample-app:3000`.
-- `RAVENEYE_ALLOWED_HOSTS` defaults to the local validation hosts only.
+- `RAVENEYE_TARGET_URL` defaults to `http://127.0.0.1:8090/overview`.
+- `RAVENEYE_ALLOWED_HOSTS` defaults to local and host-app development hosts.
 - The registry seeds a stable `Sample App` entry with id `sample-app`.
+- The sample app container is not started by default; use `docker compose --profile sample up -d sample-app` before opening that seeded entry.
 - External targets such as Outlook, staging systems, or client apps should be registered from Overview instead of committed into the repo default `.env`.
 
 Related: [Application Registry](./Application%20Registry.md) · [Control API](./Control%20API.md)

@@ -4,12 +4,18 @@ tags: [architecture, operations]
 
 # Docker Design
 
-Two services in `compose.yaml`:
+`compose.yaml` defines RavenEye plus an optional validation app. The default stack starts only `raveneye`.
 
 | Service | Image | Ports (all host-loopback) |
 |---|---|---|
 | `raveneye` | built from `mcr.microsoft.com/playwright:v1.61.1-noble` | 6080 noVNC · 9222 CDP · 8090 API |
-| `sample-app` | built from `node:22.22.0-alpine3.22` | 3000 |
+| `sample-app` | built from `node:22.22.0-alpine3.22`; profile `sample` only | 3000 |
+
+Use the sample profile only for self-tests:
+
+```bash
+docker compose --profile sample up -d sample-app
+```
 
 ## Why the Playwright base image
 
@@ -35,7 +41,7 @@ On top of the base, the observer Dockerfile adds the [Display Stack](./Display%2
 
 ## Reaching targets
 
-- Compose services by name: `http://sample-app:3000` (the [Sample App](./Sample%20App.md)).
+- Optional compose services by name: `http://sample-app:3000` after starting the `sample` profile.
 - Host applications: `http://host.docker.internal:<port>` via `extra_hosts: host-gateway` — demonstrated with a live host app (see [Project History](../01-Overview/Project%20History.md)).
 - Containers from other compose projects: attach them with `docker network connect raveneye_default <container>` — full recipe in [Observing Your Own App](../05-Operations/Observing%20Your%20Own%20App.md).
 - Anything else must pass the [URL Policy](../06-Security/URL%20Policy.md).

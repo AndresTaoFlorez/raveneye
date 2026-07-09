@@ -1,5 +1,7 @@
 services:
   sample-app:
+    profiles:
+      - sample
     build: apps/sample-app
     ports:
       - "127.0.0.1:${RAVENEYE_SAMPLE_APP_PORT:-3000}:3000"
@@ -9,10 +11,8 @@ services:
     build:
       context: .
       dockerfile: apps/observer-server/Dockerfile
-    depends_on:
-      - sample-app
     environment:
-      RAVENEYE_TARGET_URL: "${RAVENEYE_TARGET_URL:-http://sample-app:3000}"
+      RAVENEYE_TARGET_URL: "${RAVENEYE_TARGET_URL:-http://127.0.0.1:8090/overview}"
       RAVENEYE_ALLOWED_HOSTS: "${RAVENEYE_ALLOWED_HOSTS:-}"
       RAVENEYE_VIEWPORT_WIDTH: "${RAVENEYE_VIEWPORT_WIDTH:-1440}"
       RAVENEYE_VIEWPORT_HEIGHT: "${RAVENEYE_VIEWPORT_HEIGHT:-900}"
@@ -38,6 +38,7 @@ services:
       # :z relabels for SELinux (Fedora) — see docs-vault/05-Operations/Fedora Notes.md.
       - ./artifacts:/artifacts:z
       - ./config:/config:ro,z
+      - ./docs-vault:/app/docs-vault:ro,z
       - raveneye-profile:/browser-profile
     extra_hosts:
       - "host.docker.internal:host-gateway"

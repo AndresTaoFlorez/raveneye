@@ -53,7 +53,7 @@ The `.env` fallback still works for startup defaults and advanced setup:
 
 ```dotenv
 RAVENEYE_TARGET_URL=http://host.docker.internal:5173
-RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
+RAVENEYE_ALLOWED_HOSTS=host.docker.internal,localhost,127.0.0.1
 ```
 
 **3.** Apply:
@@ -79,7 +79,7 @@ Say `docker ps` shows your frontend as `127.0.0.1:8080->80/tcp`. Then your app i
 ```dotenv
 # ~/Projects/raveneye/.env
 RAVENEYE_TARGET_URL=http://host.docker.internal:8080
-RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
+RAVENEYE_ALLOWED_HOSTS=host.docker.internal,localhost,127.0.0.1
 ```
 
 ```bash
@@ -101,7 +101,7 @@ Now the observer can reach it **by container name**. Two things must use that na
 ```dotenv
 # ~/Projects/raveneye/.env
 RAVENEYE_TARGET_URL=http://mi-front:80
-RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1,mi-front
+RAVENEYE_ALLOWED_HOSTS=host.docker.internal,localhost,127.0.0.1,mi-front
 ```
 
 ⚠️ Without `mi-front` in the allowed list, navigation is refused with a 422 — that's the [URL Policy](../06-Security/URL%20Policy.md) doing its job.

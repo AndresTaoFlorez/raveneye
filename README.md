@@ -21,13 +21,33 @@ The agent navigates, clicks, types, resizes, screenshots, records traces and vid
 ```bash
 cp .env.example .env
 make build
-make up
+make up          # starts only raveneye
 make open        # prints the noVNC URL
 make health
-make smoke       # runs the generic-smoke mission against the sample app
 ```
 
-Open `http://127.0.0.1:6080` and you will see the base Chromium session displaying the target application (the bundled sample app by default). Open `http://127.0.0.1:8090/overview` for the local dashboard: Overview app registry, live session preview, sessions, mission runs, settings, and docs.
+Open `http://127.0.0.1:6080` and you will see the base Chromium session displaying RavenEye's local dashboard. Open `http://127.0.0.1:8090/overview` directly for the dashboard: Overview app registry, live session preview, sessions, mission runs, settings, and docs.
+
+`docker compose up -d` and `make up` intentionally start only `raveneye`. The bundled sample app is available only when requested:
+
+```bash
+docker compose --profile sample up -d sample-app
+scripts/run-mission.sh generic-smoke --target-url http://sample-app:3000
+```
+
+## Fast fix loop
+
+```bash
+make up
+make health
+scripts/observer navigate http://host.docker.internal:<port>/
+scripts/observer screenshot before-fix
+scripts/observer console
+scripts/observer network --problems
+# fix the target app in its own repo, then repeat the same screenshot/mission
+```
+
+For repeatable evidence, create a mission in `config/missions/` and run `make mission MISSION=<name>`.
 
 ## Pointing it at your application
 
@@ -35,9 +55,10 @@ Use the dashboard Overview at `http://127.0.0.1:8090/overview` to register apps 
 
 | Target | URL |
 |---|---|
-| Bundled sample app | `http://sample-app:3000` |
+| RavenEye dashboard | `http://127.0.0.1:8090/overview` |
 | App running on the host | `http://host.docker.internal:<port>` |
 | App in another compose network | attach the service and use its name |
+| Bundled sample app, optional | start with `docker compose --profile sample up -d sample-app`, then use `http://sample-app:3000` |
 
 Only hosts listed in `RAVENEYE_ALLOWED_HOSTS` are reachable; `file:`, `javascript:` and `data:` URLs are always rejected.
 
@@ -47,7 +68,7 @@ Only hosts listed in `RAVENEYE_ALLOWED_HOSTS` are reachable; `file:`, `javascrip
 make build / up / down / restart / logs   # lifecycle
 make open                                 # print the noVNC URL
 make health                               # component-by-component observer health
-make smoke                                # quick validation mission
+make smoke                                # optional sample-oriented validation mission
 make mission MISSION=<name>               # run config/missions/<name>.yaml
 make artifacts                            # list recent runs
 make trace RUN_ID=<run-id>                # open a recorded Playwright trace

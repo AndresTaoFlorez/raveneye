@@ -31,7 +31,8 @@ reset-profile:
 	./scripts/reset-profile.sh
 
 smoke:
-	./scripts/run-mission.sh generic-smoke
+	$(COMPOSE) --profile sample up -d sample-app
+	./scripts/run-mission.sh generic-smoke --target-url http://sample-app:3000
 
 mission:
 	@test -n "$(MISSION)" || (echo "usage: make mission MISSION=<name>"; exit 2)

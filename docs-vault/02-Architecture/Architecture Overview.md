@@ -12,14 +12,16 @@ Agent   → 127.0.0.1:9222 (CDP) ────────► socat → Chromium 
 Agent   → 127.0.0.1:8090 (API) ────────► observer-server (Node/Playwright)
 Agent   → run-mission.sh ── compose exec ─► mission-runner (own context, same display)
 
-                                         sample-app container :3000
 Host apps ◄──── host.docker.internal (extra_hosts: host-gateway)
 ```
 
-Two containers (see [Docker Design](./Docker%20Design.md)):
+Default container (see [Docker Design](./Docker%20Design.md)):
 
 - **raveneye** — the [Display Stack](./Display%20Stack.md) plus the [Observer Server](./Observer%20Server.md), managed by supervisord as a non-root user.
-- **sample-app** — the [Sample App](./Sample%20App.md) used for validation.
+
+Optional validation container:
+
+- **sample-app** — the [Sample App](./Sample%20App.md), started only with the `sample` compose profile or by `make smoke`.
 
 ## Control planes
 

@@ -4,47 +4,101 @@ tags: [operations]
 
 # Quick Start
 
-From zero to a watchable shared browser in four commands:
+Use this page when you only want RavenEye running. The default stack starts one service: `raveneye`. It does not start the sample app.
+
+## Start RavenEye
+
+PowerShell:
+
+```powershell
+cd D:\Projects\raveneye
+Copy-Item .env.example .env
+docker compose build raveneye
+docker compose up -d
+```
+
+Bash:
 
 ```bash
 cd ~/Projects/raveneye
 cp .env.example .env
-make build          # builds both images (first run pulls the Playwright base)
-make up             # starts sample-app + raveneye
+docker compose build raveneye
+docker compose up -d
 ```
 
-Open **http://127.0.0.1:6080** — you will see Chromium displaying the [Sample App](../02-Architecture/Sample%20App.md). That page auto-connects and scales; you are now watching the shared session ([Shared Browser Model](../01-Overview/Shared%20Browser%20Model.md)).
+Open:
 
-## Sanity checks
+- Dashboard: `http://127.0.0.1:8090/overview`
+- Watched browser: `http://127.0.0.1:6080`
+
+## Check It
+
+PowerShell:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8090/health | ConvertTo-Json -Depth 5
+docker compose ps
+```
+
+Bash:
 
 ```bash
-make health         # all 7 components ok? see Health Model
-make smoke          # run the generic-smoke mission → PASSED, exit 0
-make artifacts      # list the run that just happened
+curl -fsS http://127.0.0.1:8090/health
+docker compose ps
 ```
 
-## Point it at *your* application
+Expected:
 
-Full recipe (dockerized apps, network options, per-agent hookup, review mission): [Observing Your Own App](./Observing%20Your%20Own%20App.md). The short version — edit `.env` (see [Configuration](./Configuration.md)):
+- health status is `ok`;
+- `docker compose ps` shows `raveneye`;
+- it does not show `sample-app`.
 
-```dotenv
-# App running on your host:
-RAVENEYE_TARGET_URL=http://host.docker.internal:5173
-RAVENEYE_ALLOWED_HOSTS=sample-app,host.docker.internal,localhost,127.0.0.1
-```
+## Fast Fix Loop
 
-Then `docker compose up -d` (recreates with the new env). The host app must listen on `0.0.0.0`, not just `127.0.0.1` — see [Fedora Notes](./Fedora%20Notes.md).
+Run your real app first. If it runs on your host machine, make sure it listens on `0.0.0.0`, then use `host.docker.internal` from RavenEye.
 
-Or without restarting, navigate the running browser directly:
+Example for a Vite app on port 5173:
 
 ```bash
-scripts/observer navigate http://host.docker.internal:5173/
+npm run dev -- --host 0.0.0.0
 ```
 
-## Next steps
+Navigate RavenEye to it:
 
-- Hook up your agent: [Agent Integration](../04-Agents/Agent%20Integration.md) ([Playwright MCP](../04-Agents/Playwright%20MCP.md) for Claude Code/Codex).
-- Write a journey for your app: [Mission Format](../03-Missions/Mission%20Format.md), starting from [Sample Missions](../03-Missions/Sample%20Missions.md).
-- If anything misbehaves: [Troubleshooting](./Troubleshooting.md).
+```powershell
+curl.exe -fsS -X POST http://127.0.0.1:8090/navigate `
+  -H "content-type: application/json" `
+  -d '{"url":"http://host.docker.internal:5173/"}'
+```
 
-Prerequisites are validated by `scripts/verify-workspace.sh` (Docker + Compose v2, Node ≥ 22, free port 6080).
+Capture quick evidence:
+
+```powershell
+curl.exe -fsS -X POST http://127.0.0.1:8090/screenshot `
+  -H "content-type: application/json" `
+  -d '{"name":"before-fix","full_page":false}'
+
+curl.exe -fsS "http://127.0.0.1:8090/console?clear=1"
+curl.exe -fsS "http://127.0.0.1:8090/network?problems=1&clear=1"
+```
+
+Fix your app in its own repo, rebuild/restart that app if needed, then repeat the same screenshot and checks.
+
+## Optional Sample App
+
+Only use the sample app when you want to test RavenEye itself:
+
+```bash
+docker compose --profile sample up -d sample-app
+scripts/run-mission.sh generic-smoke --target-url http://sample-app:3000
+```
+
+The sample is intentionally not part of the normal startup.
+
+## Stop
+
+```bash
+docker compose down
+```
+
+More detail: [Observing Your Own App](./Observing%20Your%20Own%20App.md), [Configuration](./Configuration.md), [Troubleshooting](./Troubleshooting.md).

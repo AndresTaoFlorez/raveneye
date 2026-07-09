@@ -24,7 +24,7 @@ npm run test:e2e
 
 ## Integration (`tests/integration/`) — against the live stack
 
-- `/health` returns all 7 components ok ([Health Model](../02-Architecture/Health%20Model.md)); noVNC serves on loopback.
+- `/health` returns all components ok ([Health Model](../02-Architecture/Health%20Model.md)); noVNC serves on loopback.
 - `connectOverCDP` drives the shared browser: navigates the [Sample App](../02-Architecture/Sample%20App.md), opens and closes the modal ([Playwright over CDP](../04-Agents/Playwright%20over%20CDP.md)).
 - [Control API](../02-Architecture/Control%20API.md): URL-policy rejections (422), screenshots land in the artifacts mount, network capture shows `authorization: [REDACTED]`.
 

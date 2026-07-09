@@ -594,3 +594,93 @@ See this log for the ancestor stack trace.
  > openAppSession src/presentation/views/OverviewView.tsx:56:19
 
 [2m6:15:56 AM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[vite] Failed to reload /src/presentation/views/DocsView.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+[2m2:03:16 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:16 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:16 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:16 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:16 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:16 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:17 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:17 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:17 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:17 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:17 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:17 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:24 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:24 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:24 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:25 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:25 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:25 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:29 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/docs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:29 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/docs/Index[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:29 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/docs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:03:29 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/docs/Index[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:04:49 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:04:49 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:04:49 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:05:02 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:05:08 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:05:13 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /health[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:05:13 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/apps[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+[2m2:05:13 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/runs[39m
+Error: connect ECONNREFUSED 127.0.0.1:8090
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
