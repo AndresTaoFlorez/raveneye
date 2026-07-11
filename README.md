@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/banner.png" alt="RAVENEYE" width="480" />
+  <img src="assets/banner.png" alt="RAVENEYE" width="100%" style="max-width:900px" />
 
   # RAVENEYE
 
