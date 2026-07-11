@@ -9,7 +9,8 @@
   },
   "files": [
     "dist",
-    "cli.js"
+    "cli.js",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",
