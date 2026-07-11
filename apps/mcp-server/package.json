@@ -1,6 +1,6 @@
 {
   "name": "raveneye-mcp-server",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "MCP server for Raveneye — give your coding agent eyes and hands in a real browser",
   "type": "module",
   "main": "./dist/index.js",
@@ -10,13 +10,11 @@
   "files": [
     "dist",
     "cli.js",
-    "postinstall.cjs",
     "README.md"
   ],
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "tsc",
-    "postinstall": "node postinstall.cjs"
+    "prepublishOnly": "tsc"
   },
   "keywords": [
     "mcp",
@@ -28,6 +26,6 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0",
-    "playwright": "1.61.1"
+    "playwright-core": "1.61.1"
   }
 }

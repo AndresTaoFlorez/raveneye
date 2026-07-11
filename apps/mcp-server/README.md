@@ -11,9 +11,6 @@ Exposes 11 MCP tools so any agent (Claude Code, Codex, OpenCode) can observe, na
 - Docker (to run the Raveneye stack)
 - Node.js 22+
 
-> **First install?** The package prints setup instructions automatically after `npm install`.
-> If the stack is not running when a tool is called, the error message tells you exactly how to start it.
-
 ## Install
 
 ```bash
@@ -23,25 +20,22 @@ docker run -d \
   -v raveneye-profile:/browser-profile \
   andrestao577/raveneye:latest
 
-# 2. Install the MCP server (global or as a dev dependency)
+# 2. Install the MCP server
 npm install -g raveneye-mcp-server
-# or: npm install -D raveneye-mcp-server
-```
 
-Registration with Claude Code and Codex (`~/.codex/config.json`) happens **automatically** during `npm install` — no extra commands needed.
+# 3. Register with your agent
+npx raveneye-mcp-server setup claude   # Claude Code
+npx raveneye-mcp-server setup codex    # Codex / OpenCode (~/.codex/config.toml)
+```
 
 ## Uninstall
 
 ```bash
-# Remove the package
 npm uninstall -g raveneye-mcp-server
-# or (dev dependency): npm uninstall raveneye-mcp-server
-
-# Remove the MCP registration from Claude Code
 claude mcp remove raveneye
 ```
 
-For Codex, remove the `raveneye` entry from `~/.codex/config.json`.
+For Codex, remove the `[mcp_servers.raveneye]` section from `~/.codex/config.toml`.
 
 ## Available tools
 

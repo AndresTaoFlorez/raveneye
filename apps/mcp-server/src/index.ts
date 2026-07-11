@@ -6,7 +6,7 @@ import {
   ListToolsRequestSchema,
   type Tool,
 } from '@modelcontextprotocol/sdk/types.js';
-import { chromium } from 'playwright';
+import { chromium } from 'playwright-core';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
@@ -287,7 +287,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     const raw = err instanceof Error ? err.message : String(err);
     const msg =
       raw.includes('ECONNREFUSED') || raw.includes('fetch failed') || raw.includes('ENOENT')
-        ? `Raveneye stack not reachable (${API}).\nStart it first:\n  Linux/Mac: make up\n  Windows:   docker compose up -d\nPorts needed: 8090 (HTTP API) and 9222 (CDP).\n\nRaw: ${raw}`
+        ? `RavenEye stack is not running. Start it with:\n  docker compose -f ~/.raveneye/compose.yaml --project-directory ~/.raveneye up -d\nPorts needed: 8090 (HTTP API) and 9222 (CDP).\n\nRaw: ${raw}`
         : raw;
     return { content: [{ type: 'text', text: `Error: ${msg}` }], isError: true };
   }
