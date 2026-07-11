@@ -392,9 +392,18 @@ git tag v0.1.1          # must match the package.json version exactly
 git push origin main --tags
 ```
 
-GitHub Actions (`.github/workflows/publish.yml`) picks up the `v*` tag and:
-- Builds and pushes `andrestao577/raveneye:<version>` + `:latest` to Docker Hub
-- Publishes `raveneye-mcp@<version>` to npm
+GitHub Actions (`.github/workflows/publish.yml`) picks up the `v*` tag and publishes `raveneye-mcp@<version>` to npm.
+
+**Re-triggering CI without a version bump (admin only)**
+
+If the publish job failed and you need to retry the same tag:
+
+```bash
+git push origin --delete v0.1.0   # remove the tag from remote
+git tag -d v0.1.0                 # remove the tag locally
+git tag v0.1.0                    # re-create it
+git push origin v0.1.0            # push again → CI fires
+```
 
 **Updating as an end-user**
 
