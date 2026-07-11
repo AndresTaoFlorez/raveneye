@@ -30,18 +30,6 @@ npm install -g raveneye-mcp-server
 
 Registration with Claude Code and Codex (`~/.codex/config.json`) happens **automatically** during `npm install` — no extra commands needed.
 
-Or one-command install (Linux/macOS):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/install.sh | bash
-```
-
-Windows:
-
-```powershell
-irm https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/install.ps1 | iex
-```
-
 ## Uninstall
 
 ```bash
