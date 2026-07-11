@@ -17,18 +17,18 @@ Exposes 11 MCP tools so any agent (Claude Code, Codex, OpenCode) can observe, na
 ## Install
 
 ```bash
-# Start the Raveneye stack
+# 1. Start the Raveneye stack
 docker run -d \
   -p 6080:6080 -p 8090:8090 -p 9222:9222 \
   -v raveneye-profile:/browser-profile \
   andrestao577/raveneye:latest
 
-# Install the MCP server globally
+# 2. Install the MCP server (global or as a dev dependency)
 npm install -g raveneye-mcp-server
-
-# Register with Claude Code
-claude mcp add raveneye -- raveneye-mcp-server
+# or: npm install -D raveneye-mcp-server
 ```
+
+Registration with Claude Code and Codex (`~/.codex/config.json`) happens **automatically** during `npm install` — no extra commands needed.
 
 Or one-command install (Linux/macOS):
 
@@ -41,6 +41,19 @@ Windows:
 ```powershell
 irm https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/install.ps1 | iex
 ```
+
+## Uninstall
+
+```bash
+# Remove the package
+npm uninstall -g raveneye-mcp-server
+# or (dev dependency): npm uninstall raveneye-mcp-server
+
+# Remove the MCP registration from Claude Code
+claude mcp remove raveneye
+```
+
+For Codex, remove the `raveneye` entry from `~/.codex/config.json`.
 
 ## Available tools
 
