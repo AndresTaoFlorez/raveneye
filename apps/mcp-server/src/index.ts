@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -7,11 +8,13 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { chromium } from 'playwright';
 import { readFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
+import { homedir } from 'node:os';
 
 const API = process.env['RAVENEYE_API'] ?? 'http://127.0.0.1:8090';
 const CDP = process.env['RAVENEYE_CDP'] ?? 'http://127.0.0.1:9222';
-const ARTIFACTS = process.env['RAVENEYE_ARTIFACTS'] ?? resolve('artifacts');
+// Default: ~/.raveneye/artifacts — matches the install script's bind mount location.
+const ARTIFACTS = process.env['RAVENEYE_ARTIFACTS'] ?? join(homedir(), '.raveneye', 'artifacts');
 
 async function api(path: string, opts?: RequestInit): Promise<unknown> {
   const res = await fetch(`${API}${path}`, opts);

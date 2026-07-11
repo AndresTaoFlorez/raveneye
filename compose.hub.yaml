@@ -1,0 +1,40 @@
+# compose.hub.yaml — for end users installing from Docker Hub.
+# Uses the published image (andrestao/raveneye) instead of building from source.
+# The install script uses this file; developers use compose.yaml.
+
+services:
+  raveneye:
+    image: andrestao/raveneye:latest
+    environment:
+      RAVENEYE_TARGET_URL:          "${RAVENEYE_TARGET_URL:-http://127.0.0.1:8090/overview}"
+      RAVENEYE_ALLOWED_HOSTS:       "${RAVENEYE_ALLOWED_HOSTS:-host.docker.internal,localhost,127.0.0.1}"
+      RAVENEYE_VIEWPORT_WIDTH:      "${RAVENEYE_VIEWPORT_WIDTH:-1440}"
+      RAVENEYE_VIEWPORT_HEIGHT:     "${RAVENEYE_VIEWPORT_HEIGHT:-900}"
+      RAVENEYE_PROFILE_MODE:        "${RAVENEYE_PROFILE_MODE:-ephemeral}"
+      RAVENEYE_RECORD_VIDEO:        "${RAVENEYE_RECORD_VIDEO:-false}"
+      RAVENEYE_RECORD_TRACE:        "${RAVENEYE_RECORD_TRACE:-false}"
+      RAVENEYE_MAX_SESSIONS:        "${RAVENEYE_MAX_SESSIONS:-10}"
+      RAVENEYE_SESSION_DISPLAY_START:   "${RAVENEYE_SESSION_DISPLAY_START:-98}"
+      RAVENEYE_SESSION_VNC_PORT_START:  "${RAVENEYE_SESSION_VNC_PORT_START:-5901}"
+      RAVENEYE_SESSION_NOVNC_PORT_START: "${RAVENEYE_SESSION_NOVNC_PORT_START:-6081}"
+      RAVENEYE_SESSION_CDP_PORT_START:  "${RAVENEYE_SESSION_CDP_PORT_START:-9223}"
+    ports:
+      - "127.0.0.1:${RAVENEYE_NOVNC_PORT:-6080}:6080"
+      - "127.0.0.1:${RAVENEYE_CDP_PORT:-9222}:9222"
+      - "127.0.0.1:${RAVENEYE_API_PORT:-8090}:8090"
+      - "127.0.0.1:6081-6100:6081-6100"
+      - "127.0.0.1:9223-9232:9223-9232"
+    volumes:
+      # Artifacts bind-mounted so the MCP server can read screenshots from the host.
+      - ./artifacts:/artifacts:z
+      - raveneye-profile:/browser-profile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    shm_size: "2gb"
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  raveneye-profile:

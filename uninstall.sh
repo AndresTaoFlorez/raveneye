@@ -18,11 +18,17 @@ else
   echo -e "${YELLOW}⚠ compose.yaml not found — skipping Docker cleanup${RESET}"
 fi
 
-# ── Remove built Docker image ─────────────────────────────────────────────────
+# ── Remove Docker image ───────────────────────────────────────────────────────
 echo -e "\n${BOLD}Removing Docker image${RESET}"
-docker rmi raveneye-raveneye 2>/dev/null && \
+docker rmi andrestao/raveneye:latest 2>/dev/null && \
   echo -e "${GREEN}✔ Image removed${RESET}" || \
   echo -e "${YELLOW}⚠ Image not found (already removed)${RESET}"
+
+# ── Uninstall npm package ─────────────────────────────────────────────────────
+echo -e "\n${BOLD}Uninstalling raveneye-mcp${RESET}"
+npm uninstall -g raveneye-mcp 2>/dev/null && \
+  echo -e "${GREEN}✔ raveneye-mcp removed${RESET}" || \
+  echo -e "${YELLOW}⚠ raveneye-mcp was not installed globally${RESET}"
 
 # ── Remove MCP registration ───────────────────────────────────────────────────
 echo -e "\n${BOLD}Removing MCP server registration${RESET}"

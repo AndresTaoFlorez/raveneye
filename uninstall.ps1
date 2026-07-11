@@ -21,10 +21,15 @@ if (Test-Path $composePath) {
     Warn "compose.yaml not found — skipping Docker cleanup"
 }
 
-# ── Remove built Docker image ─────────────────────────────────────────────────
+# ── Remove Docker image ───────────────────────────────────────────────────────
 Step "Removing Docker image"
-docker rmi raveneye-raveneye 2>&1 | Out-Null
+docker rmi andrestao/raveneye:latest 2>&1 | Out-Null
 if ($LASTEXITCODE -eq 0) { Ok "Image removed" } else { Warn "Image not found (already removed)" }
+
+# ── Uninstall npm package ─────────────────────────────────────────────────────
+Step "Uninstalling raveneye-mcp"
+npm uninstall -g raveneye-mcp 2>&1 | Out-Null
+if ($LASTEXITCODE -eq 0) { Ok "raveneye-mcp removed" } else { Warn "raveneye-mcp was not installed globally" }
 
 # ── Remove MCP registration ───────────────────────────────────────────────────
 Step "Removing MCP server registration"
