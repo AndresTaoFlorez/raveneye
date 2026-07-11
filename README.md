@@ -30,7 +30,34 @@ Windows (PowerShell):
 irm https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/install.ps1 | iex
 ```
 
-El script clona el repo en `~/.raveneye`, levanta el stack Docker, compila el servidor MCP y lo registra en Claude Code. Al terminar, abre una nueva conversación en Claude Code y escribe `/mcp` — verás `raveneye` con 11 tools.
+El script descarga `compose.hub.yaml`, hace `docker pull andrestao/raveneye:latest`, instala `raveneye-mcp` globalmente desde npm y lo registra en Claude Code. No clona el repositorio — el repo puede ser privado. Al terminar, abre una nueva conversación en Claude Code y escribe `/mcp` — verás `raveneye` con 11 tools.
+
+### Instalar solo el MCP server (si ya tienes Docker corriendo)
+
+**Global** — disponible en cualquier proyecto:
+```bash
+npm install -g raveneye-mcp
+claude mcp add raveneye -- raveneye-mcp
+```
+
+**Dev dependency** — solo en tu proyecto actual:
+```bash
+npm install -D raveneye-mcp
+```
+
+Luego agrega en tu `.claude/settings.json` o `codex.json`:
+```json
+{
+  "mcpServers": {
+    "raveneye": {
+      "command": "npx",
+      "args": ["--yes", "raveneye-mcp"]
+    }
+  }
+}
+```
+
+> `npx --yes raveneye-mcp` funciona tanto si está instalado como `devDependency` en el proyecto como si no está instalado en absoluto (lo descarga automáticamente).
 
 ### Desinstalar completamente
 

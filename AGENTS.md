@@ -33,29 +33,32 @@ curl -fsS http://127.0.0.1:8090/health
 
 The custom MCP server lives in `apps/mcp-server/`. It wraps the HTTP API (port 8090) and CDP (port 9222) as named MCP tools, so any MCP-capable agent (Claude Code, Codex, etc.) can call Raveneye operations without knowing its internals.
 
-**One-time build:**
+**Option A — global (recommended):**
 ```bash
-npm install --workspace=apps/mcp-server
-npm run build --workspace=apps/mcp-server
+npm install -g raveneye-mcp
+claude mcp add raveneye -- raveneye-mcp
 ```
 
-**Register in Claude Code (run once per machine):**
+**Option B — dev dependency in your project (`-D`):**
 ```bash
-claude mcp add raveneye -- node /absolute/path/to/raveneye/apps/mcp-server/dist/index.js
+npm install -D raveneye-mcp
 ```
-
-Or add to the project `.claude/settings.json`:
+Add to `.claude/settings.json` / `codex.json` / `opencode.json`:
 ```json
 {
   "mcpServers": {
     "raveneye": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["apps/mcp-server/dist/index.js"],
-      "cwd": "/absolute/path/to/raveneye"
+      "command": "npx",
+      "args": ["--yes", "raveneye-mcp"]
     }
   }
 }
+```
+
+**Option C — build from source (contributors only):**
+```bash
+npm install --workspace=apps/mcp-server && npm run build --workspace=apps/mcp-server
+claude mcp add raveneye -- node /path/to/raveneye/apps/mcp-server/dist/index.js
 ```
 
 **Environment overrides** (all optional):
