@@ -16,14 +16,72 @@ Coding agent
 
 The agent navigates, clicks, types, resizes, screenshots, records traces and video, and captures console, network, and accessibility evidence — so it can detect and fix the class of problems that code inspection and unit tests miss: broken layouts, hidden controls, horizontal overflow, confusing flows, console errors, failed requests.
 
+## Prerequisites
+
+### Linux
+
+| Requirement | Minimum | How to install |
+|-------------|---------|----------------|
+| Docker Engine + Compose v2 | 24+ | `curl -fsSL https://get.docker.com \| sh` |
+| Node.js | 22+ | `nvm install 22` or distro package manager |
+| make | any | `apt install make` / `dnf install make` |
+| git | any | distro package manager |
+
+> **SELinux (Fedora/RHEL):** the `compose.yaml` already adds `:z` labels to all bind mounts. No extra steps.
+
+Verify everything is ready:
+```bash
+bash scripts/verify-workspace.sh
+```
+
+### Windows
+
+| Requirement | Minimum | How to install |
+|-------------|---------|----------------|
+| Docker Desktop (WSL2 backend) | 4.25+ | [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop) |
+| Node.js | 22+ | [nodejs.org](https://nodejs.org) LTS installer |
+| git | any | [git-scm.com](https://git-scm.com) |
+| make (optional) | any | `scoop install make` or use Git Bash |
+
+> **WSL2:** Docker Desktop must use the WSL2 backend (default since v4). Each `make` command has a `docker compose` equivalent listed in the sections below.
+
+Verify ports are free (PowerShell):
+```powershell
+@(6080, 9222, 8090) | ForEach-Object {
+    $used = (Test-NetConnection 127.0.0.1 -Port $_ -WarningAction SilentlyContinue).TcpTestSucceeded
+    if ($used) { Write-Host "BUSY  port $_" -ForegroundColor Red }
+    else       { Write-Host "free  port $_" -ForegroundColor Green }
+}
+```
+
+---
+
 ## Quick start
 
 ```bash
+# 1. Clone
+git clone https://github.com/your-org/raveneye.git && cd raveneye
+
+# 2. Configure (optional — defaults work out of the box)
 cp .env.example .env
+
+# 3. Build the Docker image and start the stack
 make build
 make up          # starts only raveneye
-make open        # prints the noVNC URL
-make health
+make health      # wait for "status":"ok"
+
+# 4. Build Node.js packages (includes the MCP server)
+npm install && npm run build
+```
+
+**Windows — no make (PowerShell):**
+```powershell
+cp .env.example .env
+docker compose build
+docker compose up -d
+Start-Sleep 15
+curl http://127.0.0.1:8090/health   # expect {"status":"ok"}
+npm install; npm run build
 ```
 
 Open `http://127.0.0.1:6080` and you will see the base Chromium session displaying RavenEye's local dashboard. Open `http://127.0.0.1:8090/overview` directly for the dashboard: Overview app registry, live session preview, sessions, mission runs, settings, and docs.
@@ -76,6 +134,182 @@ make reset-profile                        # wipe the persistent browser profile
 make cleanup                              # delete runs older than retention window
 make test                                 # unit + integration tests
 ```
+
+## Agent Setup (MCP)
+
+Raveneye ships a custom MCP server (`apps/mcp-server/`) that exposes its capabilities as named tools. Any MCP-capable agent can call `raveneye_health`, `raveneye_navigate`, `raveneye_screenshot`, `raveneye_observe`, `raveneye_click`, `raveneye_fill`, and more — without knowing ports or protocols.
+
+**The Docker stack must be running (`make up`) before an agent calls any tool.**
+
+### Available tools
+
+| Tool | What it does |
+|------|-------------|
+| `raveneye_health` | Check stack health |
+| `raveneye_status` | Active sessions, target URL, viewport |
+| `raveneye_navigate` | Navigate the browser to a URL |
+| `raveneye_screenshot` | Take a screenshot → returns inline PNG |
+| `raveneye_observe` | **Best first call** — screenshot + console + network in one |
+| `raveneye_console` | Read the console log buffer |
+| `raveneye_network` | Read network events (optional: failures only) |
+| `raveneye_click` | Click a DOM element by CSS selector |
+| `raveneye_fill` | Type into a text input |
+| `raveneye_apps_list` | List registered apps |
+| `raveneye_app_open` | Open an isolated session for a registered app |
+
+---
+
+### Claude Code
+
+Register the server once per machine (run from the repo root):
+
+**Linux:**
+```bash
+claude mcp add raveneye -- node "$(pwd)/apps/mcp-server/dist/index.js"
+```
+
+**Windows (PowerShell):**
+```powershell
+claude mcp add raveneye -- node "$PWD\apps\mcp-server\dist\index.js"
+```
+
+Confirm with `/mcp` in Claude Code — `raveneye` should appear with 11 tools.
+
+**Project-level config** (committed, shared with the team) — create `.claude/settings.json` in the repo root:
+```json
+{
+  "mcpServers": {
+    "raveneye": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["apps/mcp-server/dist/index.js"]
+    }
+  }
+}
+```
+
+---
+
+### Codex (OpenAI)
+
+Add a `codex.json` to the repo root (project-level, relative path):
+```json
+{
+  "mcpServers": {
+    "raveneye": {
+      "command": "node",
+      "args": ["apps/mcp-server/dist/index.js"]
+    }
+  }
+}
+```
+
+Or add to the global `~/.codex/config.json` with an absolute path.
+
+**Linux:**
+```json
+{
+  "mcpServers": {
+    "raveneye": {
+      "command": "node",
+      "args": ["/home/you/projects/raveneye/apps/mcp-server/dist/index.js"]
+    }
+  }
+}
+```
+
+**Windows (PowerShell — create the file):**
+```powershell
+$cfg = @{ mcpServers = @{ raveneye = @{
+  command = "node"
+  args    = @("$PWD\apps\mcp-server\dist\index.js")
+}}} | ConvertTo-Json -Depth 5
+New-Item -Force "$HOME\.codex" -ItemType Directory | Out-Null
+$cfg | Set-Content "$HOME\.codex\config.json" -Encoding UTF8
+```
+
+Start Codex from the repo directory. The `raveneye_*` tools appear automatically.
+
+---
+
+### OpenCode
+
+Add an `opencode.json` to the repo root:
+```json
+{
+  "mcp": {
+    "raveneye": {
+      "type": "local",
+      "command": ["node", "apps/mcp-server/dist/index.js"]
+    }
+  }
+}
+```
+
+Or edit the global config at `~/.config/opencode/opencode.json` (Linux) / `%APPDATA%\opencode\opencode.json` (Windows) with an absolute path:
+
+**Linux:**
+```json
+{
+  "mcp": {
+    "raveneye": {
+      "type": "local",
+      "command": ["node", "/home/you/projects/raveneye/apps/mcp-server/dist/index.js"]
+    }
+  }
+}
+```
+
+**Windows:**
+```json
+{
+  "mcp": {
+    "raveneye": {
+      "type": "local",
+      "command": ["node", "C:\\Users\\you\\projects\\raveneye\\apps\\mcp-server\\dist\\index.js"]
+    }
+  }
+}
+```
+
+---
+
+### Environment overrides for the MCP server
+
+If your ports differ from defaults, set these environment variables when registering the server:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `RAVENEYE_API` | `http://127.0.0.1:8090` | HTTP API base URL |
+| `RAVENEYE_CDP` | `http://127.0.0.1:9222` | CDP endpoint |
+| `RAVENEYE_ARTIFACTS` | `./artifacts` | Host-side artifacts path |
+
+---
+
+## Troubleshooting
+
+**Stack won't start:**
+```bash
+make logs    # or: docker compose logs -f raveneye
+```
+Common causes: port conflict (change ports in `.env`), Docker not running, insufficient RAM (Chromium needs ~2 GB).
+
+**Health returns 503:** an internal component failed. Check which one and restart it:
+```bash
+docker compose exec raveneye supervisorctl -c /etc/raveneye/supervisord.conf status
+docker compose exec raveneye supervisorctl -c /etc/raveneye/supervisord.conf restart <component>
+```
+
+**MCP tools not appearing:**
+1. `curl http://127.0.0.1:8090/health` — stack must be up
+2. `ls apps/mcp-server/dist/index.js` — build must exist; run `npm run build` if missing
+3. Restart / reload the agent
+
+**`raveneye_navigate` returns 422:** the target hostname is not in the allowed list. Add it to `RAVENEYE_ALLOWED_HOSTS` in `.env`, or register the app through the dashboard at `http://127.0.0.1:8090/` (no `.env` editing required).
+
+**Windows: `make` not found:** install via Scoop (`scoop install make`) or use the `docker compose` equivalents shown above.
+
+---
 
 ## Documentation
 

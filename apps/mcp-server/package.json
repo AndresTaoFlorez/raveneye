@@ -1,0 +1,14 @@
+{
+  "name": "@raveneye/mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "playwright": "1.61.1"
+  }
+}

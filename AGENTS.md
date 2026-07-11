@@ -21,12 +21,47 @@ curl -fsS http://127.0.0.1:8090/health
 
 | Surface | When to use | How |
 |---|---|---|
-| **Base CDP + Playwright** | legacy/shared-browser interaction, assertions | `chromium.connectOverCDP('http://127.0.0.1:9222')` → `browser.contexts()[0].pages()[0]` |
+| **Raveneye MCP** | recommended — named tools for any MCP-capable agent | see §1a below for registration; tools: `raveneye_health`, `raveneye_navigate`, `raveneye_screenshot`, `raveneye_observe`, `raveneye_console`, `raveneye_network`, `raveneye_click`, `raveneye_fill`, `raveneye_apps_list`, `raveneye_app_open` |
+| **Base CDP + Playwright** | direct browser interaction, assertions | `chromium.connectOverCDP('http://127.0.0.1:9222')` → `browser.contexts()[0].pages()[0]` |
 | **Dynamic session CDP** | app-specific isolated sessions | read `cdpUrl` from `POST /api/apps/:id/open`, `GET /api/sessions`, or `GET /cdp-info` |
 | **Playwright MCP** | if you have MCP tools loaded | server config uses the relevant `--cdp-endpoint` |
 | **HTTP API** | quick ops without Playwright | `http://127.0.0.1:8090` — routes below |
 | **CLI** | shell-only capability | `scripts/observer <cmd>` from repo root |
 | **Missions** | reproducible evidence, before/after proof | `scripts/run-mission.sh <name>` |
+
+### §1a — Raveneye MCP server
+
+The custom MCP server lives in `apps/mcp-server/`. It wraps the HTTP API (port 8090) and CDP (port 9222) as named MCP tools, so any MCP-capable agent (Claude Code, Codex, etc.) can call Raveneye operations without knowing its internals.
+
+**One-time build:**
+```bash
+npm install --workspace=apps/mcp-server
+npm run build --workspace=apps/mcp-server
+```
+
+**Register in Claude Code (run once per machine):**
+```bash
+claude mcp add raveneye -- node /absolute/path/to/raveneye/apps/mcp-server/dist/index.js
+```
+
+Or add to the project `.claude/settings.json`:
+```json
+{
+  "mcpServers": {
+    "raveneye": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["apps/mcp-server/dist/index.js"],
+      "cwd": "/absolute/path/to/raveneye"
+    }
+  }
+}
+```
+
+**Environment overrides** (all optional):
+- `RAVENEYE_API` — HTTP API base URL (default `http://127.0.0.1:8090`)
+- `RAVENEYE_CDP` — CDP endpoint (default `http://127.0.0.1:9222`)
+- `RAVENEYE_ARTIFACTS` — host-side artifacts directory (default `./artifacts` relative to cwd)
 
 ## 2. HTTP API reference (port 8090)
 
