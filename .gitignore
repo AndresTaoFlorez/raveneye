@@ -31,4 +31,3 @@ docs-vault/.obsidian/
 # Local agent config (personal, never commit)
 .codex/
 .opencode/
-.claude/
