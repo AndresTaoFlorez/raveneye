@@ -16,6 +16,24 @@ Coding agent
 
 The agent navigates, clicks, types, resizes, screenshots, records traces and video, and captures console, network, and accessibility evidence — so it can detect and fix the class of problems that code inspection and unit tests miss: broken layouts, hidden controls, horizontal overflow, confusing flows, console errors, failed requests.
 
+## Install in one command
+
+**Requiere Docker Desktop (o Docker Engine en Linux) y Node.js 22+.**
+
+Linux / macOS:
+```bash
+curl -fsSL https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/install.sh | bash
+```
+
+Windows (PowerShell):
+```powershell
+irm https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/install.ps1 | iex
+```
+
+El script clona el repo en `~/.raveneye`, levanta el stack Docker, compila el servidor MCP y lo registra en Claude Code. Al terminar, abre una nueva conversación en Claude Code y escribe `/mcp` — verás `raveneye` con 11 tools.
+
+---
+
 ## Prerequisites
 
 ### Linux
