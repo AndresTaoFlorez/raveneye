@@ -27,3 +27,8 @@ docs-vault/.obsidian/
 *.swp
 .idea/
 .vscode/
+
+# Local agent config (personal, never commit)
+.codex/
+.opencode/
+.claude/
