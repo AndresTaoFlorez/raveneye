@@ -32,6 +32,20 @@ irm https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/install.ps1 
 
 El script clona el repo en `~/.raveneye`, levanta el stack Docker, compila el servidor MCP y lo registra en Claude Code. Al terminar, abre una nueva conversación en Claude Code y escribe `/mcp` — verás `raveneye` con 11 tools.
 
+### Desinstalar completamente
+
+Linux / macOS:
+```bash
+curl -fsSL https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/uninstall.sh | bash
+```
+
+Windows (PowerShell):
+```powershell
+irm https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/uninstall.ps1 | iex
+```
+
+Borra containers, volúmenes Docker, imagen, registro MCP y el directorio `~/.raveneye`.
+
 ---
 
 ## Prerequisites
