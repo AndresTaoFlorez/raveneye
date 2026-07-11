@@ -36,7 +36,8 @@ The custom MCP server lives in `apps/mcp-server/`. It wraps the HTTP API (port 8
 **Option A — global (recommended):**
 ```bash
 npm install -g raveneye-mcp-server
-claude mcp add raveneye -- raveneye-mcp-server
+npx raveneye-mcp-server setup claude   # Claude Code
+npx raveneye-mcp-server setup codex    # Codex / OpenCode (~/.codex/config.toml)
 ```
 
 **Option B — dev dependency in your project (`-D`):**
@@ -64,7 +65,7 @@ claude mcp add raveneye -- node /path/to/raveneye/apps/mcp-server/dist/index.js
 **Environment overrides** (all optional):
 - `RAVENEYE_API` — HTTP API base URL (default `http://127.0.0.1:8090`)
 - `RAVENEYE_CDP` — CDP endpoint (default `http://127.0.0.1:9222`)
-- `RAVENEYE_ARTIFACTS` — host-side artifacts directory (default `./artifacts` relative to cwd)
+- `RAVENEYE_ARTIFACTS` — host-side artifacts directory (default `~/.raveneye/artifacts`)
 
 ## 2. HTTP API reference (port 8090)
 

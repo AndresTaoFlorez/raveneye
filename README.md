@@ -220,15 +220,16 @@ Raveneye ships a custom MCP server (`apps/mcp-server/`) that exposes its capabil
 
 ### Claude Code
 
-Register the server once per machine (run from the repo root):
-
-**Linux:**
+**npm-installed** — run once after `npm install -g raveneye-mcp-server`:
 ```bash
-claude mcp add raveneye -- node "$(pwd)/apps/mcp-server/dist/index.js"
+npx raveneye-mcp-server setup claude
 ```
 
-**Windows (PowerShell):**
-```powershell
+**Contributors (from source)** — run from the repo root after `npm run build`:
+```bash
+# Linux
+claude mcp add raveneye -- node "$(pwd)/apps/mcp-server/dist/index.js"
+# Windows (PowerShell)
 claude mcp add raveneye -- node "$PWD\apps\mcp-server\dist\index.js"
 ```
 
@@ -251,7 +252,19 @@ Confirm with `/mcp` in Claude Code — `raveneye` should appear with 11 tools.
 
 ### Codex (OpenAI)
 
-Add a `codex.json` to the repo root (project-level, relative path):
+**Quickest way** — run once to write `~/.codex/config.toml`:
+```bash
+npx raveneye-mcp-server setup codex
+```
+
+**Manual** — append to `~/.codex/config.toml`:
+```toml
+[mcp_servers.raveneye]
+command = "npx"
+args = ["--yes", "raveneye-mcp-server"]
+```
+
+**Project-level** (`codex.json` in the repo root, contributors only — relative path):
 ```json
 {
   "mcpServers": {
@@ -261,30 +274,6 @@ Add a `codex.json` to the repo root (project-level, relative path):
     }
   }
 }
-```
-
-Or add to the global `~/.codex/config.json` with an absolute path.
-
-**Linux:**
-```json
-{
-  "mcpServers": {
-    "raveneye": {
-      "command": "node",
-      "args": ["/home/you/projects/raveneye/apps/mcp-server/dist/index.js"]
-    }
-  }
-}
-```
-
-**Windows (PowerShell — create the file):**
-```powershell
-$cfg = @{ mcpServers = @{ raveneye = @{
-  command = "node"
-  args    = @("$PWD\apps\mcp-server\dist\index.js")
-}}} | ConvertTo-Json -Depth 5
-New-Item -Force "$HOME\.codex" -ItemType Directory | Out-Null
-$cfg | Set-Content "$HOME\.codex\config.json" -Encoding UTF8
 ```
 
 Start Codex from the repo directory. The `raveneye_*` tools appear automatically.
@@ -341,7 +330,7 @@ If your ports differ from defaults, set these environment variables when registe
 |----------|---------|---------|
 | `RAVENEYE_API` | `http://127.0.0.1:8090` | HTTP API base URL |
 | `RAVENEYE_CDP` | `http://127.0.0.1:9222` | CDP endpoint |
-| `RAVENEYE_ARTIFACTS` | `./artifacts` | Host-side artifacts path |
+| `RAVENEYE_ARTIFACTS` | `~/.raveneye/artifacts` | Host-side artifacts path |
 
 ---
 
