@@ -20,7 +20,7 @@ fi
 
 # ── Remove Docker image ───────────────────────────────────────────────────────
 echo -e "\n${BOLD}Removing Docker image${RESET}"
-docker rmi andrestao/raveneye:latest 2>/dev/null && \
+docker rmi andrestao577/raveneye:latest 2>/dev/null && \
   echo -e "${GREEN}✔ Image removed${RESET}" || \
   echo -e "${YELLOW}⚠ Image not found (already removed)${RESET}"
 

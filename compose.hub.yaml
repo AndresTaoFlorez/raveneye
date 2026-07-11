@@ -1,10 +1,10 @@
 # compose.hub.yaml — for end users installing from Docker Hub.
-# Uses the published image (andrestao/raveneye) instead of building from source.
+# Uses the published image (andrestao577/raveneye) instead of building from source.
 # The install script uses this file; developers use compose.yaml.
 
 services:
   raveneye:
-    image: andrestao/raveneye:latest
+    image: andrestao577/raveneye:latest
     environment:
       RAVENEYE_TARGET_URL:          "${RAVENEYE_TARGET_URL:-http://127.0.0.1:8090/overview}"
       RAVENEYE_ALLOWED_HOSTS:       "${RAVENEYE_ALLOWED_HOSTS:-host.docker.internal,localhost,127.0.0.1}"

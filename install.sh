@@ -35,7 +35,7 @@ ok "compose.yaml downloaded"
 
 # ── Pull Docker image ──────────────────────────────────────────────────────────
 step "Pulling Raveneye image from Docker Hub"
-docker pull andrestao/raveneye:latest
+docker pull andrestao577/raveneye:latest
 ok "Image pulled"
 
 # ── Start the stack ────────────────────────────────────────────────────────────
@@ -81,4 +81,4 @@ echo "  Open a NEW Claude Code conversation and type /mcp"
 echo "  You should see 'raveneye' with 11 tools."
 echo ""
 echo "  Stop:    docker compose -f $INSTALL_DIR/compose.yaml --project-directory $INSTALL_DIR down"
-echo "  Update:  docker pull andrestao/raveneye:latest && npm update -g raveneye-mcp"
+echo "  Update:  docker pull andrestao577/raveneye:latest && npm update -g raveneye-mcp"

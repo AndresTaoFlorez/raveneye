@@ -23,7 +23,7 @@ if (Test-Path $composePath) {
 
 # ── Remove Docker image ───────────────────────────────────────────────────────
 Step "Removing Docker image"
-docker rmi andrestao/raveneye:latest 2>&1 | Out-Null
+docker rmi andrestao577/raveneye:latest 2>&1 | Out-Null
 if ($LASTEXITCODE -eq 0) { Ok "Image removed" } else { Warn "Image not found (already removed)" }
 
 # ── Uninstall npm package ─────────────────────────────────────────────────────
