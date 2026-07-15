@@ -1,13 +1,14 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { chromium, type Browser } from 'playwright';
 import { readdir } from 'node:fs/promises';
-import { API, CDP, requireStack } from './stack.js';
+import { API, currentCdp, ensureSampleApp, requireStack } from './stack.js';
 
 let browser: Browser;
 
 beforeAll(async () => {
+  await ensureSampleApp();
   await requireStack();
-  browser = await chromium.connectOverCDP(CDP);
+  browser = await chromium.connectOverCDP(await currentCdp());
 });
 
 afterAll(async () => {
@@ -20,9 +21,7 @@ describe('shared browser control (real Chromium over CDP)', () => {
     expect(context, 'shared persistent context').toBeDefined();
     const page = context!.pages()[0] ?? (await context!.newPage());
     await page.goto('http://sample-app:3000/');
-    await expect
-      .poll(async () => page.title())
-      .toContain('Meridian Notes');
+    await expect.poll(async () => page.title()).toContain('Meridian Notes');
     await page.getByRole('button', { name: 'Open dialog' }).click();
     await page.getByRole('dialog').waitFor({ state: 'visible' });
     await page.keyboard.press('Escape');

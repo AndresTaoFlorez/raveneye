@@ -75,9 +75,7 @@ export async function runMission(opts: RunnerOptions): Promise<number> {
     browser = await chromium.launch({ headless: opts.headless, chromiumSandbox: false });
     context = await browser.newContext({
       viewport: { width: mission.viewport.width, height: mission.viewport.height },
-      ...(opts.recordVideo
-        ? { recordVideo: { dir: videoDir, size: mission.viewport } }
-        : {}),
+      ...(opts.recordVideo ? { recordVideo: { dir: videoDir, size: mission.viewport } } : {}),
     });
     if (opts.recordTrace) {
       await context.tracing.start({ screenshots: true, snapshots: true });
@@ -128,7 +126,9 @@ export async function runMission(opts: RunnerOptions): Promise<number> {
     } catch (err) {
       record.status = 'error';
       record.detail = (err as Error).message.split('\n')[0];
-      console.error(`[mission] ${index + 1}/${mission.steps.length} ${action} FAILED: ${record.detail}`);
+      console.error(
+        `[mission] ${index + 1}/${mission.steps.length} ${action} FAILED: ${record.detail}`,
+      );
       stepFailed = true;
     }
     record.duration_ms = Date.now() - t0;

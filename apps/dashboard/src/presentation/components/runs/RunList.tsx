@@ -21,7 +21,9 @@ export function RunList({ runs }: { runs: MissionRun[] }) {
             <strong>{run.manifest?.mission_name ?? run.run_id}</strong>
             <small>{run.manifest?.target_url ?? run.path}</small>
           </div>
-          <span>{run.manifest?.status ? <StatusPill value={run.manifest.status} /> : 'unknown'}</span>
+          <span>
+            {run.manifest?.status ? <StatusPill value={run.manifest.status} /> : 'unknown'}
+          </span>
           <span>{run.finding_count ?? 'unknown'}</span>
           <span>{run.report_path ?? 'No report.md'}</span>
         </article>

@@ -37,7 +37,8 @@ function intEnv(name: string, fallback: number): number {
 }
 
 export function loadConfig(): ObserverConfig {
-  const profileMode = process.env.RAVENEYE_PROFILE_MODE === 'persistent' ? 'persistent' : 'ephemeral';
+  const profileMode =
+    process.env.RAVENEYE_PROFILE_MODE === 'persistent' ? 'persistent' : 'ephemeral';
   const artifactsDir = process.env.RAVENEYE_ARTIFACTS_DIR ?? '/artifacts';
   const dataDir = process.env.RAVENEYE_DATA_DIR ?? `${artifactsDir}/data`;
   return {

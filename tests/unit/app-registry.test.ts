@@ -87,7 +87,11 @@ describe('AppRegistry', () => {
     tempDir = await mkdtemp(join(tmpdir(), 'raveneye-apps-'));
     const dbPath = join(tempDir, 'raveneye.sqlite');
     const first = new AppRegistry(dbPath);
-    first.create({ name: 'Persistent', target_url: 'http://localhost:3000', allowed_hosts: ['localhost'] });
+    first.create({
+      name: 'Persistent',
+      target_url: 'http://localhost:3000',
+      allowed_hosts: ['localhost'],
+    });
     first.close();
 
     const second = new AppRegistry(dbPath);

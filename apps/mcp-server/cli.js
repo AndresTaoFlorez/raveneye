@@ -52,6 +52,7 @@ if (cmd === 'setup') {
     process.exit(1);
   }
   handler();
+  process.exit(0);
 } else {
   await import('./dist/index.js');
 }

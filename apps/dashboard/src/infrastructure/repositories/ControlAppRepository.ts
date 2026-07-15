@@ -17,7 +17,10 @@ export class ControlAppRepository implements AppRepository {
   }
 
   async update(id: string, app: ObservedAppDraft): Promise<ObservedApp> {
-    const data = await this.client.patch<{ app: ObservedApp }>(`/api/apps/${encodeURIComponent(id)}`, app);
+    const data = await this.client.patch<{ app: ObservedApp }>(
+      `/api/apps/${encodeURIComponent(id)}`,
+      app,
+    );
     return data.app;
   }
 

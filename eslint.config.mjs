@@ -46,9 +46,26 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
-          patterns: ['@/infrastructure/*', '@/presentation/*', 'react', 'react-*', '@reduxjs/*', 'gsap', '*.css'],
+          patterns: [
+            '@/infrastructure/*',
+            '@/presentation/*',
+            'react',
+            'react-*',
+            '@reduxjs/*',
+            'gsap',
+            '*.css',
+          ],
         },
       ],
+    },
+  },
+  {
+    files: ['apps/mcp-server/cli.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
     },
   },
   {

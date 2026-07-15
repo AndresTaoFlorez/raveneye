@@ -44,7 +44,9 @@ export function SettingsView() {
               onChange={(event) => setMaxSessions(event.target.value)}
             />
           </label>
-          <p className={styles.hint}>The base session does not count against this limit. Default is 10.</p>
+          <p className={styles.hint}>
+            The base session does not count against this limit. Default is 10.
+          </p>
           <button className={styles.saveButton} type="button" onClick={saveMaxSessions}>
             Save limit
           </button>
@@ -53,10 +55,18 @@ export function SettingsView() {
         <article className={styles.panel}>
           <h3>Control surfaces</h3>
           <div className={styles.links}>
-            <a href="/health" target="_blank" rel="noreferrer">Health JSON</a>
-            <a href="/status" target="_blank" rel="noreferrer">Status JSON</a>
-            <a href="/cdp-info" target="_blank" rel="noreferrer">CDP info</a>
-            <a href="/api/runs" target="_blank" rel="noreferrer">Mission runs API</a>
+            <a href="/health" target="_blank" rel="noreferrer">
+              Health JSON
+            </a>
+            <a href="/status" target="_blank" rel="noreferrer">
+              Status JSON
+            </a>
+            <a href="/cdp-info" target="_blank" rel="noreferrer">
+              CDP info
+            </a>
+            <a href="/api/runs" target="_blank" rel="noreferrer">
+              Mission runs API
+            </a>
           </div>
         </article>
 
@@ -66,7 +76,9 @@ export function SettingsView() {
             <dt>Target</dt>
             <dd>{status?.target_url ?? 'Not loaded'}</dd>
             <dt>Viewport</dt>
-            <dd>{status ? `${status.viewport.width} x ${status.viewport.height}` : 'Not loaded'}</dd>
+            <dd>
+              {status ? `${status.viewport.width} x ${status.viewport.height}` : 'Not loaded'}
+            </dd>
             <dt>Allowed hosts</dt>
             <dd>{status?.allowed_hosts.join(', ') || 'None loaded'}</dd>
           </dl>
@@ -75,7 +87,9 @@ export function SettingsView() {
         <article className={styles.panel}>
           <h3>Diagnostics</h3>
           <p className={degraded.length ? styles.warn : styles.ok}>
-            {degraded.length ? `${degraded.length} components degraded` : 'All loaded components are healthy'}
+            {degraded.length
+              ? `${degraded.length} components degraded`
+              : 'All loaded components are healthy'}
           </p>
           <div className={styles.components}>
             {health?.components.map((component) => (

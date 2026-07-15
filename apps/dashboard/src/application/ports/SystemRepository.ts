@@ -1,4 +1,8 @@
-import type { HealthReport, ObserverStatus, RavenEyeSettings } from '@/domain/entities/SystemStatus';
+import type {
+  HealthReport,
+  ObserverStatus,
+  RavenEyeSettings,
+} from '@/domain/entities/SystemStatus';
 import type { ObserverSession } from '@/domain/entities/ObserverSession';
 
 export interface SystemRepository {

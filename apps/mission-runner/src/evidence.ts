@@ -55,9 +55,7 @@ export class RunEvidence {
         level: msg.type(),
         text: redactText(msg.text()),
         page_url: page.url(),
-        location: msg.location()
-          ? `${msg.location().url}:${msg.location().lineNumber}`
-          : undefined,
+        location: msg.location() ? `${msg.location().url}:${msg.location().lineNumber}` : undefined,
       });
     });
     page.on('pageerror', (err) => {

@@ -49,9 +49,15 @@ export function AppShell({
           ))}
         </nav>
         <div className={styles.links}>
-          <a href="/health" target="_blank" rel="noreferrer">/health</a>
-          <a href="/status" target="_blank" rel="noreferrer">/status</a>
-          <a href="/api/docs" target="_blank" rel="noreferrer">docs API</a>
+          <a href="/health" target="_blank" rel="noreferrer">
+            /health
+          </a>
+          <a href="/status" target="_blank" rel="noreferrer">
+            /status
+          </a>
+          <a href="/api/docs" target="_blank" rel="noreferrer">
+            docs API
+          </a>
         </div>
       </aside>
       <main className={styles.main}>
@@ -67,7 +73,11 @@ export function AppShell({
           </button>
         </header>
         {(error || notice) && (
-          <button className={error ? styles.error : styles.notice} type="button" onClick={() => dispatch(clearMessage())}>
+          <button
+            className={error ? styles.error : styles.notice}
+            type="button"
+            onClick={() => dispatch(clearMessage())}
+          >
             {error ?? notice}
           </button>
         )}

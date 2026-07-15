@@ -2,7 +2,12 @@ import http from 'node:http';
 import { createReadStream } from 'node:fs';
 import { mkdir, readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
-import { OBSERVER_VERSION, evaluateTargetUrl, isNetworkProblem, mergeAllowedHosts } from '@raveneye/shared';
+import {
+  OBSERVER_VERSION,
+  evaluateTargetUrl,
+  isNetworkProblem,
+  mergeAllowedHosts,
+} from '@raveneye/shared';
 import type { ObserverConfig } from './config.js';
 import {
   SessionAlreadyRunningError,
@@ -40,14 +45,21 @@ async function readJsonBody(req: http.IncomingMessage): Promise<Record<string, u
 }
 
 function sanitizeName(name: unknown, fallback: string): string {
-  return String(name ?? fallback).replace(/[^a-zA-Z0-9_-]/g, '-').slice(0, 60) || fallback;
+  return (
+    String(name ?? fallback)
+      .replace(/[^a-zA-Z0-9_-]/g, '-')
+      .slice(0, 60) || fallback
+  );
 }
 
 function assertAppUrlAllowed(body: Record<string, unknown>, existing?: ObservedApp) {
-  const targetUrl = body.target_url === undefined && existing ? existing.target_url : body.target_url;
+  const targetUrl =
+    body.target_url === undefined && existing ? existing.target_url : body.target_url;
   if (typeof targetUrl !== 'string') throw new ValidationError('target_url is required');
   const appHosts =
-    body.allowed_hosts === undefined && existing ? existing.allowed_hosts : normalizeAllowedHosts(body.allowed_hosts);
+    body.allowed_hosts === undefined && existing
+      ? existing.allowed_hosts
+      : normalizeAllowedHosts(body.allowed_hosts);
   let targetHost: string;
   try {
     targetHost = new URL(targetUrl).hostname;
@@ -82,17 +94,32 @@ const MIME_TYPES: Record<string, string> = {
   '.svg': 'image/svg+xml',
 };
 
-const DASHBOARD_ROUTES = new Set(['/', '/overview', '/sessions', '/mission-runs', '/settings', '/docs']);
+const DASHBOARD_ROUTES = new Set([
+  '/',
+  '/overview',
+  '/sessions',
+  '/mission-runs',
+  '/settings',
+  '/docs',
+]);
 
-async function serveDashboard(cfg: ObserverConfig, reqPath: string, res: http.ServerResponse): Promise<boolean> {
+async function serveDashboard(
+  cfg: ObserverConfig,
+  reqPath: string,
+  res: http.ServerResponse,
+): Promise<boolean> {
   if (
     !DASHBOARD_ROUTES.has(reqPath) &&
     !reqPath.startsWith('/docs/') &&
     !reqPath.startsWith('/dashboard') &&
     !reqPath.startsWith('/assets/')
-  ) return false;
+  )
+    return false;
   const relative =
-    DASHBOARD_ROUTES.has(reqPath) || reqPath.startsWith('/docs/') || reqPath === '/dashboard' || reqPath === '/dashboard/'
+    DASHBOARD_ROUTES.has(reqPath) ||
+    reqPath.startsWith('/docs/') ||
+    reqPath === '/dashboard' ||
+    reqPath === '/dashboard/'
       ? 'index.html'
       : reqPath.replace(/^\/dashboard\/?/, '').replace(/^\//, '');
   const root = normalize(cfg.dashboardDir);
@@ -179,7 +206,10 @@ export function startApi(state: ApiState): http.Server {
       if (appMatch && req.method === 'GET') {
         const app = state.registry.get(decodeURIComponent(appMatch[1]!));
         if (!app) return json(res, 404, { ok: false, detail: 'app not found' });
-        return json(res, 200, { app, sessions: state.sessions.list().filter((s) => s.appId === app.id) });
+        return json(res, 200, {
+          app,
+          sessions: state.sessions.list().filter((s) => s.appId === app.id),
+        });
       }
 
       if (appMatch && req.method === 'PATCH') {
@@ -190,12 +220,17 @@ export function startApi(state: ApiState): http.Server {
         if (!existing) return json(res, 404, { ok: false, detail: 'app not found' });
         assertAppUrlAllowed(body, existing);
         const app = state.registry.update(id, body);
-        return app ? json(res, 200, { app }) : json(res, 404, { ok: false, detail: 'app not found' });
+        return app
+          ? json(res, 200, { app })
+          : json(res, 404, { ok: false, detail: 'app not found' });
       }
 
       if (appMatch && req.method === 'DELETE') {
         const deleted = state.registry.delete(decodeURIComponent(appMatch[1]!));
-        return json(res, deleted ? 200 : 404, { ok: deleted, detail: deleted ? 'deleted' : 'app not found' });
+        return json(res, deleted ? 200 : 404, {
+          ok: deleted,
+          detail: deleted ? 'deleted' : 'app not found',
+        });
       }
 
       const openMatch = url.pathname.match(/^\/api\/apps\/([^/]+)\/open$/);
@@ -250,7 +285,8 @@ export function startApi(state: ApiState): http.Server {
       if (stopMatch && req.method === 'DELETE') {
         const appId = decodeURIComponent(stopMatch[1]!);
         const running = state.sessions.findRunningForApp(appId);
-        if (!running) return json(res, 404, { ok: false, detail: 'no running session for this app' });
+        if (!running)
+          return json(res, 404, { ok: false, detail: 'no running session for this app' });
         const stopped = await state.sessions.stop(running.id);
         return json(res, 200, { ok: true, session: stopped });
       }
@@ -262,7 +298,9 @@ export function startApi(state: ApiState): http.Server {
       const sessionMatch = url.pathname.match(/^\/api\/sessions\/([^/]+)$/);
       if (sessionMatch && req.method === 'GET') {
         const session = state.sessions.get(decodeURIComponent(sessionMatch[1]!));
-        return session ? json(res, 200, { session }) : json(res, 404, { ok: false, detail: 'session not found' });
+        return session
+          ? json(res, 200, { session })
+          : json(res, 404, { ok: false, detail: 'session not found' });
       }
       if (sessionMatch && req.method === 'DELETE') {
         const session = state.sessions.get(decodeURIComponent(sessionMatch[1]!));
@@ -282,7 +320,9 @@ export function startApi(state: ApiState): http.Server {
       const docMatch = url.pathname.match(/^\/api\/docs\/(.+)$/);
       if (docMatch && req.method === 'GET') {
         const doc = await readDoc(state.cfg.docsVaultDir, decodeURIComponent(docMatch[1]!));
-        return doc ? json(res, 200, { doc }) : json(res, 404, { ok: false, detail: 'doc not found' });
+        return doc
+          ? json(res, 200, { doc })
+          : json(res, 404, { ok: false, detail: 'doc not found' });
       }
 
       const runMatch = url.pathname.match(/^\/api\/runs\/([^/]+)$/);
@@ -329,34 +369,51 @@ export function startApi(state: ApiState): http.Server {
           const sessions = state.sessions.list();
           return json(res, 200, {
             host_endpoint: 'http://127.0.0.1:9222 (loopback publish of container port 9222)',
-            sessions: sessions.map((s) => ({ id: s.id, slot: s.slot, cdp: s.cdpUrl, appId: s.appId })),
+            sessions: sessions.map((s) => ({
+              id: s.id,
+              slot: s.slot,
+              cdp: s.cdpUrl,
+              appId: s.appId,
+            })),
           });
         }
 
         case 'POST /navigate': {
-          if (!baseSession) return json(res, 503, { ok: false, detail: 'base session unavailable' });
+          if (!baseSession)
+            return json(res, 503, { ok: false, detail: 'base session unavailable' });
           const body = await readJsonBody(req).catch(() => null);
           if (!body || typeof body.url !== 'string') {
             return json(res, 400, { ok: false, detail: 'expected JSON body: {"url": "..."}' });
           }
-          const decision = evaluateTargetUrl(body.url, { allowedHosts: registryNavigationHosts(state.cfg, state.registry) });
+          const decision = evaluateTargetUrl(body.url, {
+            allowedHosts: registryNavigationHosts(state.cfg, state.registry),
+          });
           if (!decision.allowed) return json(res, 422, { ok: false, detail: decision.reason });
           const context = state.sessions.contextOf(baseSession.id);
-          if (!context) return json(res, 503, { ok: false, detail: 'base session has no live context' });
+          if (!context)
+            return json(res, 503, { ok: false, detail: 'base session has no live context' });
           const page = context.pages()[0] ?? (await context.newPage());
           try {
-            await page.goto(decision.url.toString(), { waitUntil: 'domcontentloaded', timeout: 30_000 });
+            await page.goto(decision.url.toString(), {
+              waitUntil: 'domcontentloaded',
+              timeout: 30_000,
+            });
             return json(res, 200, { ok: true, detail: `navigated to ${decision.url}` });
           } catch (err) {
-            return json(res, 500, { ok: false, detail: `navigation failed: ${(err as Error).message}` });
+            return json(res, 500, {
+              ok: false,
+              detail: `navigation failed: ${(err as Error).message}`,
+            });
           }
         }
 
         case 'POST /screenshot': {
-          if (!baseSession) return json(res, 503, { ok: false, detail: 'base session unavailable' });
+          if (!baseSession)
+            return json(res, 503, { ok: false, detail: 'base session unavailable' });
           const body: Record<string, unknown> = await readJsonBody(req).catch(() => ({}));
           const context = state.sessions.contextOf(baseSession.id);
-          if (!context) return json(res, 503, { ok: false, detail: 'base session has no live context' });
+          if (!context)
+            return json(res, 503, { ok: false, detail: 'base session has no live context' });
           const pages = context.pages();
           const page = pages[pages.length - 1];
           if (!page) return json(res, 409, { ok: false, detail: 'no open page' });

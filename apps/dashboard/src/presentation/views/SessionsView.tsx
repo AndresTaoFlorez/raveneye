@@ -49,14 +49,21 @@ export function SessionsView() {
                 <dd>{session.cdpUrl}</dd>
               </dl>
               <div className={styles.actions}>
-                <button type="button" onClick={() => window.open(session.novncUrl, '_blank', 'noopener,noreferrer')}>
+                <button
+                  type="button"
+                  onClick={() => window.open(session.novncUrl, '_blank', 'noopener,noreferrer')}
+                >
                   Watch
                 </button>
                 <a href={session.cdpUrl} target="_blank" rel="noreferrer">
                   CDP
                 </a>
                 {!isBase ? (
-                  <button type="button" className={styles.danger} onClick={() => void dispatch(stopSession(session.id))}>
+                  <button
+                    type="button"
+                    className={styles.danger}
+                    onClick={() => void dispatch(stopSession(session.id))}
+                  >
                     Stop session
                   </button>
                 ) : null}
@@ -64,7 +71,9 @@ export function SessionsView() {
             </article>
           );
         })}
-        {!sessions.length ? <p className={styles.empty}>No active sessions reported by the backend.</p> : null}
+        {!sessions.length ? (
+          <p className={styles.empty}>No active sessions reported by the backend.</p>
+        ) : null}
       </div>
     </section>
   );

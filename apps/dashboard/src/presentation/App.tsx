@@ -19,8 +19,11 @@ const ROUTES: Record<ViewKey, string> = {
 };
 
 function viewFromPath(pathname: string): ViewKey {
-  if (pathname === '/' || pathname === '/docs' || pathname.startsWith('/docs/')) return pathname.startsWith('/docs') ? 'docs' : 'overview';
-  const match = (Object.entries(ROUTES) as Array<[ViewKey, string]>).find(([, path]) => path === pathname);
+  if (pathname === '/' || pathname === '/docs' || pathname.startsWith('/docs/'))
+    return pathname.startsWith('/docs') ? 'docs' : 'overview';
+  const match = (Object.entries(ROUTES) as Array<[ViewKey, string]>).find(
+    ([, path]) => path === pathname,
+  );
   return match?.[0] ?? 'overview';
 }
 

@@ -3,8 +3,7 @@
   display: grid;
   grid-template-columns: 272px minmax(0, 1fr);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(244, 247, 251, 0.92)),
-    #f4f7fb;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(244, 247, 251, 0.92)), #f4f7fb;
   color: #15191f;
 }
 

@@ -14,7 +14,11 @@ import {
 import type { MissionRun } from '@/domain/entities/MissionRun';
 import type { ObservedApp, ObservedAppDraft } from '@/domain/entities/ObservedApp';
 import type { ObserverSession, OpenAppResult } from '@/domain/entities/ObserverSession';
-import type { HealthReport, ObserverStatus, RavenEyeSettings } from '@/domain/entities/SystemStatus';
+import type {
+  HealthReport,
+  ObserverStatus,
+  RavenEyeSettings,
+} from '@/domain/entities/SystemStatus';
 import { dependencies } from './dependencies';
 
 interface DashboardState {

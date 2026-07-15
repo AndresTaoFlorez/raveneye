@@ -57,12 +57,14 @@ async function screenshotImageContent(name: string, fullPage: boolean) {
 const TOOLS: Tool[] = [
   {
     name: 'raveneye_health',
-    description: 'Check whether the Raveneye stack is healthy. Returns status and component details.',
+    description:
+      'Check whether the Raveneye stack is healthy. Returns status and component details.',
     inputSchema: { type: 'object', properties: {}, required: [] },
   },
   {
     name: 'raveneye_status',
-    description: 'Get current observer status: target URL, active sessions, allowed hosts, viewport.',
+    description:
+      'Get current observer status: target URL, active sessions, allowed hosts, viewport.',
     inputSchema: { type: 'object', properties: {}, required: [] },
   },
   {
@@ -81,7 +83,10 @@ const TOOLS: Tool[] = [
       type: 'object',
       properties: {
         name: { type: 'string', description: 'File name prefix (default: screenshot)' },
-        full_page: { type: 'boolean', description: 'Capture the full scrollable page (default: false)' },
+        full_page: {
+          type: 'boolean',
+          description: 'Capture the full scrollable page (default: false)',
+        },
       },
       required: [],
     },
@@ -94,7 +99,10 @@ const TOOLS: Tool[] = [
       type: 'object',
       properties: {
         clear: { type: 'boolean', description: 'Clear log buffers after reading (default: false)' },
-        problems_only: { type: 'boolean', description: 'Limit network entries to failures/4xx/5xx (default: false)' },
+        problems_only: {
+          type: 'boolean',
+          description: 'Limit network entries to failures/4xx/5xx (default: false)',
+        },
       },
       required: [],
     },
@@ -177,10 +185,7 @@ async function withCdpPage<T>(fn: (page: import('playwright').Page) => Promise<T
   }
 }
 
-const server = new Server(
-  { name: 'raveneye', version: '0.1.0' },
-  { capabilities: { tools: {} } },
-);
+const server = new Server({ name: 'raveneye', version: '0.1.0' }, { capabilities: { tools: {} } });
 
 server.setRequestHandler(ListToolsRequestSchema, () => ({ tools: TOOLS }));
 
@@ -233,8 +238,14 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
         ]);
 
         const content: Array<{ type: string; [k: string]: unknown }> = [
-          { type: 'text', text: `### Console\n\`\`\`json\n${JSON.stringify(consoleData, null, 2)}\n\`\`\`` },
-          { type: 'text', text: `### Network\n\`\`\`json\n${JSON.stringify(networkData, null, 2)}\n\`\`\`` },
+          {
+            type: 'text',
+            text: `### Console\n\`\`\`json\n${JSON.stringify(consoleData, null, 2)}\n\`\`\``,
+          },
+          {
+            type: 'text',
+            text: `### Network\n\`\`\`json\n${JSON.stringify(networkData, null, 2)}\n\`\`\``,
+          },
         ];
         if ('image' in shot) {
           content.push({ type: 'image', data: shot.image, mimeType: shot.mimeType });

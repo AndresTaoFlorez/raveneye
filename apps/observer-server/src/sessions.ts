@@ -30,12 +30,7 @@ export interface SessionSpec {
   headless: boolean;
 }
 
-export type SessionState =
-  | 'starting'
-  | 'running'
-  | 'stopping'
-  | 'stopped'
-  | 'failed';
+export type SessionState = 'starting' | 'running' | 'stopping' | 'stopped' | 'failed';
 
 export interface SessionHandle {
   id: string;
@@ -85,7 +80,12 @@ interface InternalSession extends SessionHandle {
   userDataDir: string;
 }
 
-function spawnLogged(name: string, command: string, args: string[], env: NodeJS.ProcessEnv): ChildProcess {
+function spawnLogged(
+  name: string,
+  command: string,
+  args: string[],
+  env: NodeJS.ProcessEnv,
+): ChildProcess {
   const child = spawn(command, args, { env, stdio: ['ignore', 'pipe', 'pipe'] });
   child.stdout?.on('data', (data) => {
     process.stdout.write(`[${name}] ${data}`);
@@ -124,7 +124,10 @@ async function waitForCdp(port: number, timeoutMs: number): Promise<void> {
   throw new Error(`CDP did not come up on port ${port} within ${timeoutMs}ms`);
 }
 
-async function firstPage(context: BrowserContext, timeoutMs: number): Promise<Awaited<ReturnType<BrowserContext['newPage']>>> {
+async function firstPage(
+  context: BrowserContext,
+  timeoutMs: number,
+): Promise<Awaited<ReturnType<BrowserContext['newPage']>>> {
   const existing = context.pages()[0];
   if (existing) return existing;
   return new Promise((resolve, reject) => {
@@ -210,9 +213,9 @@ export class SessionStore {
   }
 
   get(id: string): SessionRecord | null {
-    const row = this.db.prepare('SELECT * FROM observer_sessions WHERE id = ?').get(id) as unknown as
-      | SessionRecordRow
-      | undefined;
+    const row = this.db
+      .prepare('SELECT * FROM observer_sessions WHERE id = ?')
+      .get(id) as unknown as SessionRecordRow | undefined;
     return row ? rowToSessionRecord(row) : null;
   }
 
@@ -533,35 +536,56 @@ export class SessionManager {
       DISPLAY: spec.ports.display,
     };
 
-    const xvfb = spawnLogged('xvfb-' + spec.slot, '/usr/bin/Xvfb', [
-      spec.ports.display,
-      '-screen', '0',
-      `${spec.viewportWidth}x${spec.viewportHeight}x24`,
-      '-nolisten', 'tcp',
-    ], env);
+    const xvfb = spawnLogged(
+      'xvfb-' + spec.slot,
+      '/usr/bin/Xvfb',
+      [
+        spec.ports.display,
+        '-screen',
+        '0',
+        `${spec.viewportWidth}x${spec.viewportHeight}x24`,
+        '-nolisten',
+        'tcp',
+      ],
+      env,
+    );
     session.processes.push(xvfb);
     await waitForFile(`/tmp/.X11-unix/X${spec.ports.display.replace(':', '')}`, 15_000);
 
-    const x11vnc = spawnLogged('x11vnc-' + spec.slot, '/usr/bin/x11vnc', [
-      '-display', spec.ports.display,
-      '-forever', '-shared', '-nopw', '-localhost',
-      '-rfbport', String(spec.ports.vnc),
-      '-repeat', '-quiet',
-    ], env);
+    const x11vnc = spawnLogged(
+      'x11vnc-' + spec.slot,
+      '/usr/bin/x11vnc',
+      [
+        '-display',
+        spec.ports.display,
+        '-forever',
+        '-shared',
+        '-nopw',
+        '-localhost',
+        '-rfbport',
+        String(spec.ports.vnc),
+        '-repeat',
+        '-quiet',
+      ],
+      env,
+    );
     session.processes.push(x11vnc);
 
-    const novnc = spawnLogged('novnc-' + spec.slot, '/usr/bin/websockify', [
-      '--web=/usr/share/novnc',
-      String(spec.ports.novnc),
-      `127.0.0.1:${spec.ports.vnc}`,
-    ], env);
+    const novnc = spawnLogged(
+      'novnc-' + spec.slot,
+      '/usr/bin/websockify',
+      ['--web=/usr/share/novnc', String(spec.ports.novnc), `127.0.0.1:${spec.ports.vnc}`],
+      env,
+    );
     session.processes.push(novnc);
 
     const cdpInternal = spec.slot === 'base' ? this.cfg.cdpInternalPort : spec.ports.cdp + 1000;
-    const cdpProxy = spawnLogged('cdp-' + spec.slot, '/usr/bin/socat', [
-      `TCP-LISTEN:${spec.ports.cdp},fork,reuseaddr`,
-      `TCP:127.0.0.1:${cdpInternal}`,
-    ], env);
+    const cdpProxy = spawnLogged(
+      'cdp-' + spec.slot,
+      '/usr/bin/socat',
+      [`TCP-LISTEN:${spec.ports.cdp},fork,reuseaddr`, `TCP:127.0.0.1:${cdpInternal}`],
+      env,
+    );
     session.processes.push(cdpProxy);
 
     const context = await chromium.launchPersistentContext(session.userDataDir, {
@@ -604,7 +628,12 @@ export class SessionManager {
     } else {
       await page.waitForLoadState('domcontentloaded', { timeout: 30_000 }).catch(() => undefined);
     }
-    await Promise.all(context.pages().filter((p) => p !== page).map((p) => p.close().catch(() => undefined)));
+    await Promise.all(
+      context
+        .pages()
+        .filter((p) => p !== page)
+        .map((p) => p.close().catch(() => undefined)),
+    );
     await page.bringToFront();
   }
 

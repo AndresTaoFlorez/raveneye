@@ -5,7 +5,12 @@ import { AppsList } from '@/presentation/components/apps/AppsList';
 import { ConfirmDialog } from '@/presentation/components/shared/ConfirmDialog';
 import { Modal } from '@/presentation/components/shared/Modal';
 import { useAppFormController } from '@/presentation/hooks/useAppFormController';
-import { loadDashboard, openApp, removeApp, stopSession } from '@/presentation/store/dashboardSlice';
+import {
+  loadDashboard,
+  openApp,
+  removeApp,
+  stopSession,
+} from '@/presentation/store/dashboardSlice';
 import { useAppDispatch, useAppSelector } from '@/presentation/store/store';
 import styles from './ObservedAppsView.module.css';
 

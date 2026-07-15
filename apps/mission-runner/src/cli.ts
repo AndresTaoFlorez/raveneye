@@ -22,7 +22,9 @@ for (const arg of rest) {
 if (cmd === 'validate') {
   try {
     const mission = loadMission(await readFile(file, 'utf8'));
-    console.log(`valid: ${mission.name} (${mission.steps.length} steps, ${mission.checks.length} checks)`);
+    console.log(
+      `valid: ${mission.name} (${mission.steps.length} steps, ${mission.checks.length} checks)`,
+    );
     process.exit(EXIT.PASS);
   } catch (err) {
     console.error(`invalid mission: ${(err as Error).message}`);
@@ -37,7 +39,8 @@ const envTrue = (v: string | undefined, fallback: boolean) =>
 
 const code = await runMission({
   missionFile: file,
-  targetUrlOverride: typeof flags.get('target-url') === 'string' ? String(flags.get('target-url')) : undefined,
+  targetUrlOverride:
+    typeof flags.get('target-url') === 'string' ? String(flags.get('target-url')) : undefined,
   artifactsRoot: process.env.RAVENEYE_ARTIFACTS_DIR ?? '/artifacts',
   headless:
     flags.has('headless') ||

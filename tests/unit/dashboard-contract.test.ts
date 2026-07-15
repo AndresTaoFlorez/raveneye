@@ -12,7 +12,9 @@ describe('dashboard noVNC contract', () => {
       'presentation/components/apps/AppsList.tsx',
       'infrastructure/repositories/ControlAppRepository.ts',
     ];
-    const contents = await Promise.all(files.map((file) => readFile(join(dashboardSrc, file), 'utf8')));
+    const contents = await Promise.all(
+      files.map((file) => readFile(join(dashboardSrc, file), 'utf8')),
+    );
     const joined = contents.join('\n');
 
     expect(joined).not.toContain('noVncUrlForApp');

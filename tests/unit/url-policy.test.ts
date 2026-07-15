@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { evaluateTargetUrl, mergeAllowedHosts, parseAllowedHosts } from '../../apps/shared/src/url-policy.js';
+import {
+  evaluateTargetUrl,
+  mergeAllowedHosts,
+  parseAllowedHosts,
+} from '../../apps/shared/src/url-policy.js';
 
 const policy = { allowedHosts: ['sample-app', 'host.docker.internal', 'localhost', '127.0.0.1'] };
 
@@ -46,10 +50,8 @@ describe('parseAllowedHosts', () => {
 
 describe('mergeAllowedHosts', () => {
   it('merges host groups case-insensitively without duplicates', () => {
-    expect(mergeAllowedHosts(['sample-app', 'LOCALHOST'], ['localhost', 'host.docker.internal'])).toEqual([
-      'sample-app',
-      'localhost',
-      'host.docker.internal',
-    ]);
+    expect(
+      mergeAllowedHosts(['sample-app', 'LOCALHOST'], ['localhost', 'host.docker.internal']),
+    ).toEqual(['sample-app', 'localhost', 'host.docker.internal']);
   });
 });

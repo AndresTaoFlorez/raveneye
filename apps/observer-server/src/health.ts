@@ -30,7 +30,13 @@ function tcpCheck(port: number, host = '127.0.0.1', timeoutMs = 2000): Promise<b
   });
 }
 
-function sessionComponent(prefix: string, session: SessionHandle, key: string, ok: boolean, detail: string): ComponentHealth {
+function sessionComponent(
+  prefix: string,
+  session: SessionHandle,
+  key: string,
+  ok: boolean,
+  detail: string,
+): ComponentHealth {
   return { component: `${prefix}:${session.slot}:${key}`, ok, detail };
 }
 
@@ -38,16 +44,40 @@ async function checkSessionComponents(session: SessionHandle): Promise<Component
   const components: ComponentHealth[] = [];
   const displayNum = session.ports.display.replace(':', '');
   components.push(
-    sessionComponent('session', session, 'xvfb', existsSync(`/tmp/.X11-unix/X${displayNum}`), `display ${session.ports.display}`),
+    sessionComponent(
+      'session',
+      session,
+      'xvfb',
+      existsSync(`/tmp/.X11-unix/X${displayNum}`),
+      `display ${session.ports.display}`,
+    ),
   );
   components.push(
-    sessionComponent('session', session, 'x11vnc', await tcpCheck(session.ports.vnc), `vnc tcp ${session.ports.vnc}`),
+    sessionComponent(
+      'session',
+      session,
+      'x11vnc',
+      await tcpCheck(session.ports.vnc),
+      `vnc tcp ${session.ports.vnc}`,
+    ),
   );
   components.push(
-    sessionComponent('session', session, 'novnc', await tcpCheck(session.ports.novnc), `websockify tcp ${session.ports.novnc}`),
+    sessionComponent(
+      'session',
+      session,
+      'novnc',
+      await tcpCheck(session.ports.novnc),
+      `websockify tcp ${session.ports.novnc}`,
+    ),
   );
   components.push(
-    sessionComponent('session', session, 'cdp', await tcpCheck(session.ports.cdp), `chromium devtools tcp ${session.ports.cdp}`),
+    sessionComponent(
+      'session',
+      session,
+      'cdp',
+      await tcpCheck(session.ports.cdp),
+      `chromium devtools tcp ${session.ports.cdp}`,
+    ),
   );
   components.push(
     sessionComponent(
@@ -68,7 +98,10 @@ async function checkSessionComponents(session: SessionHandle): Promise<Component
  * The target application is intentionally excluded: a broken target must
  * never make the observer container unhealthy.
  */
-export async function collectHealth(cfg: ObserverConfig, sessions: SessionHandle[]): Promise<HealthReport> {
+export async function collectHealth(
+  cfg: ObserverConfig,
+  sessions: SessionHandle[],
+): Promise<HealthReport> {
   const components: ComponentHealth[] = [];
   for (const session of sessions) {
     components.push(...(await checkSessionComponents(session)));

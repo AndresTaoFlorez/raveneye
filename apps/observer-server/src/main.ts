@@ -64,7 +64,9 @@ async function main() {
     if (baseContext) collector.attach(baseContext);
   } catch (err) {
     console.error(`[observer] base session failed to start: ${(err as Error).message}`);
-    console.error('[observer] API will run without a base session; dynamic sessions may still be created');
+    console.error(
+      '[observer] API will run without a base session; dynamic sessions may still be created',
+    );
   }
 
   startApi({ cfg, registry, sessions, collector, baseSessionId, settings });

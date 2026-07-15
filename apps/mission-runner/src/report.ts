@@ -32,7 +32,9 @@ export function renderReport(args: {
   lines.push(`| Viewport | ${manifest.viewport.width}×${manifest.viewport.height} |`);
   lines.push(`| Started | ${manifest.started_at} |`);
   lines.push(`| Completed | ${manifest.completed_at} |`);
-  lines.push(`| Browser | ${manifest.browser_version} (Playwright ${manifest.playwright_version}) |`);
+  lines.push(
+    `| Browser | ${manifest.browser_version} (Playwright ${manifest.playwright_version}) |`,
+  );
   lines.push(`| Git commit | ${manifest.git_commit} |`);
   lines.push('');
 
@@ -73,10 +75,14 @@ export function renderReport(args: {
 
   lines.push('## Evidence summary');
   lines.push('');
-  lines.push(`- console entries: ${args.console.length} (errors: ${args.console.filter((c) => c.level === 'error').length})`);
+  lines.push(
+    `- console entries: ${args.console.length} (errors: ${args.console.filter((c) => c.level === 'error').length})`,
+  );
   lines.push(`- unhandled page errors: ${args.pageErrors.length}`);
   lines.push(`- network entries: ${args.network.length} (problems: ${problems.length})`);
-  lines.push(`- screenshots: ${args.screenshots.map((s) => s.split('/').pop()).join(', ') || 'none'}`);
+  lines.push(
+    `- screenshots: ${args.screenshots.map((s) => s.split('/').pop()).join(', ') || 'none'}`,
+  );
   lines.push(`- trace: ${manifest.artifact_paths.trace ?? 'not recorded'}`);
   lines.push(`- video: ${manifest.artifact_paths.video ?? 'not recorded'}`);
   lines.push('');

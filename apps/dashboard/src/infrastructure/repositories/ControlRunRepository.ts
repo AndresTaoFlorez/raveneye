@@ -11,7 +11,9 @@ export class ControlRunRepository implements RunRepository {
   }
 
   async get(runId: string): Promise<MissionRun> {
-    const data = await this.client.get<{ run: MissionRun }>(`/api/runs/${encodeURIComponent(runId)}`);
+    const data = await this.client.get<{ run: MissionRun }>(
+      `/api/runs/${encodeURIComponent(runId)}`,
+    );
     return data.run;
   }
 }

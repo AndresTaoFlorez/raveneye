@@ -56,9 +56,9 @@ export class SettingsStore {
   }
 
   private getRaw(key: string): unknown {
-    const row = this.db.prepare('SELECT value_json FROM raveneye_settings WHERE key = ?').get(key) as
-      | { value_json: string }
-      | undefined;
+    const row = this.db
+      .prepare('SELECT value_json FROM raveneye_settings WHERE key = ?')
+      .get(key) as { value_json: string } | undefined;
     if (!row) return null;
     return JSON.parse(row.value_json) as unknown;
   }

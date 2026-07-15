@@ -58,10 +58,37 @@ describe('generateFindings', () => {
       ...base,
       checks: [{ name: 'no_unexpected_failed_requests', allow: [] }],
       network: [
-        { ts: 't', method: 'GET', url: 'http://t/a', resource_type: 'fetch', status: 500, ok: false },
-        { ts: 't', method: 'GET', url: 'http://t/b', resource_type: 'fetch', status: 404, ok: false },
-        { ts: 't', method: 'GET', url: 'http://t/c', resource_type: 'fetch', failure: 'net::ERR_ABORTED' },
-        { ts: 't', method: 'GET', url: 'http://t/ok', resource_type: 'fetch', status: 200, ok: true },
+        {
+          ts: 't',
+          method: 'GET',
+          url: 'http://t/a',
+          resource_type: 'fetch',
+          status: 500,
+          ok: false,
+        },
+        {
+          ts: 't',
+          method: 'GET',
+          url: 'http://t/b',
+          resource_type: 'fetch',
+          status: 404,
+          ok: false,
+        },
+        {
+          ts: 't',
+          method: 'GET',
+          url: 'http://t/c',
+          resource_type: 'fetch',
+          failure: 'net::ERR_ABORTED',
+        },
+        {
+          ts: 't',
+          method: 'GET',
+          url: 'http://t/ok',
+          resource_type: 'fetch',
+          status: 200,
+          ok: true,
+        },
       ],
     });
     expect(out.map((f) => f.severity)).toEqual(['high', 'medium', 'high']);

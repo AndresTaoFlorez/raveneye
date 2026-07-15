@@ -20,9 +20,7 @@ describe('missionSchema', () => {
   });
 
   it('rejects unknown actions', () => {
-    expect(() =>
-      missionSchema.parse({ ...valid, steps: [{ action: 'teleport' }] }),
-    ).toThrow();
+    expect(() => missionSchema.parse({ ...valid, steps: [{ action: 'teleport' }] })).toThrow();
   });
 
   it('rejects unknown checks', () => {

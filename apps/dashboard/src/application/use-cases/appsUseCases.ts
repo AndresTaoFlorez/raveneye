@@ -23,4 +23,5 @@ export const submitAppUseCase = (
 
 export const deleteAppUseCase = (repo: AppRepository, id: string): Promise<void> => repo.delete(id);
 
-export const openAppUseCase = (repo: AppRepository, id: string): Promise<OpenAppResult> => repo.open(id);
+export const openAppUseCase = (repo: AppRepository, id: string): Promise<OpenAppResult> =>
+  repo.open(id);

@@ -93,13 +93,23 @@ function renderInline(text: string, context: RenderContext, keyPrefix: string): 
       const target = resolveDocHref(href, context.currentDoc, context.docs);
       if (target) {
         parts.push(
-          <button className={styles.docLink} key={key} type="button" onClick={() => context.openDoc(target.slug)}>
+          <button
+            className={styles.docLink}
+            key={key}
+            type="button"
+            onClick={() => context.openDoc(target.slug)}
+          >
             {label}
           </button>,
         );
       } else {
         parts.push(
-          <a key={key} href={href} target={externalHref(href) ? '_blank' : undefined} rel="noreferrer">
+          <a
+            key={key}
+            href={href}
+            target={externalHref(href) ? '_blank' : undefined}
+            rel="noreferrer"
+          >
             {label}
           </a>,
         );
@@ -189,7 +199,13 @@ function renderMarkdown(content: string, context: RenderContext) {
         skippedTitle = true;
         continue;
       }
-      nodes.push(createElement(`h${Math.min(level, 6)}`, { key: `heading-${index}` }, inline(text, `heading-${index}`)));
+      nodes.push(
+        createElement(
+          `h${Math.min(level, 6)}`,
+          { key: `heading-${index}` },
+          inline(text, `heading-${index}`),
+        ),
+      );
       continue;
     }
 
@@ -203,7 +219,11 @@ function renderMarkdown(content: string, context: RenderContext) {
       const headers = splitTableRow(lines[index] ?? '');
       index += 2;
       const rows: string[][] = [];
-      while (index < lines.length && (lines[index] ?? '').includes('|') && (lines[index] ?? '').trim()) {
+      while (
+        index < lines.length &&
+        (lines[index] ?? '').includes('|') &&
+        (lines[index] ?? '').trim()
+      ) {
         rows.push(splitTableRow(lines[index] ?? ''));
         index += 1;
       }
@@ -211,12 +231,18 @@ function renderMarkdown(content: string, context: RenderContext) {
         <div className={styles.tableWrap} key={`table-${index}`}>
           <table>
             <thead>
-              <tr>{headers.map((cell, cellIndex) => <th key={cellIndex}>{inline(cell, `th-${index}-${cellIndex}`)}</th>)}</tr>
+              <tr>
+                {headers.map((cell, cellIndex) => (
+                  <th key={cellIndex}>{inline(cell, `th-${index}-${cellIndex}`)}</th>
+                ))}
+              </tr>
             </thead>
             <tbody>
               {rows.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {row.map((cell, cellIndex) => <td key={cellIndex}>{inline(cell, `td-${index}-${rowIndex}-${cellIndex}`)}</td>)}
+                  {row.map((cell, cellIndex) => (
+                    <td key={cellIndex}>{inline(cell, `td-${index}-${rowIndex}-${cellIndex}`)}</td>
+                  ))}
                 </tr>
               ))}
             </tbody>
@@ -241,7 +267,9 @@ function renderMarkdown(content: string, context: RenderContext) {
       const ListTag = orderedList ? 'ol' : 'ul';
       nodes.push(
         <ListTag key={`list-${index}`}>
-          {items.map((item, itemIndex) => <li key={itemIndex}>{inline(item, `li-${index}-${itemIndex}`)}</li>)}
+          {items.map((item, itemIndex) => (
+            <li key={itemIndex}>{inline(item, `li-${index}-${itemIndex}`)}</li>
+          ))}
         </ListTag>,
       );
       continue;
@@ -253,7 +281,9 @@ function renderMarkdown(content: string, context: RenderContext) {
         quote.push((lines[index] ?? '').replace(/^>\s?/, ''));
         index += 1;
       }
-      nodes.push(<blockquote key={`quote-${index}`}>{inline(quote.join(' '), `quote-${index}`)}</blockquote>);
+      nodes.push(
+        <blockquote key={`quote-${index}`}>{inline(quote.join(' '), `quote-${index}`)}</blockquote>,
+      );
       continue;
     }
 
@@ -309,7 +339,10 @@ export function DocsView() {
   }, [activeSlug]);
 
   const content = useMemo(
-    () => (activeDoc ? renderMarkdown(activeDoc.content, { docs, currentDoc: activeDoc, openDoc }) : null),
+    () =>
+      activeDoc
+        ? renderMarkdown(activeDoc.content, { docs, currentDoc: activeDoc, openDoc })
+        : null,
     [activeDoc, docs],
   );
 

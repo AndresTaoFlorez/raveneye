@@ -76,10 +76,7 @@ export interface KeyboardInspection {
 }
 
 export type Inspection =
-  | OverflowInspection
-  | A11yInspection
-  | ControlsInspection
-  | KeyboardInspection;
+  OverflowInspection | A11yInspection | ControlsInspection | KeyboardInspection;
 
 export interface RunManifest {
   run_id: string;

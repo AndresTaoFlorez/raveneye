@@ -1,6 +1,10 @@
 import type { SystemRepository } from '@/application/ports/SystemRepository';
 import type { ObserverSession } from '@/domain/entities/ObserverSession';
-import type { HealthReport, ObserverStatus, RavenEyeSettings } from '@/domain/entities/SystemStatus';
+import type {
+  HealthReport,
+  ObserverStatus,
+  RavenEyeSettings,
+} from '@/domain/entities/SystemStatus';
 import type { ControlApiClient } from '@/infrastructure/http/controlApiClient';
 
 export class ControlSystemRepository implements SystemRepository {
@@ -25,7 +29,9 @@ export class ControlSystemRepository implements SystemRepository {
   }
 
   async stopSession(id: string): Promise<ObserverSession> {
-    const data = await this.client.delete<{ session: ObserverSession }>(`/api/sessions/${encodeURIComponent(id)}`);
+    const data = await this.client.delete<{ session: ObserverSession }>(
+      `/api/sessions/${encodeURIComponent(id)}`,
+    );
     return data.session;
   }
 }

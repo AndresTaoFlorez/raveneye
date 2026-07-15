@@ -7,12 +7,17 @@ import { startApi } from '../../apps/observer-server/src/api.js';
 import { AppRegistry } from '../../apps/observer-server/src/apps.js';
 import type { ObserverConfig } from '../../apps/observer-server/src/config.js';
 import type { EvidenceCollector } from '../../apps/observer-server/src/evidence.js';
-import { SessionLimitError, type SessionHandle, type SessionManager } from '../../apps/observer-server/src/sessions.js';
+import {
+  SessionLimitError,
+  type SessionHandle,
+  type SessionManager,
+} from '../../apps/observer-server/src/sessions.js';
 import type { SettingsStore } from '../../apps/observer-server/src/settings.js';
 
 let tempDir: string | null = null;
 let server: http.Server | null = null;
 let currentRegistry: AppRegistry | null = null;
+let nextApiPort = 18_090;
 
 const collector = {
   getConsole: () => [],
@@ -63,14 +68,18 @@ function handle(overrides: Partial<SessionHandle>): SessionHandle {
     startedAt: overrides.startedAt ?? new Date().toISOString(),
     stoppedAt: overrides.stoppedAt ?? null,
     detail: overrides.detail ?? null,
-    novncUrl: overrides.novncUrl ?? `http://127.0.0.1:${novnc}/vnc.html?autoconnect=true&resize=scale`,
+    novncUrl:
+      overrides.novncUrl ?? `http://127.0.0.1:${novnc}/vnc.html?autoconnect=true&resize=scale`,
     cdpUrl: overrides.cdpUrl ?? `http://127.0.0.1:${cdp}`,
   };
 }
 
 class FakeSessions {
   readonly sessions = new Map<string, SessionHandle>();
-  readonly contexts = new Map<string, { pages: () => unknown[]; newPage: () => Promise<unknown> }>();
+  readonly contexts = new Map<
+    string,
+    { pages: () => unknown[]; newPage: () => Promise<unknown> }
+  >();
   navigatedTo = '';
 
   constructor(private readonly maxDynamic = 3) {
@@ -96,7 +105,9 @@ class FakeSessions {
   }
 
   findRunningForApp(appId: string) {
-    return this.list().find((session) => session.appId === appId && session.state === 'running') ?? null;
+    return (
+      this.list().find((session) => session.appId === appId && session.state === 'running') ?? null
+    );
   }
 
   contextOf(id: string) {
@@ -111,7 +122,8 @@ class FakeSessions {
     viewportHeight: number;
   }) {
     const dynamicCount = this.list().filter((session) => session.slot !== 'base').length;
-    if (dynamicCount >= this.maxDynamic) throw new SessionLimitError('maximum dynamic sessions reached');
+    if (dynamicCount >= this.maxDynamic)
+      throw new SessionLimitError('maximum dynamic sessions reached');
     const slot = String(dynamicCount);
     const session = handle({
       id: `sess-${slot}`,
@@ -119,7 +131,12 @@ class FakeSessions {
       appId: opts.appId,
       targetUrl: new URL(opts.targetUrl).toString(),
       allowedHosts: opts.allowedHosts,
-      ports: { display: `:${98 - dynamicCount}`, vnc: 5901 + dynamicCount * 2, novnc: 6081 + dynamicCount * 2, cdp: 9223 + dynamicCount },
+      ports: {
+        display: `:${98 - dynamicCount}`,
+        vnc: 5901 + dynamicCount * 2,
+        novnc: 6081 + dynamicCount * 2,
+        cdp: 9223 + dynamicCount,
+      },
     });
     this.sessions.set(session.id, session);
     return session;
@@ -138,7 +155,7 @@ async function startTestApi(fakeSessions = new FakeSessions()) {
   const registry = new AppRegistry(join(tempDir, 'raveneye.sqlite'));
   currentRegistry = registry;
   server = startApi({
-    cfg: cfg(),
+    cfg: cfg(nextApiPort++),
     collector,
     registry,
     sessions: fakeSessions as unknown as SessionManager,
@@ -205,7 +222,11 @@ describe('app registry API', () => {
     const res = await fetch(`${baseUrl}/api/apps`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ name: 'External', target_url: 'https://example.com', allowed_hosts: [] }),
+      body: JSON.stringify({
+        name: 'External',
+        target_url: 'https://example.com',
+        allowed_hosts: [],
+      }),
     });
     expect(res.status).toBe(201);
   });

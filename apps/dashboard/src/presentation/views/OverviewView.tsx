@@ -108,8 +108,16 @@ export function OverviewView() {
                 {selectedApp ? (
                   <button
                     type="button"
-                    aria-label={selectedSession ? 'Refresh selected session preview' : 'Open selected app session'}
-                    title={selectedSession ? 'Refresh selected session preview' : 'Open selected app session'}
+                    aria-label={
+                      selectedSession
+                        ? 'Refresh selected session preview'
+                        : 'Open selected app session'
+                    }
+                    title={
+                      selectedSession
+                        ? 'Refresh selected session preview'
+                        : 'Open selected app session'
+                    }
                     onClick={() => void openAppSession(selectedApp.id)}
                   >
                     <EyeIcon />
@@ -120,7 +128,9 @@ export function OverviewView() {
                     type="button"
                     aria-label="Open selected session in a new tab"
                     title="Open selected session in a new tab"
-                    onClick={() => window.open(selectedSession.novncUrl, '_blank', 'noopener,noreferrer')}
+                    onClick={() =>
+                      window.open(selectedSession.novncUrl, '_blank', 'noopener,noreferrer')
+                    }
                   >
                     <ExternalIcon />
                   </button>
@@ -135,74 +145,87 @@ export function OverviewView() {
               />
             ) : (
               <div className={styles.previewEmpty}>
-                <p>{selectedApp ? 'Open this app to start a live observed session.' : 'Select or register an app to preview it here.'}</p>
+                <p>
+                  {selectedApp
+                    ? 'Open this app to start a live observed session.'
+                    : 'Select or register an app to preview it here.'}
+                </p>
               </div>
             )}
           </div>
 
           <div className={styles.windowGrid} aria-label="Observed browser windows">
             {apps.map((app) => {
-              const session = sessions.find((item) => item.appId === app.id && item.state === 'running');
+              const session = sessions.find(
+                (item) => item.appId === app.id && item.state === 'running',
+              );
               return (
-              <article
-                role="button"
-                tabIndex={0}
-                className={
-                  app.id === selectedApp?.id
-                    ? `${styles.miniWindow} ${styles.selectedWindow}`
-                    : styles.miniWindow
-                }
-                key={app.id}
-                onClick={() => previewApp(app.id, Boolean(session))}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    previewApp(app.id, Boolean(session));
+                <article
+                  role="button"
+                  tabIndex={0}
+                  className={
+                    app.id === selectedApp?.id
+                      ? `${styles.miniWindow} ${styles.selectedWindow}`
+                      : styles.miniWindow
                   }
-                }}
-                aria-label={session ? `Preview ${app.name}` : `Open and preview ${app.name}`}
-              >
-                <div className={styles.windowBar}>
-                  <span />
-                  <span />
-                  <span />
-                  <strong>{session ? session.slot : 'idle'}</strong>
-                </div>
-                <div className={styles.windowBody}>
-                  <p>{app.name}</p>
-                  <small>{session?.targetUrl ?? 'Not open yet'}</small>
-                  <div className={styles.windowActions}>
-                    <button
-                      type="button"
-                      aria-label={session ? `Refresh preview for ${app.name}` : `Open and preview ${app.name}`}
-                      title={session ? 'Refresh preview' : 'Open and preview'}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        previewApp(app.id, Boolean(session));
-                      }}
-                    >
-                      <EyeIcon />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={session ? `Open ${app.name} in a new tab` : `Open ${app.name} session in a new tab`}
-                      title={session ? 'Open in new tab' : 'Open session in new tab'}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        if (session) window.open(session.novncUrl, '_blank', 'noopener,noreferrer');
-                        else void openAppSession(app.id, true);
-                      }}
-                    >
-                      <ExternalIcon />
-                    </button>
+                  key={app.id}
+                  onClick={() => previewApp(app.id, Boolean(session))}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      previewApp(app.id, Boolean(session));
+                    }
+                  }}
+                  aria-label={session ? `Preview ${app.name}` : `Open and preview ${app.name}`}
+                >
+                  <div className={styles.windowBar}>
+                    <span />
+                    <span />
+                    <span />
+                    <strong>{session ? session.slot : 'idle'}</strong>
                   </div>
-                </div>
-              </article>
-            );
+                  <div className={styles.windowBody}>
+                    <p>{app.name}</p>
+                    <small>{session?.targetUrl ?? 'Not open yet'}</small>
+                    <div className={styles.windowActions}>
+                      <button
+                        type="button"
+                        aria-label={
+                          session
+                            ? `Refresh preview for ${app.name}`
+                            : `Open and preview ${app.name}`
+                        }
+                        title={session ? 'Refresh preview' : 'Open and preview'}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          previewApp(app.id, Boolean(session));
+                        }}
+                      >
+                        <EyeIcon />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={
+                          session
+                            ? `Open ${app.name} in a new tab`
+                            : `Open ${app.name} session in a new tab`
+                        }
+                        title={session ? 'Open in new tab' : 'Open session in new tab'}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          if (session)
+                            window.open(session.novncUrl, '_blank', 'noopener,noreferrer');
+                          else void openAppSession(app.id, true);
+                        }}
+                      >
+                        <ExternalIcon />
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
             })}
-            {!apps.length ? (
-              <p className={styles.empty}>No observed apps registered yet.</p>
-            ) : null}
+            {!apps.length ? <p className={styles.empty}>No observed apps registered yet.</p> : null}
           </div>
         </article>
 
@@ -219,7 +242,9 @@ export function OverviewView() {
                 <dt>Target URL</dt>
                 <dd>{selectedApp.target_url}</dd>
                 <dt>Session</dt>
-                <dd>{selectedSession ? `${selectedSession.id} (${selectedSession.slot})` : 'Not open'}</dd>
+                <dd>
+                  {selectedSession ? `${selectedSession.id} (${selectedSession.slot})` : 'Not open'}
+                </dd>
                 <dt>Watch URL</dt>
                 <dd>{selectedSession?.novncUrl ?? 'Created by backend when app opens'}</dd>
                 <dt>CDP URL</dt>

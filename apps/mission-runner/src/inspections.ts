@@ -144,7 +144,10 @@ export async function inspectInteractiveControls(page: Page): Promise<ControlsIn
 }
 
 export async function inspectKeyboardNavigation(page: Page): Promise<KeyboardInspection> {
-  await page.locator('body').focus().catch(() => {});
+  await page
+    .locator('body')
+    .focus()
+    .catch(() => {});
   const sequence: string[] = [];
   const seen = new Set<string>();
   for (let i = 0; i < 15; i++) {

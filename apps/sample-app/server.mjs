@@ -137,7 +137,8 @@ const pages = {
     const broken = url.searchParams.get('broken') === '1';
     const items = Array.from(
       { length: 6 },
-      (_, i) => `<figure class="tile"><div class="ph"></div><figcaption>Sketch ${i + 1}</figcaption></figure>`,
+      (_, i) =>
+        `<figure class="tile"><div class="ph"></div><figcaption>Sketch ${i + 1}</figcaption></figure>`,
     ).join('');
     const brokenBlock = broken
       ? '<div style="width:1200px" class="card">This element has a fixed 1200px width and breaks small viewports on purpose.</div>'

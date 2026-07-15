@@ -38,9 +38,9 @@ steps:
 checks:
   - no_unhandled_page_errors
   - name: no_critical_console_errors
-    allow: ["favicon.ico"]
+    allow: ['favicon.ico']
   - name: no_unexpected_failed_requests
-    allow: ["favicon.ico"]
+    allow: ['favicon.ico']
   - no_horizontal_overflow
   - interactive_controls_visible
   - keyboard_navigation_available

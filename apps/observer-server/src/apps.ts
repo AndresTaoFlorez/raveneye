@@ -89,7 +89,8 @@ export function normalizeAllowedHosts(value: unknown): string[] {
   const seen = new Set<string>();
   const hosts: string[] = [];
   for (const entry of raw) {
-    if (typeof entry !== 'string') throw new ValidationError('allowed_hosts entries must be strings');
+    if (typeof entry !== 'string')
+      throw new ValidationError('allowed_hosts entries must be strings');
     const host = entry.trim().toLowerCase();
     if (!host || seen.has(host)) continue;
     seen.add(host);
@@ -104,15 +105,24 @@ function normalizeRunMode(value: unknown): RunMode {
   throw new ValidationError('run_mode must be "host" or "container"');
 }
 
-export function validateObservedAppInput(input: ObservedAppInput, existing?: ObservedApp): ObservedApp {
+export function validateObservedAppInput(
+  input: ObservedAppInput,
+  existing?: ObservedApp,
+): ObservedApp {
   const now = new Date().toISOString();
-  if (existing && input.target_url !== undefined && requiredString(input.target_url, 'target_url') !== existing.target_url) {
+  if (
+    existing &&
+    input.target_url !== undefined &&
+    requiredString(input.target_url, 'target_url') !== existing.target_url
+  ) {
     throw new ValidationError('target_url cannot be changed after an app is registered');
   }
   let targetHost: string;
   try {
     targetHost = new URL(
-      input.target_url === undefined && existing ? existing.target_url : requiredString(input.target_url, 'target_url'),
+      input.target_url === undefined && existing
+        ? existing.target_url
+        : requiredString(input.target_url, 'target_url'),
     ).hostname;
   } catch {
     throw new ValidationError('target_url must be a valid absolute URL');
@@ -121,8 +131,13 @@ export function validateObservedAppInput(input: ObservedAppInput, existing?: Obs
     id: existing?.id ?? optionalId(input.id) ?? randomUUID(),
     name: input.name === undefined && existing ? existing.name : requiredString(input.name, 'name'),
     description:
-      input.description === undefined && existing ? existing.description : optionalString(input.description),
-    target_url: input.target_url === undefined && existing ? existing.target_url : requiredString(input.target_url, 'target_url'),
+      input.description === undefined && existing
+        ? existing.description
+        : optionalString(input.description),
+    target_url:
+      input.target_url === undefined && existing
+        ? existing.target_url
+        : requiredString(input.target_url, 'target_url'),
     allowed_hosts:
       input.allowed_hosts === undefined && existing
         ? existing.allowed_hosts
@@ -131,7 +146,10 @@ export function validateObservedAppInput(input: ObservedAppInput, existing?: Obs
       input.local_repo_path === undefined && existing
         ? existing.local_repo_path
         : optionalString(input.local_repo_path),
-    run_mode: input.run_mode === undefined && existing ? existing.run_mode : normalizeRunMode(input.run_mode),
+    run_mode:
+      input.run_mode === undefined && existing
+        ? existing.run_mode
+        : normalizeRunMode(input.run_mode),
     default_viewport_width:
       input.default_viewport_width === undefined && existing
         ? existing.default_viewport_width
@@ -213,8 +231,7 @@ export class AppRegistry {
 
   get(id: string): ObservedApp | null {
     const row = this.db.prepare('SELECT * FROM observed_apps WHERE id = ?').get(id) as unknown as
-      | ObservedAppRow
-      | undefined;
+      ObservedAppRow | undefined;
     return row ? rowToApp(row) : null;
   }
 

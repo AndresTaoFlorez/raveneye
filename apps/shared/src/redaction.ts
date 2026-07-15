@@ -6,9 +6,11 @@
 
 export const REDACTED = '[REDACTED]';
 
-const SENSITIVE_HEADERS = /^(authorization|proxy-authorization|cookie|set-cookie|x-api-key|x-auth-token|x-csrf-token)$/i;
+const SENSITIVE_HEADERS =
+  /^(authorization|proxy-authorization|cookie|set-cookie|x-api-key|x-auth-token|x-csrf-token)$/i;
 
-const SENSITIVE_PARAMS = /(token|secret|password|passwd|api[-_]?key|auth|session|credential|bearer)/i;
+const SENSITIVE_PARAMS =
+  /(token|secret|password|passwd|api[-_]?key|auth|session|credential|bearer)/i;
 
 /** Values that look like bearer/base64 credentials inside free text. */
 const BEARER_IN_TEXT = /\b(bearer|basic)\s+[a-z0-9._~+/=-]{8,}/gi;
