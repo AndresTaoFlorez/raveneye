@@ -9,12 +9,26 @@ import {
 import { chromium } from 'playwright-core';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { homedir } from 'node:os';
+import { homedir, hostname } from 'node:os';
 
 const API = process.env['RAVENEYE_API'] ?? 'http://127.0.0.1:8090';
 const CDP = process.env['RAVENEYE_CDP'] ?? 'http://127.0.0.1:9222';
 // Default: ~/.raveneye/artifacts — matches the install script's bind mount location.
 const ARTIFACTS = process.env['RAVENEYE_ARTIFACTS'] ?? join(homedir(), '.raveneye', 'artifacts');
+const AGENT_ID =
+  process.env['RAVENEYE_AGENT_ID'] ??
+  `mcp-${hostname().replace(/[^a-zA-Z0-9_.:-]/g, '-')}-${process.pid}`;
+const AGENT_LABEL = process.env['RAVENEYE_AGENT_LABEL'] ?? `RavenEye MCP ${process.pid}`;
+
+interface ActiveSession {
+  id: string;
+  appId: string;
+  cdpUrl: string;
+  novncUrl: string;
+  targetUrl: string;
+}
+
+let activeSession: ActiveSession | null = null;
 
 async function api(path: string, opts?: RequestInit): Promise<unknown> {
   const res = await fetch(`${API}${path}`, opts);
@@ -29,6 +43,46 @@ async function apiPost(path: string, body?: unknown): Promise<unknown> {
   });
 }
 
+function rememberSession(data: unknown): ActiveSession | null {
+  const payload = data as {
+    session?: {
+      id?: unknown;
+      appId?: unknown;
+      cdpUrl?: unknown;
+      novncUrl?: unknown;
+      targetUrl?: unknown;
+    };
+  };
+  const session = payload.session;
+  if (
+    typeof session?.id !== 'string' ||
+    typeof session.appId !== 'string' ||
+    typeof session.cdpUrl !== 'string' ||
+    typeof session.novncUrl !== 'string' ||
+    typeof session.targetUrl !== 'string'
+  ) {
+    return null;
+  }
+  activeSession = {
+    id: session.id,
+    appId: session.appId,
+    cdpUrl: session.cdpUrl,
+    novncUrl: session.novncUrl,
+    targetUrl: session.targetUrl,
+  };
+  return activeSession;
+}
+
+async function acquireSession(body: Record<string, unknown>): Promise<unknown> {
+  const data = await apiPost('/api/sessions/acquire', {
+    ...body,
+    agentId: body['agentId'] ?? body['agent_id'] ?? AGENT_ID,
+    label: body['label'] ?? AGENT_LABEL,
+  });
+  rememberSession(data);
+  return data;
+}
+
 // Maps the Docker-internal artifact path to the host-mounted path.
 function hostPath(dockerPath: string): string {
   // /artifacts/screenshots/foo.png → <ARTIFACTS>/screenshots/foo.png
@@ -37,6 +91,17 @@ function hostPath(dockerPath: string): string {
 }
 
 async function screenshotImageContent(name: string, fullPage: boolean) {
+  if (activeSession) {
+    return withCdpPage(async (page) => {
+      const data = await page.screenshot({ fullPage });
+      return {
+        image: data.toString('base64'),
+        mimeType: 'image/png',
+        path: `session:${activeSession?.id}/${name}.png`,
+      };
+    });
+  }
+
   const result = (await apiPost('/screenshot', { name, full_page: fullPage })) as {
     ok: boolean;
     path?: string;
@@ -69,7 +134,8 @@ const TOOLS: Tool[] = [
   },
   {
     name: 'raveneye_navigate',
-    description: 'Navigate the shared browser to a URL. The URL must be in the allowed-hosts list.',
+    description:
+      'Navigate this agent-owned Raveneye session to a URL. The URL must be in the allowed-hosts list.',
     inputSchema: {
       type: 'object',
       properties: { url: { type: 'string', description: 'Absolute URL to navigate to' } },
@@ -78,7 +144,8 @@ const TOOLS: Tool[] = [
   },
   {
     name: 'raveneye_screenshot',
-    description: 'Take a screenshot of the current browser page and return it as an inline image.',
+    description:
+      'Take a screenshot of this agent-owned browser session and return it as an inline image.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -132,7 +199,7 @@ const TOOLS: Tool[] = [
   },
   {
     name: 'raveneye_click',
-    description: 'Click a DOM element in the shared browser using a CSS selector or role locator.',
+    description: 'Click a DOM element in this agent-owned browser session.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -143,7 +210,7 @@ const TOOLS: Tool[] = [
   },
   {
     name: 'raveneye_fill',
-    description: 'Fill a text input or textarea in the shared browser.',
+    description: 'Fill a text input or textarea in this agent-owned browser session.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -161,7 +228,7 @@ const TOOLS: Tool[] = [
   {
     name: 'raveneye_app_open',
     description:
-      'Open a dynamic isolated browser session for a registered app. Returns the session CDP URL and watch URL.',
+      'Open or acquire this agent-owned isolated browser session for a registered app. Returns the session CDP URL and watch URL.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -172,8 +239,8 @@ const TOOLS: Tool[] = [
   },
 ];
 
-async function withCdpPage<T>(fn: (page: import('playwright').Page) => Promise<T>): Promise<T> {
-  const browser = await chromium.connectOverCDP(CDP);
+async function withCdpPage<T>(fn: (page: import('playwright-core').Page) => Promise<T>): Promise<T> {
+  const browser = await chromium.connectOverCDP(activeSession?.cdpUrl ?? CDP);
   try {
     const ctx = browser.contexts()[0];
     if (!ctx) throw new Error('No browser context available — is the Raveneye stack running?');
@@ -202,11 +269,18 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
 
       case 'raveneye_status': {
         const data = await api('/status');
-        return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({ agentId: AGENT_ID, activeSession, status: data }, null, 2),
+            },
+          ],
+        };
       }
 
       case 'raveneye_navigate': {
-        const data = await apiPost('/navigate', { url: a['url'] });
+        const data = await acquireSession({ targetUrl: a['url'] });
         return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
       }
 
@@ -287,7 +361,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       }
 
       case 'raveneye_app_open': {
-        const data = await apiPost(`/api/apps/${String(a['app_id'])}/open`);
+        const data = await acquireSession({ appId: String(a['app_id']) });
         return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
       }
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { homedir } from 'node:os';
 import { execFileSync, execSync } from 'node:child_process';
 import { platform } from 'node:process';
 
-const RAVENEYE_MCP = { command: 'npx', args: ['--yes', 'raveneye-mcp-server'] };
+const RAVENEYE_MCP = { command: 'npx', args: ['--yes', 'raveneye-mcp-server@latest'] };
 const INSTALL_DIR = process.env.RAVENEYE_HOME ?? join(homedir(), '.raveneye');
 const COMPOSE_FILE = join(INSTALL_DIR, 'compose.yaml');
 const COMPOSE_URL =
@@ -119,31 +119,37 @@ async function fix(target = 'codex') {
   console.log(`Watched browser: ${WATCH}`);
 }
 
-// Escribe un bloque en un archivo TOML si no existe ya.
+function tomlSection(header, mcp) {
+  return `${header}\ncommand = "${mcp.command}"\nargs = ${JSON.stringify(mcp.args)}\n`;
+}
+
+// Escribe o actualiza un bloque TOML.
 function registerToml(cfgPath, block) {
   const existing = existsSync(cfgPath) ? readFileSync(cfgPath, 'utf8') : '';
-  if (existing.includes('[mcp_servers.raveneye]')) {
-    console.log(`raveneye already registered in ${cfgPath}`);
+  mkdirSync(dirname(cfgPath), { recursive: true });
+  const replacement = tomlSection(block, RAVENEYE_MCP);
+  const lines = existing.split(/\r?\n/);
+  const start = lines.findIndex((line) => line.trim() === block);
+  if (start >= 0) {
+    let end = lines.findIndex((line, index) => index > start && /^\s*\[.+\]\s*$/.test(line));
+    if (end < 0) end = lines.length;
+    lines.splice(start, end - start, ...replacement.trimEnd().split('\n'));
+    writeFileSync(cfgPath, lines.join('\n').replace(/\n*$/, '\n'));
+    console.log(`Updated raveneye in ${cfgPath}`);
     return;
   }
-  mkdirSync(join(cfgPath, '..'), { recursive: true });
-  const snippet = `\n${block}\ncommand = "${RAVENEYE_MCP.command}"\nargs = ${JSON.stringify(RAVENEYE_MCP.args)}\n`;
-  writeFileSync(cfgPath, existing + snippet);
+  writeFileSync(cfgPath, `${existing.replace(/\n*$/, '')}\n\n${replacement}`);
   console.log(`Registered raveneye in ${cfgPath}`);
 }
 
 // Escribe la entrada del servidor en un archivo JSON anidado si no existe.
 function registerJson(cfgPath, keys) {
-  mkdirSync(join(cfgPath, '..'), { recursive: true });
+  mkdirSync(dirname(cfgPath), { recursive: true });
   const config = existsSync(cfgPath) ? JSON.parse(readFileSync(cfgPath, 'utf8')) : {};
   const node = keys.reduce((obj, k) => (obj[k] ??= {}), config);
-  if (node.raveneye) {
-    console.log(`raveneye already registered in ${cfgPath}`);
-    return;
-  }
   node.raveneye = RAVENEYE_MCP;
   writeFileSync(cfgPath, JSON.stringify(config, null, 2) + '\n');
-  console.log(`Registered raveneye in ${cfgPath}`);
+  console.log(`Updated raveneye in ${cfgPath}`);
 }
 
 const [, , cmd, target] = process.argv;
