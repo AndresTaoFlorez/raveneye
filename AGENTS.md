@@ -38,13 +38,14 @@ The custom MCP server lives in `apps/mcp-server/`. It wraps the HTTP API (port 8
 npm install -g raveneye-mcp-server
 npx raveneye-mcp-server setup claude   # Claude Code
 npx raveneye-mcp-server setup codex    # Codex / OpenCode (~/.codex/config.toml)
+npx raveneye-mcp-server setup zcode    # ZCode / Z.ai (~/.zcode/cli/config.json)
 ```
 
 **Option B — dev dependency in your project (`-D`):**
 ```bash
 npm install -D raveneye-mcp-server
 ```
-Add to `.claude/settings.json` / `codex.json` / `opencode.json`:
+Add to `.claude/settings.json` / `codex.json` / `opencode.json` / `.zcode/config.json`:
 ```json
 {
   "mcpServers": {

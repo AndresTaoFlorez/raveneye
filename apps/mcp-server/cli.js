@@ -19,10 +19,27 @@ if (cmd === 'setup') {
       writeFileSync(cfg, existing + block);
       console.log('Registered raveneye in ~/.codex/config.toml');
     }
+  } else if (target === 'zcode') {
+    const dir = join(homedir(), '.zcode', 'cli');
+    const cfgPath = join(dir, 'config.json');
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+    const existing = existsSync(cfgPath) ? JSON.parse(readFileSync(cfgPath, 'utf8')) : {};
+    if (!existing.mcp) existing.mcp = {};
+    if (!existing.mcp.servers) existing.mcp.servers = {};
+    if (existing.mcp.servers.raveneye) {
+      console.log('raveneye already registered in ~/.zcode/cli/config.json');
+    } else {
+      existing.mcp.servers.raveneye = {
+        command: 'npx',
+        args: ['--yes', 'raveneye-mcp-server'],
+      };
+      writeFileSync(cfgPath, JSON.stringify(existing, null, 2) + '\n');
+      console.log('Registered raveneye in ~/.zcode/cli/config.json');
+    }
   } else if (target === 'claude') {
     execSync('claude mcp add raveneye -- npx --yes raveneye-mcp-server', { stdio: 'inherit' });
   } else {
-    console.error('Usage: raveneye-mcp-server setup <codex|claude>');
+    console.error('Usage: raveneye-mcp-server setup <codex|claude|zcode>');
     process.exit(1);
   }
 } else {

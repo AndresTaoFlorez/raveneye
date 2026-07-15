@@ -112,6 +112,11 @@ npx raveneye-mcp-server setup claude
 npx raveneye-mcp-server setup codex
 ```
 
+### ZCode (Z.ai)
+```bash
+npx raveneye-mcp-server setup zcode
+```
+
 ### OpenCode / other agents
 Add to your MCP config:
 ```json
