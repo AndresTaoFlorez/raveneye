@@ -1,6 +1,6 @@
 {
   "name": "raveneye-mcp-server",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "MCP server for Raveneye — give your coding agent eyes and hands in a real browser",
   "type": "module",
   "main": "./dist/index.js",
