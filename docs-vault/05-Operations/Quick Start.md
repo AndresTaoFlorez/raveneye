@@ -6,6 +6,26 @@ tags: [operations]
 
 Use this page when you only want RavenEye running. The default stack starts one service: `raveneye`. It does not start the sample app.
 
+## Install or Update
+
+Recommended command:
+
+```powershell
+npx --yes raveneye-mcp-server@latest fix codex
+```
+
+This downloads the current NPM package, installs or repairs RavenEye, registers the MCP server for Codex, starts the local stack, and opens the dashboard.
+
+For other agents:
+
+```powershell
+npx --yes raveneye-mcp-server@latest fix claude
+npx --yes raveneye-mcp-server@latest fix zcode
+npx --yes raveneye-mcp-server@latest fix none
+```
+
+Use `fix none` when you only want RavenEye installed/repaired/opened without changing an agent configuration.
+
 ## Start RavenEye
 
 PowerShell:

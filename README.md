@@ -27,6 +27,31 @@ npx --yes raveneye-mcp-server@latest fix none
 
 `fix none` solo instala/repara/abre Raveneye, sin registrar un agente.
 
+## Actualizar Raveneye
+
+El comando recomendado es el mismo de instalación rápida:
+
+```bash
+npx --yes raveneye-mcp-server@latest fix codex
+```
+
+Ese comando descarga la versión actual desde NPM, repara/actualiza el stack local, registra MCP para Codex y abre el dashboard.
+
+Si usas otro agente:
+
+```bash
+npx --yes raveneye-mcp-server@latest fix claude
+npx --yes raveneye-mcp-server@latest fix zcode
+npx --yes raveneye-mcp-server@latest fix none
+```
+
+No necesitas entrar al repo para usar este flujo. Si actualizas manualmente con Docker, sí debes estar dentro del directorio que contiene `compose.yaml`, por ejemplo:
+
+```bash
+cd D:\Projects\raveneye
+docker compose restart raveneye
+```
+
 ## URLs Importantes
 
 | URL | Para Qué Sirve |
@@ -132,6 +157,12 @@ Ver logs:
 
 ```bash
 docker compose logs -f raveneye
+```
+
+Si `docker compose` dice `no configuration file provided: not found`, estás en una carpeta que no tiene `compose.yaml`. Entra al repo de Raveneye o usa el comando recomendado:
+
+```bash
+npx --yes raveneye-mcp-server@latest fix codex
 ```
 
 Si una URL local no abre:

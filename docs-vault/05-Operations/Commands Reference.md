@@ -4,6 +4,17 @@ tags: [operations, reference]
 
 # Commands Reference
 
+## NPM installer/updater
+
+| Command | Action |
+|---|---|
+| `npx --yes raveneye-mcp-server@latest fix codex` | install/update/repair RavenEye, register Codex MCP, start/open the dashboard |
+| `npx --yes raveneye-mcp-server@latest fix claude` | same flow for Claude Code |
+| `npx --yes raveneye-mcp-server@latest fix zcode` | same flow for ZCode |
+| `npx --yes raveneye-mcp-server@latest fix none` | install/update/repair RavenEye without registering an agent |
+| `npx raveneye-mcp-server open` | open the dashboard |
+| `npx raveneye-mcp-server setup codex` | register MCP only; does not repair the stack |
+
 ## Make targets
 
 | Target | Action |

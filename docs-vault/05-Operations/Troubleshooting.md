@@ -26,6 +26,23 @@ The shared browser died; the [Observer Server](../02-Architecture/Observer%20Ser
 
 Working as intended: the [URL Policy](../06-Security/URL%20Policy.md) refused the scheme or host. Add the hostname to `RAVENEYE_ALLOWED_HOSTS` ([Configuration](./Configuration.md)) and `docker compose up -d`.
 
+## Docker Compose says "no configuration file provided"
+
+You ran `docker compose ...` from a folder that does not contain RavenEye's `compose.yaml`.
+
+Use the recommended updater instead:
+
+```powershell
+npx --yes raveneye-mcp-server@latest fix codex
+```
+
+Or run Docker commands from the RavenEye repo:
+
+```powershell
+cd D:\Projects\raveneye
+docker compose restart raveneye
+```
+
 ## Mission problems
 
 - **Exit 2 immediately** → invalid YAML or rejected target; `validate` it ([Mission Format](../03-Missions/Mission%20Format.md)).
