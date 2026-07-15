@@ -63,8 +63,11 @@ export default tseslint.config(
     files: ['apps/mcp-server/cli.js'],
     languageOptions: {
       globals: {
+        AbortSignal: 'readonly',
         console: 'readonly',
+        fetch: 'readonly',
         process: 'readonly',
+        setTimeout: 'readonly',
       },
     },
   },
