@@ -15,3 +15,9 @@ export const updateSettingsUseCase = (
   repo: SystemRepository,
   settings: Partial<RavenEyeSettings>,
 ): Promise<RavenEyeSettings> => repo.updateSettings(settings);
+
+export const resizeSessionViewportUseCase = (
+  repo: SystemRepository,
+  id: string,
+  viewport: { width: number; height: number },
+): Promise<ObserverSession> => repo.resizeSessionViewport(id, viewport);

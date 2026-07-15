@@ -1,16 +1,30 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import {
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  LayoutDashboard,
+  PlaySquare,
+  RefreshCw,
+  Settings,
+} from 'lucide-react';
 import type { ViewKey } from '@/presentation/App';
 import { clearMessage, loadDashboard } from '@/presentation/store/dashboardSlice';
 import { useAppDispatch, useAppSelector } from '@/presentation/store/store';
 import styles from './AppShell.module.css';
 
-const views: Array<{ key: ViewKey; label: string }> = [
-  { key: 'overview', label: 'Overview' },
-  { key: 'sessions', label: 'Sessions' },
-  { key: 'runs', label: 'Mission Runs' },
-  { key: 'settings', label: 'Settings' },
-  { key: 'docs', label: 'Docs' },
+const views: Array<{ key: ViewKey; label: string; Icon: typeof LayoutDashboard }> = [
+  { key: 'overview', label: 'Overview', Icon: LayoutDashboard },
+  { key: 'sessions', label: 'Sessions', Icon: PlaySquare },
+  { key: 'runs', label: 'Runs', Icon: ClipboardList },
+  { key: 'settings', label: 'Settings', Icon: Settings },
+  { key: 'docs', label: 'Docs', Icon: BookOpen },
 ];
+
+function CollapseIcon({ collapsed }: { collapsed: boolean }) {
+  return collapsed ? <ChevronRight aria-hidden="true" /> : <ChevronLeft aria-hidden="true" />;
+}
 
 export function AppShell({
   activeView,
@@ -25,16 +39,30 @@ export function AppShell({
 }) {
   const dispatch = useAppDispatch();
   const { error, notice, loading } = useAppSelector((state) => state.dashboard);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className={styles.shell}>
+    <div className={collapsed ? `${styles.shell} ${styles.collapsed}` : styles.shell}>
       <aside className={styles.sidebar}>
-        <div>
-          <p className={styles.kicker}>RavenEye v0.2</p>
-          <h1>Local Dashboard</h1>
+        <div className={styles.brand}>
+          <div>
+            <p className={styles.kicker}>v0.2</p>
+            <h1>RavenEye</h1>
+          </div>
+          <strong aria-hidden="true">RE</strong>
+          <button
+            type="button"
+            className={styles.collapseButton}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-expanded={!collapsed}
+            onClick={() => setCollapsed((value) => !value)}
+          >
+            <CollapseIcon collapsed={collapsed} />
+          </button>
         </div>
         <nav className={styles.nav}>
-          {views.map((view) => (
+          {views.map(({ Icon, ...view }) => (
             <a
               key={view.key}
               className={activeView === view.key ? styles.active : ''}
@@ -43,12 +71,27 @@ export function AppShell({
                 event.preventDefault();
                 onViewChange(view.key);
               }}
+              aria-label={view.label}
+              title={view.label}
             >
-              {view.label}
+              <span aria-hidden="true">
+                <Icon />
+              </span>
+              <b>{view.label}</b>
             </a>
           ))}
         </nav>
         <div className={styles.links}>
+          <button
+            type="button"
+            aria-label={loading ? 'Refreshing dashboard' : 'Refresh dashboard'}
+            title={loading ? 'Refreshing dashboard' : 'Refresh dashboard'}
+            disabled={loading}
+            onClick={() => void dispatch(loadDashboard())}
+          >
+            <RefreshCw aria-hidden="true" />
+            {loading ? 'Refreshing' : 'Refresh'}
+          </button>
           <a href="/health" target="_blank" rel="noreferrer">
             /health
           </a>
@@ -61,17 +104,6 @@ export function AppShell({
         </div>
       </aside>
       <main className={styles.main}>
-        <header className={styles.toolbar}>
-          <button
-            type="button"
-            aria-label={loading ? 'Refreshing dashboard' : 'Refresh dashboard'}
-            title={loading ? 'Refreshing dashboard' : 'Refresh dashboard'}
-            disabled={loading}
-            onClick={() => void dispatch(loadDashboard())}
-          >
-            {loading ? '...' : 'Refresh'}
-          </button>
-        </header>
         {(error || notice) && (
           <button
             className={error ? styles.error : styles.notice}

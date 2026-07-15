@@ -10,5 +10,6 @@ export interface SystemRepository {
   status(): Promise<ObserverStatus>;
   settings(): Promise<RavenEyeSettings>;
   updateSettings(settings: Partial<RavenEyeSettings>): Promise<RavenEyeSettings>;
+  resizeSessionViewport(id: string, viewport: { width: number; height: number }): Promise<ObserverSession>;
   stopSession(id: string): Promise<ObserverSession>;
 }

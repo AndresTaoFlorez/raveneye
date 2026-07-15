@@ -28,6 +28,17 @@ export class ControlSystemRepository implements SystemRepository {
     return data.settings;
   }
 
+  async resizeSessionViewport(
+    id: string,
+    viewport: { width: number; height: number },
+  ): Promise<ObserverSession> {
+    const data = await this.client.patch<{ session: ObserverSession }>(
+      `/api/sessions/${encodeURIComponent(id)}/viewport`,
+      viewport,
+    );
+    return data.session;
+  }
+
   async stopSession(id: string): Promise<ObserverSession> {
     const data = await this.client.delete<{ session: ObserverSession }>(
       `/api/sessions/${encodeURIComponent(id)}`,

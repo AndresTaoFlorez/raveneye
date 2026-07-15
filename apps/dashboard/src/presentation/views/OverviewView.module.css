@@ -1,34 +1,38 @@
 .view {
+  min-width: 0;
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .heading {
+  min-width: 0;
   display: flex;
   justify-content: space-between;
-  align-items: end;
+  align-items: center;
   gap: 12px;
-  padding-right: 54px;
+  padding: 2px 0 4px;
 }
 
 .heading p {
   margin: 0 0 4px;
-  color: #667085;
+  color: #d0c8ff;
 }
 
 .headingActions {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .addButton,
 .detailActions button {
-  min-height: 36px;
-  border: 1px solid #cad2dc;
+  min-height: 38px;
+  border: 1px solid rgba(128, 105, 203, 0.38);
   border-radius: 8px;
-  background: #ffffff;
-  color: #1d2937;
+  background: rgba(44, 44, 55, 0.92);
+  color: #f7f7fb;
   cursor: pointer;
   font: inherit;
   padding: 0 12px;
@@ -36,8 +40,40 @@
 
 .addButton:hover,
 .detailActions button:hover {
-  border-color: #9fb0c0;
-  background: #f8fafc;
+  border-color: rgba(183, 168, 255, 0.78);
+  background: rgba(128, 105, 203, 0.22);
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-color: rgba(183, 168, 255, 0.62);
+  background: #6f55c1;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 16px 34px rgba(128, 105, 203, 0.3);
+}
+
+.addButton:hover {
+  border-color: #c7bbff;
+  background: #8069cb;
+}
+
+.addButton svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.addButton:focus-visible,
+.detailActions button:focus-visible {
+  outline: 3px solid rgba(128, 105, 203, 0.62);
+  outline-offset: 2px;
 }
 
 .heading h2,
@@ -47,24 +83,28 @@
 }
 
 .heading h2 {
-  color: #111820;
+  color: #ffffff;
   font-size: 24px;
   line-height: 1.1;
 }
 
 .operatingGrid {
-  display: flex;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
-  flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
 }
 
 .browserPanel,
 .detailPanel {
-  background: #ffffff;
-  border: 1px solid #dbe1e8;
+  min-width: 0;
+  background:
+    linear-gradient(180deg, rgba(44, 44, 55, 0.86), rgba(20, 19, 30, 0.92)),
+    #2c2c37;
+  border: 1px solid rgba(128, 105, 203, 0.28);
   border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(15, 23, 32, 0.05);
+  box-shadow: 0 22px 60px rgba(4, 3, 12, 0.34);
 }
 
 .browserPanel,
@@ -72,17 +112,138 @@
   padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
-.browserPanel {
-  flex: 999 1 520px;
-  min-width: min(100%, 360px);
+.focusBar {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.7fr) minmax(240px, 2fr) minmax(220px, 1fr) minmax(
+      130px,
+      0.7fr
+    );
+  gap: 8px;
+  border-radius: 8px;
+  background: rgba(4, 3, 12, 0.56);
+  padding: 8px;
 }
 
-.detailPanel {
-  flex: 1 1 320px;
-  min-width: min(100%, 300px);
+.focusBar div {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  border: 1px solid rgba(128, 105, 203, 0.28);
+  border-radius: 7px;
+  background: rgba(44, 44, 55, 0.9);
+  padding: 11px 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.focusBar span,
+.signalStack span {
+  color: #cfc7ff;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.focusBar strong,
+.signalStack strong {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-wrap: anywhere;
+}
+
+.inlineViewport {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.focusBar .inlineViewport {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+.inlineViewport label {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.inlineViewport em {
+  color: #b8addf;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.inlineViewport input {
+  width: 64px;
+  min-height: 32px;
+  border: 1px solid rgba(139, 126, 181, 0.72);
+  border-radius: 6px;
+  background: rgba(4, 3, 12, 0.34);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0;
+  padding: 3px 7px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.inlineViewport input:hover {
+  border-color: rgba(199, 187, 255, 0.86);
+  background: rgba(20, 17, 36, 0.78);
+}
+
+.inlineViewport input:focus {
+  border-color: #b7a8ff;
+  background: #04030c;
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(128, 105, 203, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.inlineViewport input:disabled {
+  opacity: 0.7;
+}
+
+.inlineViewport i {
+  color: #b8addf;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.editableSignal {
+  border-color: rgba(183, 168, 255, 0.42) !important;
+  background:
+    linear-gradient(180deg, rgba(128, 105, 203, 0.16), rgba(44, 44, 55, 0.88)),
+    #2c2c37 !important;
+}
+
+.liveDot,
+.idleDot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #9f8cff;
+  box-shadow: 0 0 0 4px rgba(128, 105, 203, 0.22);
+}
+
+.idleDot {
+  background: #73718a;
+  box-shadow: 0 0 0 4px rgba(115, 113, 138, 0.2);
 }
 
 .panelHeader {
@@ -94,7 +255,7 @@
 
 .panelHeader p {
   margin: 5px 0 0;
-  color: #667085;
+  color: #d0c8ff;
   line-height: 1.45;
 }
 
@@ -103,10 +264,10 @@
   align-items: center;
   justify-content: center;
   min-height: 36px;
-  border: 1px solid #a8e7ca;
+  border: 1px solid rgba(128, 105, 203, 0.42);
   border-radius: 8px;
-  background: #edfdf5;
-  color: #126341;
+  background: rgba(128, 105, 203, 0.16);
+  color: #f7f7fb;
   cursor: pointer;
   font: inherit;
   padding: 0 12px;
@@ -115,15 +276,18 @@
 }
 
 .appRow button:hover {
-  background: #dff8ed;
-  border-color: #78d8ad;
+  background: rgba(128, 105, 203, 0.28);
+  border-color: #b7a8ff;
 }
 
 .livePreview {
   overflow: hidden;
-  border: 1px solid #cbd5df;
+  border: 1px solid rgba(128, 105, 203, 0.38);
   border-radius: 8px;
-  background: #0f1720;
+  background:
+    linear-gradient(180deg, rgba(44, 44, 55, 0.68), rgba(4, 3, 12, 0.98)),
+    #04030c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .previewHeader {
@@ -132,7 +296,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(128, 105, 203, 0.22);
   padding: 9px 12px;
 }
 
@@ -143,7 +307,7 @@
 }
 
 .previewHeader span {
-  color: #94a3b8;
+  color: #d0c8ff;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -159,30 +323,32 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 4px;
 }
 
 .previewActions button {
-  width: 34px;
-  min-height: 34px;
+  width: 32px;
+  min-height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(168, 231, 202, 0.85);
-  border-radius: 7px;
-  background: rgba(237, 253, 245, 0.12);
-  color: #dff8ed;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #d8d0ff;
   cursor: pointer;
   font: inherit;
   padding: 0;
 }
 
 .previewActions button:hover {
-  background: rgba(237, 253, 245, 0.22);
+  border-color: rgba(183, 168, 255, 0.32);
+  background: rgba(128, 105, 203, 0.16);
+  color: #ffffff;
 }
 
 .previewActions button:focus-visible {
-  outline: 3px solid rgba(125, 211, 252, 0.45);
+  outline: 3px solid rgba(128, 105, 203, 0.62);
   outline-offset: 2px;
 }
 
@@ -200,10 +366,10 @@
 .previewEmpty {
   width: 100%;
   aspect-ratio: 16 / 9;
-  min-height: 300px;
-  max-height: min(58vh, 620px);
+  min-height: 420px;
+  max-height: min(64vh, 700px);
   border: 0;
-  background: #111820;
+  background: #04030c;
 }
 
 .previewFrame {
@@ -219,67 +385,132 @@
 .previewEmpty p {
   max-width: 420px;
   margin: 0;
-  color: #aebbc9;
+  color: #c9c5e6;
   text-align: center;
+}
+
+.selfNotice {
+  border-bottom: 1px solid rgba(183, 168, 255, 0.22);
+  background: rgba(128, 105, 203, 0.18);
+  color: #f2efff;
+  font-size: 13px;
+  padding: 8px 12px;
 }
 
 .miniWindow {
   overflow: hidden;
-  border: 1px solid #cbd5df;
+  border: 1px solid rgba(128, 105, 203, 0.28);
   border-radius: 8px;
-  background: #0f1720;
+  background: rgba(44, 44, 55, 0.82);
   cursor: pointer;
 }
 
 .windowGrid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 10px;
 }
 
 .miniWindow {
-  flex: 1 1 220px;
-  min-width: min(100%, 190px);
+  min-width: 0;
 }
 
 .windowBar {
-  min-height: 36px;
+  min-height: 34px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 7px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(128, 105, 203, 0.2);
+  background: rgba(4, 3, 12, 0.42);
   padding: 0 12px;
 }
 
-.windowBar span {
+.windowBar > div:first-child {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.windowBarActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.windowBarActions button {
+  width: 26px;
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(183, 168, 255, 0.28);
+  border-radius: 6px;
+  background: rgba(44, 44, 55, 0.55);
+  color: #f7f7fb;
+  cursor: pointer;
+  padding: 0;
+}
+
+.windowBarActions button:hover {
+  border-color: rgba(183, 168, 255, 0.72);
+  background: rgba(128, 105, 203, 0.24);
+}
+
+.windowBarActions button:focus-visible {
+  outline: 3px solid rgba(128, 105, 203, 0.62);
+  outline-offset: 2px;
+}
+
+.windowBarActions svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.9;
+}
+
+.windowDeleteButton:hover {
+  border-color: rgba(248, 113, 113, 0.7) !important;
+  background: rgba(127, 29, 29, 0.34) !important;
+  color: #fecaca;
+}
+
+.windowLive,
+.windowIdle {
   width: 9px;
   height: 9px;
+  flex: 0 0 auto;
   border-radius: 999px;
-  background: #ef4444;
+  background: #9f8cff;
+  box-shadow: 0 0 0 4px rgba(128, 105, 203, 0.22);
 }
 
-.windowBar span:nth-child(2) {
-  background: #f59e0b;
-}
-
-.windowBar span:nth-child(3) {
-  background: #22c55e;
+.windowIdle {
+  background: #73718a;
+  box-shadow: 0 0 0 4px rgba(115, 113, 138, 0.2);
 }
 
 .windowBar strong {
-  margin-left: 8px;
-  color: #cbd5e1;
+  color: #c9c5e6;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .windowBody {
-  min-height: 132px;
-  display: grid;
-  align-content: end;
-  gap: 8px;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.14), rgba(125, 211, 252, 0.08)), #111820;
-  padding: 18px;
+  min-height: 126px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  background:
+    linear-gradient(135deg, rgba(128, 105, 203, 0.18), rgba(88, 137, 255, 0.08)),
+    #2c2c37;
+  padding: 14px;
 }
 
 .windowBody p,
@@ -289,31 +520,30 @@
 }
 
 .windowBody p {
-  color: #f8fafc;
-  font-size: 18px;
+  color: #ffffff;
+  font-size: 16px;
   font-weight: 700;
 }
 
 .windowBody small {
-  color: #aebbc9;
+  color: #d0c8ff;
 }
 
 .miniWindow {
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease,
-    transform 160ms ease;
+    background-color 160ms ease;
 }
 
 .miniWindow:hover,
 .selectedWindow {
-  border-color: #78d8ad;
-  box-shadow: 0 10px 24px rgba(15, 23, 32, 0.14);
-  transform: translateY(-1px);
+  border-color: #b7a8ff;
+  box-shadow: 0 16px 34px rgba(4, 3, 12, 0.34);
 }
 
 .miniWindow:focus-visible {
-  outline: 3px solid rgba(125, 211, 252, 0.55);
+  outline: 3px solid rgba(128, 105, 203, 0.66);
   outline-offset: 2px;
 }
 
@@ -330,21 +560,22 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(168, 231, 202, 0.85);
+  border: 1px solid rgba(183, 168, 255, 0.42);
   border-radius: 7px;
-  background: rgba(237, 253, 245, 0.12);
-  color: #dff8ed;
+  background: rgba(4, 3, 12, 0.26);
+  color: #f7f7fb;
   cursor: pointer;
   font: inherit;
   padding: 0;
 }
 
 .windowActions button:hover {
-  background: rgba(237, 253, 245, 0.22);
+  background: rgba(128, 105, 203, 0.28);
+  border-color: #b7a8ff;
 }
 
 .windowActions button:focus-visible {
-  outline: 3px solid rgba(125, 211, 252, 0.45);
+  outline: 3px solid rgba(128, 105, 203, 0.62);
   outline-offset: 2px;
 }
 
@@ -360,20 +591,46 @@
 
 .details {
   display: grid;
-  gap: 8px;
+  grid-template-columns: 118px minmax(0, 1fr) 118px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px 12px;
   margin: 0;
+  border-top: 1px solid rgba(128, 105, 203, 0.24);
+  padding-top: 14px;
+}
+
+.signalStack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.signalStack section {
+  display: grid;
+  gap: 4px;
+  border: 1px solid rgba(128, 105, 203, 0.28);
+  border-radius: 8px;
+  background: rgba(4, 3, 12, 0.28);
+  padding: 12px;
+}
+
+.signalStack p {
+  margin: 0;
+  color: #c9c5e6;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .details dt {
-  color: #667085;
+  color: #cfc7ff;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .details dd {
-  margin: -4px 0 8px;
-  color: #26313d;
+  margin: 0 0 8px;
+  color: #f2efff;
   overflow-wrap: anywhere;
 }
 
@@ -384,29 +641,30 @@
 }
 
 .dangerButton {
-  border-color: #f2b8b8 !important;
-  color: #9c1c1c !important;
+  border-color: rgba(248, 113, 113, 0.46) !important;
+  color: #fecaca !important;
 }
 
 .dangerButton:hover {
-  background: #fff1f1 !important;
-  border-color: #ef9393 !important;
+  background: rgba(127, 29, 29, 0.3) !important;
+  border-color: rgba(248, 113, 113, 0.68) !important;
 }
 
 .empty {
   margin: 0;
-  color: #667085;
+  color: #d0c8ff;
 }
 
 .statusStrip {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) auto minmax(180px, 0.8fr);
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px 18px;
-  border-top: 1px solid #dbe1e8;
-  color: #667085;
-  padding: 10px 2px 0;
+  gap: 10px 14px;
+  border: 1px solid rgba(128, 105, 203, 0.24);
+  border-radius: 8px;
+  background: rgba(44, 44, 55, 0.62);
+  color: #c9c5e6;
+  padding: 10px 12px;
 }
 
 .statusStrip section {
@@ -419,7 +677,7 @@
 
 .statusStrip section > span {
   display: inline-flex;
-  color: #667085;
+  color: #cfc7ff;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -427,7 +685,7 @@
 
 .statusStrip p {
   margin: 0;
-  color: #667085;
+  color: #f2efff;
   font-size: 13px;
 }
 
@@ -438,33 +696,280 @@
 }
 
 .hosts span {
-  background: transparent;
-  border: 1px solid #d8e0e8;
+  background: rgba(4, 3, 12, 0.3);
+  border: 1px solid rgba(128, 105, 203, 0.28);
   border-radius: 999px;
-  color: #586575;
+  color: #d9d4f6;
   font-size: 12px;
   padding: 3px 7px;
 }
 
 @media (max-width: 900px) {
+  .focusBar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .signalStack {
+    grid-template-columns: 1fr;
+  }
+
+  .details {
+    grid-template-columns: 1fr;
+  }
+
+  .details dd {
+    margin: -4px 0 8px;
+  }
+
   .statusStrip {
+    grid-template-columns: 1fr;
     align-items: flex-start;
   }
 }
 
 @media (max-width: 620px) {
   .heading,
-  .panelHeader,
-  .previewHeader {
+  .panelHeader {
     display: grid;
   }
 
   .previewActions {
+    justify-content: flex-end;
+  }
+
+  .headingActions {
     justify-content: flex-start;
+  }
+
+  .browserPanel,
+  .detailPanel {
+    padding: 12px;
+  }
+
+  .focusBar {
+    grid-template-columns: 1fr;
+    padding: 6px;
   }
 
   .previewFrame,
   .previewEmpty {
-    min-height: 240px;
+    min-height: 220px;
+    max-height: 54vh;
+  }
+
+  .windowGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .view {
+    gap: 8px;
+  }
+
+  .heading {
+    gap: 8px;
+    padding-top: 0;
+  }
+
+  .heading p {
+    font-size: 13px;
+  }
+
+  .heading h2 {
+    font-size: 22px;
+  }
+
+  .headingActions {
+    gap: 8px;
+  }
+
+  .addButton,
+  .detailActions button {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .browserPanel,
+  .detailPanel {
+    padding: 8px;
+    gap: 10px;
+  }
+
+  .focusBar {
+    gap: 6px;
+    border-radius: 7px;
+  }
+
+  .focusBar div {
+    padding: 9px 10px;
+  }
+
+  .focusBar strong,
+  .signalStack strong {
+    font-size: 15px;
+  }
+
+  .inlineViewport input {
+    width: 58px;
+    min-height: 28px;
+  }
+
+  .previewHeader {
+    min-height: 40px;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .previewActions,
+  .windowActions {
+    gap: 6px;
+  }
+
+  .previewActions button {
+    width: 28px;
+    min-height: 28px;
+  }
+
+  .previewActions svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .addButton {
+    border-color: rgba(183, 168, 255, 0.34);
+    background: rgba(44, 44, 55, 0.72);
+    box-shadow: none;
+  }
+
+  .addButton:hover {
+    background: rgba(128, 105, 203, 0.22);
+  }
+
+  .selfNotice {
+    font-size: 12px;
+    line-height: 1.35;
+    padding: 7px 10px;
+  }
+
+  .previewFrame,
+  .previewEmpty {
+    min-height: 190px;
+    max-height: 46vh;
+  }
+
+  .panelHeader p {
+    font-size: 14px;
+  }
+
+  .windowBar {
+    min-height: 30px;
+    padding: 0 10px;
+  }
+
+  .windowBody {
+    min-height: 104px;
+    padding: 12px;
+  }
+
+  .windowBody p {
+    font-size: 15px;
+  }
+
+  .windowBody small,
+  .signalStack p,
+  .details dd,
+  .statusStrip p {
+    font-size: 12px;
+  }
+
+  .signalStack {
+    gap: 8px;
+  }
+
+  .signalStack section {
+    padding: 10px;
+  }
+
+  .details {
+    gap: 6px;
+    padding-top: 10px;
+  }
+
+  .statusStrip {
+    padding: 8px;
+  }
+
+  .hosts {
+    gap: 5px;
+  }
+
+  .hosts span {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+}
+
+@media (max-width: 380px) {
+  .heading h2 {
+    font-size: 21px;
+  }
+
+  .browserPanel,
+  .detailPanel {
+    border-radius: 7px;
+    padding: 6px;
+  }
+
+  .focusBar div,
+  .signalStack section,
+  .miniWindow {
+    border-radius: 6px;
+  }
+
+  .previewHeader,
+  .selfNotice,
+  .windowBody {
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  .previewFrame,
+  .previewEmpty {
+    min-height: 164px;
+    max-height: 38vh;
+  }
+}
+
+@media (max-width: 420px) {
+  .heading {
+    gap: 6px;
+  }
+
+  .headingActions {
+    gap: 7px;
+  }
+
+  .focusBar div {
+    padding: 8px 9px;
+  }
+
+  .previewFrame,
+  .previewEmpty {
+    min-height: 170px;
+    max-height: 40vh;
+  }
+
+  .previewHeader {
+    align-items: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .previewFrame,
+  .previewEmpty {
+    min-height: 164px;
+    max-height: 38vh;
   }
 }

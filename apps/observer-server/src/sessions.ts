@@ -28,6 +28,8 @@ export interface SessionSpec {
   profileMode: 'ephemeral' | 'persistent';
   profileDir: string;
   headless: boolean;
+  ownerAgentId: string | null;
+  ownerLabel: string | null;
 }
 
 export type SessionState = 'starting' | 'running' | 'stopping' | 'stopped' | 'failed';
@@ -45,6 +47,7 @@ export interface SessionHandle {
   detail: string | null;
   novncUrl: string;
   cdpUrl: string;
+  owner: SessionOwner | null;
 }
 
 export interface SessionRecord {
@@ -58,6 +61,13 @@ export interface SessionRecord {
   api_url: string | null;
   started_at: string;
   stopped_at: string | null;
+  owner_agent_id: string | null;
+  owner_label: string | null;
+}
+
+export interface SessionOwner {
+  agentId: string;
+  label: string | null;
 }
 
 interface SessionRecordRow {
@@ -71,6 +81,8 @@ interface SessionRecordRow {
   api_url: string | null;
   started_at: string;
   stopped_at: string | null;
+  owner_agent_id: string | null;
+  owner_label: string | null;
 }
 
 interface InternalSession extends SessionHandle {
@@ -176,7 +188,13 @@ function rowToSessionRecord(row: SessionRecordRow): SessionRecord {
     api_url: row.api_url,
     started_at: row.started_at,
     stopped_at: row.stopped_at,
+    owner_agent_id: row.owner_agent_id,
+    owner_label: row.owner_label,
   };
+}
+
+function sessionOwner(agentId: string | null, label: string | null): SessionOwner | null {
+  return agentId ? { agentId, label } : null;
 }
 
 export class SessionStore {
@@ -196,9 +214,20 @@ export class SessionStore {
         cdp_url TEXT,
         api_url TEXT,
         started_at TEXT NOT NULL,
-        stopped_at TEXT
+        stopped_at TEXT,
+        owner_agent_id TEXT,
+        owner_label TEXT
       );
     `);
+    this.ensureColumn('observer_sessions', 'owner_agent_id', 'TEXT');
+    this.ensureColumn('observer_sessions', 'owner_label', 'TEXT');
+  }
+
+  private ensureColumn(table: string, column: string, type: string) {
+    const columns = this.db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+    if (!columns.some((row) => row.name === column)) {
+      this.db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+    }
   }
 
   close() {
@@ -224,8 +253,8 @@ export class SessionStore {
       .prepare(
         `INSERT OR REPLACE INTO observer_sessions (
           id, observed_app_id, status, target_url, display, novnc_url, cdp_url,
-          api_url, started_at, stopped_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          api_url, started_at, stopped_at, owner_agent_id, owner_label
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         session.id,
@@ -238,6 +267,8 @@ export class SessionStore {
         apiUrl,
         session.startedAt,
         session.stoppedAt,
+        session.owner?.agentId ?? null,
+        session.owner?.label ?? null,
       );
   }
 
@@ -320,6 +351,19 @@ export class SessionManager {
     return null;
   }
 
+  findRunningForAppOwner(appId: string, agentId: string): SessionHandle | null {
+    for (const s of this.sessions.values()) {
+      if (
+        s.appId === appId &&
+        s.owner?.agentId === agentId &&
+        (s.state === 'starting' || s.state === 'running')
+      ) {
+        return this.toHandle(s);
+      }
+    }
+    return null;
+  }
+
   count(): number {
     let n = 0;
     for (const s of this.sessions.values()) {
@@ -367,6 +411,8 @@ export class SessionManager {
       profileMode: this.cfg.profileMode,
       profileDir,
       headless: this.cfg.headless,
+      ownerAgentId: null,
+      ownerLabel: null,
     });
   }
 
@@ -376,10 +422,9 @@ export class SessionManager {
     allowedHosts: string[];
     viewportWidth: number;
     viewportHeight: number;
+    ownerAgentId?: string | null;
+    ownerLabel?: string | null;
   }): Promise<SessionHandle> {
-    if (this.findRunningForApp(opts.appId)) {
-      throw new SessionAlreadyRunningError(`a session for app ${opts.appId} is already running`);
-    }
     if (!this.hasRoom()) {
       throw new SessionLimitError(
         `maximum of ${this.maxDynamicSessions()} dynamic app sessions reached`,
@@ -406,6 +451,8 @@ export class SessionManager {
       profileMode: 'ephemeral',
       profileDir: userDataDir,
       headless: this.cfg.headless,
+      ownerAgentId: opts.ownerAgentId ?? null,
+      ownerLabel: opts.ownerLabel ?? null,
     });
   }
 
@@ -448,6 +495,7 @@ export class SessionManager {
       detail: s.detail,
       novncUrl: s.novncUrl,
       cdpUrl: s.cdpUrl,
+      owner: sessionOwner(s.spec.ownerAgentId, s.spec.ownerLabel),
     };
   }
 
@@ -502,6 +550,7 @@ export class SessionManager {
       detail: null,
       novncUrl: `http://127.0.0.1:${spec.ports.novnc}/vnc.html?autoconnect=true&resize=scale`,
       cdpUrl: `http://127.0.0.1:${spec.ports.cdp}`,
+      owner: sessionOwner(spec.ownerAgentId, spec.ownerLabel),
     };
 
     const internal: InternalSession = {

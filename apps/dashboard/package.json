@@ -11,15 +11,16 @@
   "dependencies": {
     "@reduxjs/toolkit": "latest",
     "gsap": "latest",
+    "lucide-react": "^1.24.0",
     "react": "latest",
     "react-dom": "latest",
     "react-redux": "latest"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "typescript": "5.9.3",
     "@types/react": "latest",
-    "@types/react-dom": "latest"
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
+    "typescript": "5.9.3",
+    "vite": "latest"
   }
 }

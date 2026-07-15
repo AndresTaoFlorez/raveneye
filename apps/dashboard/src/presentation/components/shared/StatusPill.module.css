@@ -4,21 +4,25 @@
   min-height: 24px;
   padding: 2px 8px;
   border-radius: 999px;
+  border: 1px solid transparent;
   font-size: 12px;
   font-weight: 700;
 }
 
 .good {
-  background: #dcfce7;
-  color: #166534;
+  background: rgba(91, 70, 154, 0.72);
+  border-color: rgba(183, 168, 255, 0.38);
+  color: #ffffff;
 }
 
 .warn {
-  background: #fef3c7;
-  color: #92400e;
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.38);
+  color: #fde68a;
 }
 
 .bad {
-  background: #fee2e2;
-  color: #991b1b;
+  background: rgba(127, 29, 29, 0.3);
+  border-color: rgba(248, 113, 113, 0.46);
+  color: #fecaca;
 }

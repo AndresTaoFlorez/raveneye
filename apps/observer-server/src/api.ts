@@ -52,6 +52,21 @@ function sanitizeName(name: unknown, fallback: string): string {
   );
 }
 
+function sanitizeAgentId(value: unknown): string | null {
+  if (value === undefined || value === null || value === '') return null;
+  const agentId = String(value).trim();
+  if (!agentId) return null;
+  if (!/^[a-zA-Z0-9_.:-]{1,80}$/.test(agentId)) {
+    throw new ValidationError('agentId may only contain letters, numbers, dot, underscore, colon, and dash');
+  }
+  return agentId;
+}
+
+function sanitizeOwnerLabel(value: unknown): string | null {
+  if (value === undefined || value === null || value === '') return null;
+  return String(value).trim().slice(0, 120) || null;
+}
+
 function assertAppUrlAllowed(body: Record<string, unknown>, existing?: ObservedApp) {
   const targetUrl =
     body.target_url === undefined && existing ? existing.target_url : body.target_url;
@@ -237,9 +252,14 @@ export function startApi(state: ApiState): http.Server {
       if (openMatch && req.method === 'POST') {
         const app = state.registry.get(decodeURIComponent(openMatch[1]!));
         if (!app) return json(res, 404, { ok: false, detail: 'app not found' });
-        const running = state.sessions.findRunningForApp(app.id);
+        const body: Record<string, unknown> = await readJsonBody(req).catch(() => ({}));
+        const agentId = sanitizeAgentId(body.agentId ?? body.agent_id) ?? 'manual';
+        const ownerLabel = sanitizeOwnerLabel(body.label) ?? null;
+        const strategy = body.strategy === 'new' ? 'new' : 'acquire';
+        const running =
+          strategy === 'acquire' ? state.sessions.findRunningForAppOwner(app.id, agentId) : null;
         if (running) {
-          // Reuse the existing session: just navigate it to the app URL.
+          // Reuse only this agent's own session; never attach to another owner's session.
           const context = state.sessions.contextOf(running.id);
           if (!context) return json(res, 503, { ok: false, detail: 'session has no live context' });
           const page = context.pages()[0] ?? (await context.newPage());
@@ -247,7 +267,8 @@ export function startApi(state: ApiState): http.Server {
           await page.bringToFront();
           return json(res, 200, {
             ok: true,
-            detail: 'navigated existing session',
+            detail: 'navigated existing owned session',
+            reused: true,
             app,
             session: running,
             watchUrl: running.novncUrl,
@@ -261,10 +282,13 @@ export function startApi(state: ApiState): http.Server {
             allowedHosts: mergeAllowedHosts(state.cfg.allowedHosts, appNavigationHosts(app)),
             viewportWidth: app.default_viewport_width,
             viewportHeight: app.default_viewport_height,
+            ownerAgentId: agentId,
+            ownerLabel,
           });
           return json(res, 201, {
             ok: true,
             detail: 'session started',
+            reused: false,
             app,
             session,
             watchUrl: session.novncUrl,
@@ -274,6 +298,106 @@ export function startApi(state: ApiState): http.Server {
           if (err instanceof SessionAlreadyRunningError) {
             return json(res, 409, { ok: false, detail: err.message });
           }
+          if (err instanceof SessionLimitError) {
+            return json(res, 429, { ok: false, detail: err.message });
+          }
+          throw err;
+        }
+      }
+
+      if (route === 'POST /api/sessions/acquire') {
+        const body = await readJsonBody(req).catch(() => null);
+        if (!body) return json(res, 400, { ok: false, detail: 'invalid JSON body' });
+        const agentId = sanitizeAgentId(body.agentId ?? body.agent_id);
+        if (!agentId) return json(res, 422, { ok: false, detail: 'agentId is required' });
+        const ownerLabel = sanitizeOwnerLabel(body.label);
+        const strategy = body.strategy === 'new' ? 'new' : 'acquire';
+
+        let app: ObservedApp | null = null;
+        if (typeof body.appId === 'string' || typeof body.app_id === 'string') {
+          app = state.registry.get(String(body.appId ?? body.app_id));
+          if (!app) return json(res, 404, { ok: false, detail: 'app not found' });
+        }
+
+        const targetUrl =
+          app?.target_url ?? (typeof body.targetUrl === 'string' ? body.targetUrl : body.target_url);
+        if (typeof targetUrl !== 'string') {
+          return json(res, 422, { ok: false, detail: 'appId or targetUrl is required' });
+        }
+
+        const appId = app?.id ?? `adhoc:${sanitizeName(targetUrl, 'target')}`;
+        let targetHost: string;
+        try {
+          targetHost = new URL(targetUrl).hostname;
+        } catch {
+          return json(res, 422, { ok: false, detail: 'targetUrl must be a valid absolute URL' });
+        }
+        const allowedHosts = app
+          ? mergeAllowedHosts(state.cfg.allowedHosts, appNavigationHosts(app))
+          : mergeAllowedHosts(state.cfg.allowedHosts, [targetHost]);
+        const viewport =
+          typeof body.viewport === 'object' && body.viewport !== null
+            ? (body.viewport as Record<string, unknown>)
+            : {};
+        const viewportWidth = Number(
+          viewport.width ?? body.viewportWidth ?? body.viewport_width ?? app?.default_viewport_width ?? state.cfg.viewportWidth,
+        );
+        const viewportHeight = Number(
+          viewport.height ?? body.viewportHeight ?? body.viewport_height ?? app?.default_viewport_height ?? state.cfg.viewportHeight,
+        );
+        if (
+          !Number.isInteger(viewportWidth) ||
+          !Number.isInteger(viewportHeight) ||
+          viewportWidth < 320 ||
+          viewportWidth > 3840 ||
+          viewportHeight < 240 ||
+          viewportHeight > 2160
+        ) {
+          return json(res, 422, {
+            ok: false,
+            detail: 'viewport width must be 320-3840 and height must be 240-2160',
+          });
+        }
+
+        const running =
+          strategy === 'acquire' ? state.sessions.findRunningForAppOwner(appId, agentId) : null;
+        if (running) {
+          const context = state.sessions.contextOf(running.id);
+          if (!context) return json(res, 503, { ok: false, detail: 'session has no live context' });
+          const page = context.pages()[0] ?? (await context.newPage());
+          await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+          await page.bringToFront();
+          return json(res, 200, {
+            ok: true,
+            reused: true,
+            detail: 'navigated existing owned session',
+            app,
+            session: running,
+            watchUrl: running.novncUrl,
+            cdpUrl: running.cdpUrl,
+          });
+        }
+
+        try {
+          const session = await state.sessions.startForApp({
+            appId,
+            targetUrl,
+            allowedHosts,
+            viewportWidth,
+            viewportHeight,
+            ownerAgentId: agentId,
+            ownerLabel,
+          });
+          return json(res, 201, {
+            ok: true,
+            reused: false,
+            detail: 'session started',
+            app,
+            session,
+            watchUrl: session.novncUrl,
+            cdpUrl: session.cdpUrl,
+          });
+        } catch (err) {
           if (err instanceof SessionLimitError) {
             return json(res, 429, { ok: false, detail: err.message });
           }
@@ -307,6 +431,35 @@ export function startApi(state: ApiState): http.Server {
         if (!session) return json(res, 404, { ok: false, detail: 'session not found' });
         const stopped = await state.sessions.stop(session.id);
         return json(res, 200, { ok: true, session: stopped });
+      }
+
+      const viewportMatch = url.pathname.match(/^\/api\/sessions\/([^/]+)\/viewport$/);
+      if (viewportMatch && req.method === 'PATCH') {
+        const id = decodeURIComponent(viewportMatch[1]!);
+        const session = state.sessions.get(id);
+        if (!session) return json(res, 404, { ok: false, detail: 'session not found' });
+        const body = await readJsonBody(req).catch(() => null);
+        const width = Number(body?.width);
+        const height = Number(body?.height);
+        if (
+          !Number.isInteger(width) ||
+          !Number.isInteger(height) ||
+          width < 320 ||
+          width > 3840 ||
+          height < 240 ||
+          height > 2160
+        ) {
+          return json(res, 422, {
+            ok: false,
+            detail: 'width must be 320-3840 and height must be 240-2160',
+          });
+        }
+        const context = state.sessions.contextOf(id);
+        if (!context) return json(res, 503, { ok: false, detail: 'session has no live context' });
+        await Promise.all(
+          context.pages().map((page) => page.setViewportSize({ width, height })),
+        );
+        return json(res, 200, { ok: true, session, viewport: { width, height } });
       }
 
       if (route === 'GET /api/runs') {
@@ -359,6 +512,7 @@ export function startApi(state: ApiState): http.Server {
               targetUrl: s.targetUrl,
               novncUrl: s.novncUrl,
               cdpUrl: s.cdpUrl,
+              owner: s.owner,
               startedAt: s.startedAt,
               stoppedAt: s.stoppedAt,
             })),
@@ -374,6 +528,7 @@ export function startApi(state: ApiState): http.Server {
               slot: s.slot,
               cdp: s.cdpUrl,
               appId: s.appId,
+              owner: s.owner,
             })),
           });
         }
@@ -456,8 +611,10 @@ export function startApi(state: ApiState): http.Server {
               'GET/PATCH/DELETE /api/apps/:id',
               'POST /api/apps/:id/open',
               'DELETE /api/apps/:id/session',
+              'POST /api/sessions/acquire',
               'GET /api/sessions',
               'GET/DELETE /api/sessions/:id',
+              'PATCH /api/sessions/:id/viewport',
               'GET /api/runs',
               'GET /api/runs/:runId',
               'GET /api/docs',

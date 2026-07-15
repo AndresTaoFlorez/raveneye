@@ -8,6 +8,7 @@ import {
 import { listRunsUseCase } from '@/application/use-cases/runsUseCases';
 import {
   loadOverviewUseCase,
+  resizeSessionViewportUseCase,
   stopSessionUseCase,
   updateSettingsUseCase,
 } from '@/application/use-cases/systemUseCases';
@@ -73,6 +74,12 @@ export const openApp = createAsyncThunk('dashboard/openApp', async (id: string) 
 
 export const stopSession = createAsyncThunk('dashboard/stopSession', async (id: string) =>
   stopSessionUseCase(dependencies.systemRepository, id),
+);
+
+export const resizeSessionViewport = createAsyncThunk(
+  'dashboard/resizeSessionViewport',
+  async ({ id, width, height }: { id: string; width: number; height: number }) =>
+    resizeSessionViewportUseCase(dependencies.systemRepository, id, { width, height }),
 );
 
 export const saveSettings = createAsyncThunk(
@@ -142,6 +149,17 @@ const slice = createSlice({
           sessions: app.sessions?.filter((session) => session.id !== action.payload.id),
         }));
         state.notice = `Stopped session ${action.payload.id}`;
+      })
+      .addCase(resizeSessionViewport.fulfilled, (state, action: PayloadAction<ObserverSession>) => {
+        const index = state.sessions.findIndex((session) => session.id === action.payload.id);
+        if (index >= 0) state.sessions[index] = action.payload;
+        state.apps = state.apps.map((app) => ({
+          ...app,
+          sessions: app.sessions?.map((session) =>
+            session.id === action.payload.id ? action.payload : session,
+          ),
+        }));
+        state.notice = `Resized session ${action.payload.id}`;
       })
       .addCase(saveSettings.fulfilled, (state, action: PayloadAction<RavenEyeSettings>) => {
         state.settings = action.payload;

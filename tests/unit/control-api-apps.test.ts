@@ -71,6 +71,7 @@ function handle(overrides: Partial<SessionHandle>): SessionHandle {
     novncUrl:
       overrides.novncUrl ?? `http://127.0.0.1:${novnc}/vnc.html?autoconnect=true&resize=scale`,
     cdpUrl: overrides.cdpUrl ?? `http://127.0.0.1:${cdp}`,
+    owner: overrides.owner ?? null,
   };
 }
 
@@ -85,6 +86,10 @@ class FakeSessions {
   constructor(private readonly maxDynamic = 3) {
     const base = handle({});
     this.sessions.set(base.id, base);
+    this.contexts.set(base.id, this.createContext());
+  }
+
+  private createContext() {
     const page = {
       goto: async (url: string) => {
         this.navigatedTo = url;
@@ -93,7 +98,7 @@ class FakeSessions {
       screenshot: async () => {},
       url: () => this.navigatedTo,
     };
-    this.contexts.set(base.id, { pages: () => [page], newPage: async () => page });
+    return { pages: () => [page], newPage: async () => page };
   }
 
   list() {
@@ -110,6 +115,17 @@ class FakeSessions {
     );
   }
 
+  findRunningForAppOwner(appId: string, agentId: string) {
+    return (
+      this.list().find(
+        (session) =>
+          session.appId === appId &&
+          session.owner?.agentId === agentId &&
+          session.state === 'running',
+      ) ?? null
+    );
+  }
+
   contextOf(id: string) {
     return this.contexts.get(id) ?? null;
   }
@@ -120,6 +136,8 @@ class FakeSessions {
     allowedHosts: string[];
     viewportWidth: number;
     viewportHeight: number;
+    ownerAgentId?: string | null;
+    ownerLabel?: string | null;
   }) {
     const dynamicCount = this.list().filter((session) => session.slot !== 'base').length;
     if (dynamicCount >= this.maxDynamic)
@@ -137,8 +155,12 @@ class FakeSessions {
         novnc: 6081 + dynamicCount * 2,
         cdp: 9223 + dynamicCount,
       },
+      owner: opts.ownerAgentId
+        ? { agentId: opts.ownerAgentId, label: opts.ownerLabel ?? null }
+        : null,
     });
     this.sessions.set(session.id, session);
+    this.contexts.set(session.id, this.createContext());
     return session;
   }
 
@@ -257,6 +279,71 @@ describe('app registry API', () => {
 
     const res = await fetch(`${baseUrl}/api/apps/${app.id}/open`, { method: 'POST' });
     expect(res.status).toBe(201);
+  });
+
+  it('acquires separate sessions for different agents on the same app', async () => {
+    const { baseUrl, registry } = await startTestApi();
+    const app = registry.create({
+      name: 'Parallel app',
+      target_url: 'http://sample-app:3000',
+      allowed_hosts: ['sample-app'],
+    });
+
+    const first = await (
+      await fetch(`${baseUrl}/api/sessions/acquire`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ appId: app.id, agentId: 'codex-a', label: 'first' }),
+      })
+    ).json();
+    const second = await (
+      await fetch(`${baseUrl}/api/sessions/acquire`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ appId: app.id, agentId: 'codex-b', label: 'second' }),
+      })
+    ).json();
+
+    expect(first.reused).toBe(false);
+    expect(second.reused).toBe(false);
+    expect(first.session.id).not.toBe(second.session.id);
+    expect(first.session.owner.agentId).toBe('codex-a');
+    expect(second.session.owner.agentId).toBe('codex-b');
+  });
+
+  it('reuses only the requesting agent owned session', async () => {
+    const { baseUrl, registry } = await startTestApi();
+    const app = registry.create({
+      name: 'Reusable app',
+      target_url: 'http://sample-app:3000',
+      allowed_hosts: ['sample-app'],
+    });
+
+    const first = await (
+      await fetch(`${baseUrl}/api/sessions/acquire`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ appId: app.id, agentId: 'codex-a' }),
+      })
+    ).json();
+    const other = await (
+      await fetch(`${baseUrl}/api/sessions/acquire`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ appId: app.id, agentId: 'codex-b' }),
+      })
+    ).json();
+    const again = await (
+      await fetch(`${baseUrl}/api/sessions/acquire`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ appId: app.id, agentId: 'codex-a' }),
+      })
+    ).json();
+
+    expect(again.reused).toBe(true);
+    expect(again.session.id).toBe(first.session.id);
+    expect(again.session.id).not.toBe(other.session.id);
   });
 
   it('rejects direct navigation when the target is not in Observed Apps', async () => {

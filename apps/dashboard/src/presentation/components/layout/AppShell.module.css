@@ -1,43 +1,115 @@
 .shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 272px minmax(0, 1fr);
+  grid-template-columns: 248px minmax(0, 1fr);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(244, 247, 251, 0.92)), #f4f7fb;
-  color: #15191f;
+    radial-gradient(circle at 28% 4%, rgba(128, 105, 203, 0.34), transparent 28rem),
+    radial-gradient(circle at 88% 20%, rgba(87, 126, 255, 0.14), transparent 24rem),
+    linear-gradient(180deg, #04030c 0%, #0a0914 52%, #04030c 100%);
+  color: #f7f7fb;
+  transition: grid-template-columns 180ms ease;
+}
+
+.collapsed {
+  grid-template-columns: 78px minmax(0, 1fr);
 }
 
 .sidebar {
-  background: linear-gradient(180deg, #0f1720 0%, #111c26 52%, #13211c 100%);
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(4, 3, 12, 0.78), rgba(4, 3, 12, 0.98) 44%),
+    url('../../../assets/brand-banner.png') top center / 190% auto no-repeat,
+    #04030c;
   color: #f7fafc;
-  padding: 24px 22px;
+  padding: 22px 18px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 22px;
+  border-right: 1px solid rgba(128, 105, 203, 0.28);
+  box-shadow: 18px 0 48px rgba(4, 3, 12, 0.28);
+  transition:
+    padding 180ms ease,
+    gap 180ms ease,
+    background-size 180ms ease;
+}
+
+.brand {
+  min-width: 0;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+  transition: gap 180ms ease;
+}
+
+.brand > div {
+  min-width: 0;
+}
+
+.brand strong {
+  display: none;
+}
+
+.collapseButton {
+  width: 34px;
+  min-height: 34px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(183, 168, 255, 0.38);
+  border-radius: 8px;
+  background: rgba(44, 44, 55, 0.74);
+  color: #f7f7fb;
+  cursor: pointer;
+  padding: 0;
+}
+
+.collapseButton:hover {
+  border-color: rgba(183, 168, 255, 0.78);
+  background: rgba(128, 105, 203, 0.28);
+}
+
+.collapseButton:focus-visible {
+  outline: 3px solid rgba(128, 105, 203, 0.66);
+  outline-offset: 2px;
+}
+
+.collapseButton svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
 }
 
 .kicker {
-  margin: 0 0 8px;
-  color: #7dd3fc;
-  font-size: 12px;
+  margin: 0 0 3px;
+  color: #b7a8ff;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0;
 }
 
 .sidebar h1 {
   margin: 0;
-  font-size: 24px;
-  line-height: 1.08;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: #f2efff;
 }
 
 .nav {
   display: grid;
-  gap: 6px;
+  gap: 5px;
 }
 
 .nav a,
-.toolbar button,
+.links button,
 .error,
 .notice {
   min-height: 40px;
@@ -52,36 +124,75 @@
 }
 
 .nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background: transparent;
-  color: #d7dde5;
+  color: #d9d7e8;
   text-align: left;
-  padding: 10px 12px;
+  padding: 9px 11px;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    padding 180ms ease;
+}
+
+.nav a span {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background: rgba(61, 45, 111, 0.96);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.nav a span svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.1;
+}
+
+.nav a b {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  transition:
+    opacity 140ms ease,
+    max-width 180ms ease;
 }
 
 .nav a:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(128, 105, 203, 0.18);
   color: #ffffff;
 }
 
 .nav a:focus-visible,
-.toolbar button:focus-visible,
+.links button:focus-visible,
 .error:focus-visible,
 .notice:focus-visible {
-  outline: 3px solid rgba(125, 211, 252, 0.55);
+  outline: 3px solid rgba(128, 105, 203, 0.66);
   outline-offset: 2px;
 }
 
 .nav a:active,
-.toolbar button:active,
+.links button:active,
 .error:active,
 .notice:active {
   transform: translateY(1px);
 }
 
 .nav .active {
-  background: #223142;
-  border-color: rgba(125, 211, 252, 0.2);
+  background: rgba(91, 70, 154, 0.72);
+  border-color: rgba(183, 168, 255, 0.34);
   color: #ffffff;
+  box-shadow: inset 3px 0 0 #8069cb;
 }
 
 .links {
@@ -90,52 +201,112 @@
   gap: 8px;
 }
 
-.links a {
-  color: #a8f0d1;
+.links a,
+.links button {
+  color: #d8d0ff;
   text-decoration: none;
   width: fit-content;
   font-size: 14px;
 }
 
-.links a:hover {
+.links button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(44, 44, 55, 0.72);
+  border-color: rgba(128, 105, 203, 0.38);
+  padding: 0 11px;
+}
+
+.links button svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.2;
+}
+
+.links a:hover,
+.links button:hover {
   color: #ffffff;
+}
+
+.collapsed .sidebar {
+  align-items: center;
+  padding: 18px 12px;
+  gap: 18px;
+}
+
+.collapsed .collapseButton {
+  order: -1;
+}
+
+.collapsed .brand {
+  display: grid;
+  place-items: center;
+  gap: 12px;
+}
+
+.collapsed .brand > div,
+.collapsed .links {
+  display: none;
+}
+
+.collapsed .brand strong {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(183, 168, 255, 0.36);
+  border-radius: 10px;
+  background: rgba(91, 70, 154, 0.74);
+  color: #ffffff;
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.collapsed .nav {
+  width: 100%;
+}
+
+.collapsed .nav a {
+  justify-content: center;
+  padding: 8px;
+}
+
+.collapsed .nav a b {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  opacity: 0;
+  white-space: nowrap;
+}
+
+.collapsed .nav a span {
+  width: 32px;
+  height: 32px;
+}
+
+.collapsed .nav a span svg {
+  width: 17px;
+  height: 17px;
+}
+
+.collapsed .nav .active {
+  box-shadow: inset 0 -3px 0 #8069cb;
 }
 
 .main {
   position: relative;
-  padding: 22px clamp(18px, 2.4vw, 32px) 32px;
+  min-width: 0;
+  padding: 18px clamp(16px, 2.2vw, 30px) 32px;
   display: grid;
   align-content: start;
-  gap: 14px;
+  gap: 12px;
 }
 
-.toolbar {
-  position: absolute;
-  top: 22px;
-  right: clamp(18px, 2.4vw, 32px);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 2;
-}
-
-.toolbar button {
-  min-width: 72px;
-  min-height: 40px;
-  background: #ffffff;
-  border-color: #cad2dc;
-  color: #123a2d;
-  font-size: 18px;
-  font-weight: 800;
-  padding: 0;
-  box-shadow: 0 1px 2px rgba(15, 23, 32, 0.08);
-}
-
-.toolbar button:hover {
-  border-color: #98a7b8;
-  background: #f8fafc;
-}
-
-.toolbar button:disabled {
+.links button:disabled {
   cursor: not-allowed;
   opacity: 0.62;
 }
@@ -148,28 +319,152 @@
 }
 
 .error {
-  background: #fff1f1;
-  color: #9c1c1c;
-  border-color: #f4b6b6;
+  background: rgba(127, 29, 29, 0.34);
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.42);
 }
 
 .notice {
-  background: #edfdf5;
-  color: #126341;
-  border-color: #a8e7ca;
+  background: rgba(128, 105, 203, 0.2);
+  color: #f2efff;
+  border-color: rgba(183, 168, 255, 0.36);
 }
 
 @media (max-width: 820px) {
   .shell {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: hidden;
+  }
+
+  .collapsed {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .sidebar {
     position: static;
-    gap: 20px;
+    min-width: 0;
+    min-height: 0;
+    gap: 14px;
+    padding: 18px 16px;
+  }
+
+  .collapseButton {
+    display: none;
+  }
+
+  .brand strong {
+    display: none;
+  }
+
+  .collapsed .sidebar {
+    align-items: stretch;
+    padding: 18px 16px;
+    gap: 14px;
+  }
+
+  .collapsed .brand .kicker {
+    display: block;
+  }
+
+  .collapsed .brand h1 {
+    display: block;
   }
 
   .nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
+    gap: 8px;
+    padding-bottom: 2px;
+  }
+
+  .nav a {
+    white-space: nowrap;
+  }
+
+  .collapsed .nav a {
+    justify-content: flex-start;
+    padding: 9px 11px;
+  }
+
+  .collapsed .nav a b {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .collapsed .nav a span {
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav .active {
+    box-shadow: inset 0 -3px 0 #8069cb;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 0;
+  }
+
+  .main {
+    width: 100%;
+    min-width: 0;
+    padding: 14px 12px 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .sidebar {
+    gap: 10px;
+    padding: 12px 12px 10px;
+  }
+
+  .kicker {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .sidebar h1 {
+    font-size: 19px;
+  }
+
+  .nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .nav a,
+  .links button,
+  .error,
+  .notice {
+    min-height: 34px;
+  }
+
+  .nav a {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .links {
+    display: none;
+  }
+
+  .main {
+    padding: 10px 6px 18px;
+    gap: 8px;
+  }
+
+}
+
+@media (max-width: 420px) {
+  .sidebar {
+    background:
+      linear-gradient(180deg, rgba(4, 3, 12, 0.86), rgba(4, 3, 12, 0.98) 56%),
+      url('../../../assets/brand-banner.png') top center / 150% auto no-repeat,
+      #04030c;
   }
 }

@@ -37,6 +37,12 @@ export function SessionsView() {
               <dl className={styles.details}>
                 <dt>ID</dt>
                 <dd>{session.id}</dd>
+                <dt>Owner</dt>
+                <dd>
+                  {session.owner
+                    ? `${session.owner.agentId}${session.owner.label ? ` · ${session.owner.label}` : ''}`
+                    : 'unassigned'}
+                </dd>
                 <dt>Slot</dt>
                 <dd>{session.slot}</dd>
                 <dt>Display</dt>

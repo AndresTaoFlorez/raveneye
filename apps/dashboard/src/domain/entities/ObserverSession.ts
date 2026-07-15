@@ -20,10 +20,15 @@ export interface ObserverSession {
   detail?: string | null;
   novncUrl: string;
   cdpUrl: string;
+  owner?: {
+    agentId: string;
+    label: string | null;
+  } | null;
 }
 
 export interface OpenAppResult {
   detail: string;
+  reused?: boolean;
   session: ObserverSession;
   watchUrl: string;
   cdpUrl: string;
