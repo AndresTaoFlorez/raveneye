@@ -46,6 +46,7 @@ If any secret is missing or expired, the deploy is failed, not complete.
 
 The workflow must:
 
+- Run `scripts/deploy-preflight.mjs` before any publish job.
 - Check out the exact commit that reached `main`.
 - Authenticate to Docker Hub before pushing images.
 - Set up Docker Buildx.
