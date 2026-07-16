@@ -2,6 +2,8 @@ name: Publish
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
 
@@ -26,7 +28,8 @@ jobs:
           images: andrestao577/raveneye
           tags: |
             type=semver,pattern={{version}}
-            type=raw,value=latest
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-
 
       - uses: docker/build-push-action@v6
         with:
@@ -53,6 +56,7 @@ jobs:
       - run: npm run build
 
       - name: Check version matches tag
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           PKG=$(node -p "require('./apps/mcp-server/package.json').version")
           TAG="${GITHUB_REF_NAME#v}"
@@ -61,6 +65,19 @@ jobs:
             exit 1
           fi
 
+      - name: Check whether npm version is publishable
+        id: npm_version
+        run: |
+          PKG=$(node -p "require('./apps/mcp-server/package.json').version")
+          if npm view "raveneye-mcp-server@$PKG" version >/dev/null 2>&1; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "raveneye-mcp-server@$PKG already exists on npm; skipping publish."
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "raveneye-mcp-server@$PKG does not exist on npm; publishing."
+          fi
+
       - run: npm publish --workspace=apps/mcp-server --access public
+        if: steps.npm_version.outputs.publish == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

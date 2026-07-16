@@ -48,6 +48,7 @@ tags: [moc]
 - [Quick Start](./05-Operations/Quick%20Start.md) — from clone to visible browser
 - [Observing Your Own App](./05-Operations/Observing%20Your%20Own%20App.md) — point the observer at your real project (the Zoom-call recipe)
 - [Commands Reference](./05-Operations/Commands%20Reference.md) — every make target and script
+- [Recurring Full Deploy](./05-Operations/Recurring%20Full%20Deploy.md) — automatic Docker Hub and npm publish plan for every `main` push
 - [Configuration](./05-Operations/Configuration.md) — all environment variables
 - [Profiles](./05-Operations/Profiles.md) — ephemeral vs persistent sessions
 - [CI Mode](./05-Operations/CI%20Mode.md) — headless missions without exposed ports
