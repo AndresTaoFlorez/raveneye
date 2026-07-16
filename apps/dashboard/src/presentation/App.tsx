@@ -18,6 +18,8 @@ const ROUTES: Record<ViewKey, string> = {
   docs: '/docs',
 };
 
+const DASHBOARD_REFRESH_MS = 3000;
+
 function viewFromPath(pathname: string): ViewKey {
   if (pathname === '/' || pathname === '/docs' || pathname.startsWith('/docs/'))
     return pathname.startsWith('/docs') ? 'docs' : 'overview';
@@ -33,6 +35,10 @@ export function App() {
 
   useEffect(() => {
     void dispatch(loadDashboard());
+    const interval = window.setInterval(() => {
+      void dispatch(loadDashboard());
+    }, DASHBOARD_REFRESH_MS);
+    return () => window.clearInterval(interval);
   }, [dispatch]);
 
   useEffect(() => {

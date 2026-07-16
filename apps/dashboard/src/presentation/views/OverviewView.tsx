@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toAppDraft } from '@/domain/entities/ObservedApp';
+import type { ObserverSession } from '@/domain/entities/ObserverSession';
 import { useEntranceAnimation } from '@/presentation/animations/useEntranceAnimation';
 import { AppForm } from '@/presentation/components/apps/AppForm';
 import { ConfirmDialog } from '@/presentation/components/shared/ConfirmDialog';
@@ -65,6 +66,24 @@ function formatTime(value?: string): string {
   return new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+function appFromSession(session: ObserverSession) {
+  const host = hostname(session.targetUrl);
+  return {
+    id: session.appId,
+    name: session.slot === 'base' ? 'Configured Target' : host ?? session.appId,
+    description: session.owner?.label ?? null,
+    target_url: session.targetUrl,
+    allowed_hosts: session.allowedHosts ?? (host ? [host] : []),
+    local_repo_path: null,
+    run_mode: 'host' as const,
+    default_viewport_width: 1440,
+    default_viewport_height: 900,
+    created_at: session.startedAt,
+    updated_at: session.startedAt,
+    sessions: [session],
+  };
+}
+
 export function OverviewView() {
   const ref = useEntranceAnimation<HTMLElement>();
   const dispatch = useAppDispatch();
@@ -78,11 +97,18 @@ export function OverviewView() {
   const firstRunningSession = sessions.find((session) => session.state === 'running') ?? null;
   const activeCount = sessions.filter((session) => session.state === 'running').length;
   const activeHealth = health?.components.filter((component) => !component.ok) ?? [];
+  const sessionOnlyApps = sessions
+    .filter((session) => !apps.some((app) => app.id === session.appId))
+    .map(appFromSession);
+  const observableApps = [...apps, ...sessionOnlyApps];
   const selectedApp =
-    apps.find((app) => app.id === selectedAppId) ??
-    apps.find((app) => app.id === firstRunningSession?.appId) ??
-    apps[0] ??
+    observableApps.find((app) => app.id === selectedAppId) ??
+    observableApps.find((app) => app.id === firstRunningSession?.appId) ??
+    observableApps[0] ??
     null;
+  const selectedAppIsRegistered = Boolean(
+    selectedApp && apps.some((app) => app.id === selectedApp.id),
+  );
   const deleteApp = apps.find((app) => app.id === deleteAppId) ?? null;
   const selectedSession = selectedApp
     ? sessions.find((session) => session.appId === selectedApp.id && session.state === 'running')
@@ -106,6 +132,7 @@ export function OverviewView() {
   }, [selectedApp?.id, selectedApp?.default_viewport_width, selectedApp?.default_viewport_height]);
 
   const openAppSession = async (appId: string, expand = false) => {
+    if (!apps.some((app) => app.id === appId)) return;
     const result = await dispatch(openApp(appId)).unwrap();
     setSelectedAppId(appId);
     if (expand) window.open(result.watchUrl, '_blank', 'noopener,noreferrer');
@@ -117,7 +144,7 @@ export function OverviewView() {
   };
 
   const commitViewport = async () => {
-    if (!selectedApp || viewportSaving) return;
+    if (!selectedApp || !selectedAppIsRegistered || viewportSaving) return;
     const width = Number(viewportDraft.width);
     const height = Number(viewportDraft.height);
     if (
@@ -187,7 +214,7 @@ export function OverviewView() {
                 <strong>{selectedApp?.name ?? 'No app selected'}</strong>
               </div>
               <div className={styles.previewActions}>
-                {selectedApp ? (
+                {selectedApp && selectedAppIsRegistered ? (
                   <button
                     type="button"
                     aria-label={
@@ -256,7 +283,8 @@ export function OverviewView() {
             </button>
           </div>
           <div className={styles.windowGrid} aria-label="Observed browser windows">
-            {apps.map((app) => {
+            {observableApps.map((app) => {
+              const isRegisteredApp = apps.some((item) => item.id === app.id);
               const session = sessions.find(
                 (item) => item.appId === app.id && item.state === 'running',
               );
@@ -285,18 +313,20 @@ export function OverviewView() {
                       <strong>{session ? session.slot : 'idle'}</strong>
                     </div>
                     <div className={styles.windowBarActions}>
-                      <button
-                        type="button"
-                        aria-label={`Delete ${app.name}`}
-                        title="Delete"
-                        className={styles.windowDeleteButton}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setDeleteAppId(app.id);
-                        }}
-                      >
-                        <CloseIcon />
-                      </button>
+                      {isRegisteredApp ? (
+                        <button
+                          type="button"
+                          aria-label={`Delete ${app.name}`}
+                          title="Delete"
+                          className={styles.windowDeleteButton}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setDeleteAppId(app.id);
+                          }}
+                        >
+                          <CloseIcon />
+                        </button>
+                      ) : null}
                     </div>
                   </div>
                   <div className={styles.windowBody}>
@@ -342,7 +372,9 @@ export function OverviewView() {
                 </article>
               );
             })}
-            {!apps.length ? <p className={styles.empty}>No observed apps registered yet.</p> : null}
+            {!observableApps.length ? (
+              <p className={styles.empty}>No observed apps registered yet.</p>
+            ) : null}
           </div>
         </article>
 
@@ -376,7 +408,7 @@ export function OverviewView() {
                         value={viewportDraft.width}
                         inputMode="numeric"
                         aria-label="Viewport width"
-                        disabled={!selectedApp || viewportSaving}
+                        disabled={!selectedApp || !selectedAppIsRegistered || viewportSaving}
                         onChange={(event) =>
                           setViewportDraft((current) => ({
                             ...current,
@@ -403,7 +435,7 @@ export function OverviewView() {
                         value={viewportDraft.height}
                         inputMode="numeric"
                         aria-label="Viewport height"
-                        disabled={!selectedApp || viewportSaving}
+                        disabled={!selectedApp || !selectedAppIsRegistered || viewportSaving}
                         onChange={(event) =>
                           setViewportDraft((current) => ({
                             ...current,
