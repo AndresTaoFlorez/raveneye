@@ -3,17 +3,106 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { homedir } from 'node:os';
 import { execFileSync, execSync } from 'node:child_process';
+import { createServer } from 'node:net';
 import { platform } from 'node:process';
 
 const RAVENEYE_MCP = { command: 'npx', args: ['--yes', 'raveneye-mcp-server@latest'] };
 const INSTALL_DIR = process.env.RAVENEYE_HOME ?? join(homedir(), '.raveneye');
 const COMPOSE_FILE = join(INSTALL_DIR, 'compose.yaml');
+const ENV_FILE = join(INSTALL_DIR, '.env');
 const COMPOSE_URL =
   'https://raw.githubusercontent.com/AndresTaoFlorez/raveneye/main/compose.hub.yaml';
 const IMAGE = 'andrestao577/raveneye:latest';
-const API = 'http://127.0.0.1:8090';
-const DASHBOARD = `${API}/overview`;
-const WATCH = 'http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale';
+
+// Host-side ports. When any default is taken, the whole set shifts by a single
+// offset so the layout stays coherent (main ports adjacent to session ranges).
+const DEFAULT_PORTS = {
+  RAVENEYE_NOVNC_PORT: 6080,
+  RAVENEYE_CDP_PORT: 9222,
+  RAVENEYE_API_PORT: 8090,
+  RAVENEYE_SESSION_NOVNC_PORT_START: 6081,
+  RAVENEYE_SESSION_NOVNC_PORT_END: 6100,
+  RAVENEYE_SESSION_CDP_PORT_START: 9223,
+  RAVENEYE_SESSION_CDP_PORT_END: 9232,
+};
+
+function readEnvPorts() {
+  if (!existsSync(ENV_FILE)) return null;
+  const ports = { ...DEFAULT_PORTS };
+  for (const line of readFileSync(ENV_FILE, 'utf8').split(/\r?\n/)) {
+    const m = line.match(/^(\w+)=(\d+)\s*$/);
+    if (m && m[1] in ports) ports[m[1]] = Number(m[2]);
+  }
+  return ports;
+}
+
+function urls(ports = readEnvPorts() ?? DEFAULT_PORTS) {
+  const api = `http://127.0.0.1:${ports.RAVENEYE_API_PORT}`;
+  return {
+    api,
+    dashboard: `${api}/overview`,
+    watch: `http://127.0.0.1:${ports.RAVENEYE_NOVNC_PORT}/vnc.html?autoconnect=true&resize=scale`,
+  };
+}
+
+// Env vars baked into the MCP registration so the client finds the stack
+// even when it runs on non-default ports.
+function mcpEnv() {
+  const ports = readEnvPorts() ?? DEFAULT_PORTS;
+  return {
+    RAVENEYE_API: `http://127.0.0.1:${ports.RAVENEYE_API_PORT}`,
+    RAVENEYE_CDP: `http://127.0.0.1:${ports.RAVENEYE_CDP_PORT}`,
+  };
+}
+
+function portFree(port) {
+  return new Promise((resolve) => {
+    const srv = createServer()
+      .once('error', () => resolve(false))
+      .once('listening', () => srv.close(() => resolve(true)))
+      .listen(port, '127.0.0.1');
+  });
+}
+
+async function allFree(ports) {
+  const list = [ports.RAVENEYE_NOVNC_PORT, ports.RAVENEYE_CDP_PORT, ports.RAVENEYE_API_PORT];
+  for (let p = ports.RAVENEYE_SESSION_NOVNC_PORT_START; p <= ports.RAVENEYE_SESSION_NOVNC_PORT_END; p += 1)
+    list.push(p);
+  for (let p = ports.RAVENEYE_SESSION_CDP_PORT_START; p <= ports.RAVENEYE_SESSION_CDP_PORT_END; p += 1)
+    list.push(p);
+  return (await Promise.all(list.map(portFree))).every(Boolean);
+}
+
+function shiftPorts(ports, offset) {
+  return Object.fromEntries(Object.entries(ports).map(([k, v]) => [k, v + offset]));
+}
+
+async function choosePorts() {
+  // If our stack is already up, its own bindings would look "taken" — keep
+  // whatever ports it is running on instead of probing.
+  try {
+    const running = execFileSync(
+      'docker',
+      ['compose', '-f', COMPOSE_FILE, '--project-directory', INSTALL_DIR, 'ps', '-q'],
+      { stdio: ['ignore', 'pipe', 'ignore'] },
+    )
+      .toString()
+      .trim();
+    if (running) return readEnvPorts() ?? { ...DEFAULT_PORTS };
+  } catch {
+    // No stack yet (or compose unavailable) — probe for free ports below.
+  }
+  for (let offset = 0; offset <= 9000; offset += 1000) {
+    const candidate = shiftPorts(DEFAULT_PORTS, offset);
+    if (await allFree(candidate)) {
+      if (offset > 0)
+        console.log(`Default ports busy — using offset +${offset} (API on ${candidate.RAVENEYE_API_PORT})`);
+      return candidate;
+    }
+  }
+  console.error('No free port range found for Raveneye (tried offsets +0 to +9000).');
+  process.exit(1);
+}
 
 // Cada target sabe cómo registrar el MCP server en su cliente.
 // Agregar uno nuevo = añadir una entrada aquí.
@@ -28,9 +117,12 @@ const TARGETS = {
         // raveneye was not registered in this scope — nothing to replace.
       }
     }
+    const envFlags = Object.entries(mcpEnv())
+      .map(([k, v]) => `-e ${k}=${v}`)
+      .join(' ');
     try {
       execSync(
-        `claude mcp add raveneye -s user -- ${RAVENEYE_MCP.command} ${RAVENEYE_MCP.args.join(' ')}`,
+        `claude mcp add raveneye -s user ${envFlags} -- ${RAVENEYE_MCP.command} ${RAVENEYE_MCP.args.join(' ')}`,
         { stdio: 'inherit' },
       );
     } catch {
@@ -57,10 +149,10 @@ async function download(url, path) {
   writeFileSync(path, await res.text());
 }
 
-async function waitForHealth() {
+async function waitForHealth(api) {
   for (let i = 1; i <= 30; i += 1) {
     try {
-      const res = await fetch(`${API}/health`, { signal: AbortSignal.timeout(2000) });
+      const res = await fetch(`${api}/health`, { signal: AbortSignal.timeout(2000) });
       if (res.ok) {
         const body = await res.json();
         if (body.status === 'ok') return true;
@@ -107,11 +199,21 @@ async function fix(target = 'codex') {
     process.exit(1);
   }
 
+  step('Choosing ports');
+  const ports = await choosePorts();
+  writeFileSync(
+    ENV_FILE,
+    Object.entries(ports)
+      .map(([k, v]) => `${k}=${v}`)
+      .join('\n') + '\n',
+  );
+
   step('Starting or repairing Raveneye stack');
   run('docker', ['compose', '-f', COMPOSE_FILE, '--project-directory', INSTALL_DIR, 'up', '-d']);
 
   step('Checking health');
-  const healthy = await waitForHealth();
+  const { api, dashboard, watch } = urls(ports);
+  const healthy = await waitForHealth(api);
   if (!healthy) {
     console.error('\nRaveneye did not become healthy. Recent logs:');
     run('docker', [
@@ -141,13 +243,16 @@ async function fix(target = 'codex') {
   }
 
   step('Opening dashboard');
-  openUrl(DASHBOARD);
-  console.log(`Dashboard: ${DASHBOARD}`);
-  console.log(`Watched browser: ${WATCH}`);
+  openUrl(dashboard);
+  console.log(`Dashboard: ${dashboard}`);
+  console.log(`Watched browser: ${watch}`);
 }
 
 function tomlSection(header, mcp) {
-  return `${header}\ncommand = "${mcp.command}"\nargs = ${JSON.stringify(mcp.args)}\n`;
+  const env = Object.entries(mcpEnv())
+    .map(([k, v]) => `${k} = "${v}"`)
+    .join(', ');
+  return `${header}\ncommand = "${mcp.command}"\nargs = ${JSON.stringify(mcp.args)}\nenv = { ${env} }\n`;
 }
 
 // Escribe o actualiza un bloque TOML.
@@ -174,7 +279,7 @@ function registerJson(cfgPath, keys) {
   mkdirSync(dirname(cfgPath), { recursive: true });
   const config = existsSync(cfgPath) ? JSON.parse(readFileSync(cfgPath, 'utf8')) : {};
   const node = keys.reduce((obj, k) => (obj[k] ??= {}), config);
-  node.raveneye = RAVENEYE_MCP;
+  node.raveneye = { ...RAVENEYE_MCP, env: mcpEnv() };
   writeFileSync(cfgPath, JSON.stringify(config, null, 2) + '\n');
   console.log(`Updated raveneye in ${cfgPath}`);
 }
@@ -193,9 +298,10 @@ if (cmd === 'setup') {
   await fix(target ?? 'codex');
   process.exit(0);
 } else if (cmd === 'open') {
-  openUrl(DASHBOARD);
-  console.log(`Dashboard: ${DASHBOARD}`);
-  console.log(`Watched browser: ${WATCH}`);
+  const { dashboard, watch } = urls();
+  openUrl(dashboard);
+  console.log(`Dashboard: ${dashboard}`);
+  console.log(`Watched browser: ${watch}`);
   process.exit(0);
 } else {
   await import('./dist/index.js');

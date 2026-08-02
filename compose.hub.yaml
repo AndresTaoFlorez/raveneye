@@ -25,8 +25,10 @@ services:
       - '127.0.0.1:${RAVENEYE_NOVNC_PORT:-6080}:6080'
       - '127.0.0.1:${RAVENEYE_CDP_PORT:-9222}:9222'
       - '127.0.0.1:${RAVENEYE_API_PORT:-8090}:8090'
-      - '127.0.0.1:6081-6100:6081-6100'
-      - '127.0.0.1:9223-9232:9223-9232'
+      # Session ranges are mapped same:same — the app inside allocates listeners
+      # starting at RAVENEYE_SESSION_*_PORT_START, so host and container must match.
+      - '127.0.0.1:${RAVENEYE_SESSION_NOVNC_PORT_START:-6081}-${RAVENEYE_SESSION_NOVNC_PORT_END:-6100}:${RAVENEYE_SESSION_NOVNC_PORT_START:-6081}-${RAVENEYE_SESSION_NOVNC_PORT_END:-6100}'
+      - '127.0.0.1:${RAVENEYE_SESSION_CDP_PORT_START:-9223}-${RAVENEYE_SESSION_CDP_PORT_END:-9232}:${RAVENEYE_SESSION_CDP_PORT_START:-9223}-${RAVENEYE_SESSION_CDP_PORT_END:-9232}'
     volumes:
       # Artifacts bind-mounted so the MCP server can read screenshots from the host.
       - ./artifacts:/artifacts:z
