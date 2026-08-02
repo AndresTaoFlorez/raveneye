@@ -19,14 +19,25 @@ const WATCH = 'http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale';
 // Agregar uno nuevo = añadir una entrada aquí.
 const TARGETS = {
   claude: () => {
-    try {
-      execSync('claude mcp remove raveneye', { stdio: 'ignore' });
-    } catch {
-      // raveneye was not registered yet — nothing to replace.
+    // Earlier versions registered without a scope (= local, tied to the cwd
+    // where the installer ran), so sweep both scopes before re-adding.
+    for (const scope of ['user', 'local']) {
+      try {
+        execSync(`claude mcp remove raveneye -s ${scope}`, { stdio: 'ignore' });
+      } catch {
+        // raveneye was not registered in this scope — nothing to replace.
+      }
     }
-    execSync(`claude mcp add raveneye -- ${RAVENEYE_MCP.command} ${RAVENEYE_MCP.args.join(' ')}`, {
-      stdio: 'inherit',
-    });
+    try {
+      execSync(
+        `claude mcp add raveneye -s user -- ${RAVENEYE_MCP.command} ${RAVENEYE_MCP.args.join(' ')}`,
+        { stdio: 'inherit' },
+      );
+    } catch {
+      console.error('\nCould not register with the `claude` CLI. Is Claude Code installed?');
+      console.error('Install it, then re-run: npx --yes raveneye-mcp-server@latest setup claude');
+      process.exit(1);
+    }
   },
   codex: () => registerToml(join(homedir(), '.codex', 'config.toml'), '[mcp_servers.raveneye]'),
   zcode: () => registerJson(join(homedir(), '.zcode', 'cli', 'config.json'), ['mcp', 'servers']),
@@ -85,7 +96,16 @@ async function fix(target = 'codex') {
   await download(COMPOSE_URL, COMPOSE_FILE);
 
   step('Updating Raveneye image');
-  run('docker', ['pull', IMAGE]);
+  try {
+    run('docker', ['pull', IMAGE]);
+  } catch {
+    console.error('\ndocker pull failed (see error above). Common causes:');
+    console.error('  - Daemon not running: sudo systemctl enable --now docker');
+    console.error(
+      '  - Permission denied on /var/run/docker.sock: sudo usermod -aG docker $USER, then log out and back in (or run `newgrp docker`)',
+    );
+    process.exit(1);
+  }
 
   step('Starting or repairing Raveneye stack');
   run('docker', ['compose', '-f', COMPOSE_FILE, '--project-directory', INSTALL_DIR, 'up', '-d']);
