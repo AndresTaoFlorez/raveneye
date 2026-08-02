@@ -62,6 +62,9 @@ jobs:
     name: Publish npm package
     runs-on: ubuntu-latest
     needs: preflight
+    # Only tag pushes publish to npm — a main push and its release tag arrive
+    # together and the two runs race each other to publish the same version.
+    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v5
 
