@@ -8,9 +8,18 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { chromium } from 'playwright-core';
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { homedir, hostname } from 'node:os';
+
+// dist/index.js sits one level below package.json both in the repo and in the
+// published tarball.
+const VERSION = (
+  JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
+    version: string;
+  }
+).version;
 
 const API = process.env['RAVENEYE_API'] ?? 'http://127.0.0.1:8090';
 const CDP = process.env['RAVENEYE_CDP'] ?? 'http://127.0.0.1:9222';
@@ -268,7 +277,7 @@ async function withCdpPage<T>(fn: (page: import('playwright-core').Page) => Prom
   }
 }
 
-const server = new Server({ name: 'raveneye', version: '0.1.0' }, { capabilities: { tools: {} } });
+const server = new Server({ name: 'raveneye', version: VERSION }, { capabilities: { tools: {} } });
 
 server.setRequestHandler(ListToolsRequestSchema, () => ({ tools: TOOLS }));
 
