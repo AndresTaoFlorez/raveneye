@@ -5,6 +5,9 @@
 services:
   raveneye:
     image: andrestao577/raveneye:latest
+    # Reap zombie Chromium child processes — without this they accumulate
+    # until the container degrades.
+    init: true
     environment:
       RAVENEYE_TARGET_URL: '${RAVENEYE_TARGET_URL:-http://127.0.0.1:8090/overview}'
       RAVENEYE_ALLOWED_HOSTS: '${RAVENEYE_ALLOWED_HOSTS:-host.docker.internal,localhost,127.0.0.1}'
@@ -34,6 +37,14 @@ services:
     stop_grace_period: 30s
     security_opt:
       - no-new-privileges:true
+    # Explicit healthcheck so a hung observer is reported as unhealthy even
+    # when the pulled image predates the baked-in Dockerfile HEALTHCHECK.
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:8090/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     restart: unless-stopped
 
 volumes:
