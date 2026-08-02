@@ -48,6 +48,7 @@ export interface SessionHandle {
   novncUrl: string;
   cdpUrl: string;
   owner: SessionOwner | null;
+  participants: SessionParticipant[];
 }
 
 export interface SessionRecord {
@@ -70,6 +71,14 @@ export interface SessionOwner {
   label: string | null;
 }
 
+export interface SessionParticipant {
+  id: string;
+  label: string | null;
+  kind: 'agent' | 'human';
+  connectedAt: string;
+  lastSeenAt: string;
+}
+
 interface SessionRecordRow {
   id: string;
   observed_app_id: string | null;
@@ -90,6 +99,7 @@ interface InternalSession extends SessionHandle {
   processes: ChildProcess[];
   context: BrowserContext | null;
   userDataDir: string;
+  participantMap: Map<string, SessionParticipant>;
 }
 
 function spawnLogged(
@@ -335,6 +345,16 @@ export class SessionManager {
     return s ? this.toHandle(s) : null;
   }
 
+  joinSession(id: string, participant: { agentId: string; label?: string | null }): SessionHandle {
+    const session = this.sessions.get(id);
+    if (!session) throw new SessionNotFoundError(`session ${id} not found`);
+    if (session.state !== 'starting' && session.state !== 'running') {
+      throw new SessionNotFoundError(`session ${id} is not running`);
+    }
+    this.touchParticipant(session, participant.agentId, participant.label ?? null);
+    return this.toHandle(session);
+  }
+
   findBySlot(slot: string): SessionHandle | null {
     for (const s of this.sessions.values()) {
       if (s.slot === slot) return this.toHandle(s);
@@ -496,6 +516,9 @@ export class SessionManager {
       novncUrl: s.novncUrl,
       cdpUrl: s.cdpUrl,
       owner: sessionOwner(s.spec.ownerAgentId, s.spec.ownerLabel),
+      participants: [...s.participantMap.values()].sort((a, b) =>
+        a.connectedAt.localeCompare(b.connectedAt),
+      ),
     };
   }
 
@@ -527,6 +550,18 @@ export class SessionManager {
     };
   }
 
+  private touchParticipant(session: InternalSession, agentId: string, label: string | null) {
+    const now = new Date().toISOString();
+    const existing = session.participantMap.get(agentId);
+    session.participantMap.set(agentId, {
+      id: agentId,
+      label: label ?? existing?.label ?? null,
+      kind: agentId === 'manual' ? 'human' : 'agent',
+      connectedAt: existing?.connectedAt ?? now,
+      lastSeenAt: now,
+    });
+  }
+
   private async boot(spec: SessionSpec): Promise<SessionHandle> {
     if (this.findBySlot(spec.slot)) {
       throw new SessionAlreadyRunningError(`slot ${spec.slot} already in use`);
@@ -551,6 +586,7 @@ export class SessionManager {
       novncUrl: `http://127.0.0.1:${spec.ports.novnc}/vnc.html?autoconnect=true&resize=scale`,
       cdpUrl: `http://127.0.0.1:${spec.ports.cdp}`,
       owner: sessionOwner(spec.ownerAgentId, spec.ownerLabel),
+      participants: [],
     };
 
     const internal: InternalSession = {
@@ -559,7 +595,9 @@ export class SessionManager {
       processes: [],
       context: null,
       userDataDir: spec.profileDir,
+      participantMap: new Map(),
     };
+    if (spec.ownerAgentId) this.touchParticipant(internal, spec.ownerAgentId, spec.ownerLabel);
     this.sessions.set(id, internal);
 
     try {

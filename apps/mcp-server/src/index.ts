@@ -7,18 +7,22 @@ import {
   type Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import { chromium } from 'playwright-core';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { homedir, hostname } from 'node:os';
 
 const API = process.env['RAVENEYE_API'] ?? 'http://127.0.0.1:8090';
 const CDP = process.env['RAVENEYE_CDP'] ?? 'http://127.0.0.1:9222';
 // Default: ~/.raveneye/artifacts — matches the install script's bind mount location.
 const ARTIFACTS = process.env['RAVENEYE_ARTIFACTS'] ?? join(homedir(), '.raveneye', 'artifacts');
+const AGENT_SCOPE = `${hostname()}:${process.cwd()}`;
+const DEFAULT_AGENT_SUFFIX = createHash('sha256').update(AGENT_SCOPE).digest('hex').slice(0, 12);
 const AGENT_ID =
   process.env['RAVENEYE_AGENT_ID'] ??
-  `mcp-${hostname().replace(/[^a-zA-Z0-9_.:-]/g, '-')}-${process.pid}`;
-const AGENT_LABEL = process.env['RAVENEYE_AGENT_LABEL'] ?? `RavenEye MCP ${process.pid}`;
+  `mcp-${hostname().replace(/[^a-zA-Z0-9_.:-]/g, '-')}-${DEFAULT_AGENT_SUFFIX}`;
+const AGENT_LABEL =
+  process.env['RAVENEYE_AGENT_LABEL'] ?? `RavenEye MCP ${basename(process.cwd()) || 'workspace'}`;
 
 interface ActiveSession {
   id: string;
@@ -237,6 +241,18 @@ const TOOLS: Tool[] = [
       required: ['app_id'],
     },
   },
+  {
+    name: 'raveneye_session_join',
+    description:
+      'Join an existing Raveneye browser session by ID as this agent. Use raveneye_status to discover session IDs.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        session_id: { type: 'string', description: 'Session ID from raveneye_status' },
+      },
+      required: ['session_id'],
+    },
+  },
 ];
 
 async function withCdpPage<T>(fn: (page: import('playwright-core').Page) => Promise<T>): Promise<T> {
@@ -362,6 +378,11 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
 
       case 'raveneye_app_open': {
         const data = await acquireSession({ appId: String(a['app_id']) });
+        return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+      }
+
+      case 'raveneye_session_join': {
+        const data = await acquireSession({ sessionId: String(a['session_id']) });
         return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
       }
 

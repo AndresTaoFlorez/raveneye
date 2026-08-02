@@ -489,6 +489,31 @@
   box-shadow: 0 0 0 4px rgba(128, 105, 203, 0.22);
 }
 
+.participantDotButton {
+  width: 22px;
+  min-height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.participantDotButton:hover .windowLive {
+  box-shadow:
+    0 0 0 4px rgba(128, 105, 203, 0.32),
+    0 0 18px rgba(159, 140, 255, 0.66);
+}
+
+.participantDotButton:focus-visible {
+  outline: 3px solid rgba(183, 168, 255, 0.68);
+  outline-offset: 1px;
+}
+
 .windowIdle {
   background: #73718a;
   box-shadow: 0 0 0 4px rgba(115, 113, 138, 0.2);
@@ -653,6 +678,85 @@
 .empty {
   margin: 0;
   color: #d0c8ff;
+}
+
+.participantsPanel {
+  display: grid;
+  gap: 14px;
+}
+
+.participantsSummary {
+  display: grid;
+  gap: 4px;
+  border: 1px solid #dbe1e8;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 12px;
+}
+
+.participantsSummary span,
+.participantRow dt {
+  color: #475569;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.participantsSummary strong {
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.participantsList {
+  display: grid;
+  gap: 10px;
+}
+
+.participantRow {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #dbe1e8;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.participantRow > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.participantRow strong {
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.participantRow span {
+  color: #475569;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.participantRow dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.participantRow dl div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.participantRow dd {
+  margin: 0;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .statusStrip {
@@ -899,6 +1003,10 @@
 
   .statusStrip {
     padding: 8px;
+  }
+
+  .participantRow dl {
+    grid-template-columns: 1fr;
   }
 
   .hosts {

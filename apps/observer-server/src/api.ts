@@ -260,6 +260,7 @@ export function startApi(state: ApiState): http.Server {
           strategy === 'acquire' ? state.sessions.findRunningForAppOwner(app.id, agentId) : null;
         if (running) {
           // Reuse only this agent's own session; never attach to another owner's session.
+          const joined = state.sessions.joinSession(running.id, { agentId, label: ownerLabel });
           const context = state.sessions.contextOf(running.id);
           if (!context) return json(res, 503, { ok: false, detail: 'session has no live context' });
           const page = context.pages()[0] ?? (await context.newPage());
@@ -270,9 +271,9 @@ export function startApi(state: ApiState): http.Server {
             detail: 'navigated existing owned session',
             reused: true,
             app,
-            session: running,
-            watchUrl: running.novncUrl,
-            cdpUrl: running.cdpUrl,
+            session: joined,
+            watchUrl: joined.novncUrl,
+            cdpUrl: joined.cdpUrl,
           });
         }
         try {
@@ -312,6 +313,28 @@ export function startApi(state: ApiState): http.Server {
         if (!agentId) return json(res, 422, { ok: false, detail: 'agentId is required' });
         const ownerLabel = sanitizeOwnerLabel(body.label);
         const strategy = body.strategy === 'new' ? 'new' : 'acquire';
+        const sessionId =
+          typeof body.sessionId === 'string'
+            ? body.sessionId
+            : typeof body.session_id === 'string'
+              ? body.session_id
+              : null;
+        if (sessionId) {
+          const session = state.sessions.joinSession(sessionId, { agentId, label: ownerLabel });
+          const context = state.sessions.contextOf(session.id);
+          if (!context) return json(res, 503, { ok: false, detail: 'session has no live context' });
+          const page = context.pages()[0] ?? (await context.newPage());
+          await page.bringToFront();
+          return json(res, 200, {
+            ok: true,
+            reused: true,
+            detail: 'joined existing session',
+            app: state.registry.get(session.appId),
+            session,
+            watchUrl: session.novncUrl,
+            cdpUrl: session.cdpUrl,
+          });
+        }
 
         let app: ObservedApp | null = null;
         if (typeof body.appId === 'string' || typeof body.app_id === 'string') {
@@ -362,6 +385,7 @@ export function startApi(state: ApiState): http.Server {
         const running =
           strategy === 'acquire' ? state.sessions.findRunningForAppOwner(appId, agentId) : null;
         if (running) {
+          const joined = state.sessions.joinSession(running.id, { agentId, label: ownerLabel });
           const context = state.sessions.contextOf(running.id);
           if (!context) return json(res, 503, { ok: false, detail: 'session has no live context' });
           const page = context.pages()[0] ?? (await context.newPage());
@@ -372,9 +396,9 @@ export function startApi(state: ApiState): http.Server {
             reused: true,
             detail: 'navigated existing owned session',
             app,
-            session: running,
-            watchUrl: running.novncUrl,
-            cdpUrl: running.cdpUrl,
+            session: joined,
+            watchUrl: joined.novncUrl,
+            cdpUrl: joined.cdpUrl,
           });
         }
 
@@ -513,6 +537,7 @@ export function startApi(state: ApiState): http.Server {
               novncUrl: s.novncUrl,
               cdpUrl: s.cdpUrl,
               owner: s.owner,
+              participants: s.participants,
               startedAt: s.startedAt,
               stoppedAt: s.stoppedAt,
             })),
@@ -529,6 +554,7 @@ export function startApi(state: ApiState): http.Server {
               cdp: s.cdpUrl,
               appId: s.appId,
               owner: s.owner,
+              participants: s.participants,
             })),
           });
         }

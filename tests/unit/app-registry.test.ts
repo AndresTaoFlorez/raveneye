@@ -140,6 +140,8 @@ describe('SessionStore', () => {
       detail: null,
       novncUrl: 'http://127.0.0.1:6081/vnc.html?autoconnect=true&resize=scale',
       cdpUrl: 'http://127.0.0.1:9223',
+      owner: null,
+      participants: [],
     };
 
     store.recordStarted(session, 'http://127.0.0.1:8090');

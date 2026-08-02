@@ -69,7 +69,7 @@ function formatTime(value?: string): string {
 function appFromSession(session: ObserverSession) {
   const host = hostname(session.targetUrl);
   return {
-    id: session.appId,
+    id: `session:${session.id}`,
     name: session.slot === 'base' ? 'Configured Target' : host ?? session.appId,
     description: session.owner?.label ?? null,
     target_url: session.targetUrl,
@@ -90,6 +90,7 @@ export function OverviewView() {
   const { apps, health, status, sessions } = useAppSelector((state) => state.dashboard);
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
   const [deleteAppId, setDeleteAppId] = useState<string | null>(null);
+  const [participantsSessionId, setParticipantsSessionId] = useState<string | null>(null);
   const [viewportDraft, setViewportDraft] = useState({ width: '', height: '' });
   const [viewportSaving, setViewportSaving] = useState(false);
   const form = useAppFormController();
@@ -110,8 +111,16 @@ export function OverviewView() {
     selectedApp && apps.some((app) => app.id === selectedApp.id),
   );
   const deleteApp = apps.find((app) => app.id === deleteAppId) ?? null;
+  const participantsSession =
+    sessions.find((session) => session.id === participantsSessionId) ??
+    observableApps
+      .flatMap((app) => app.sessions ?? [])
+      .find((session) => session.id === participantsSessionId) ??
+    null;
   const selectedSession = selectedApp
-    ? sessions.find((session) => session.appId === selectedApp.id && session.state === 'running')
+    ? selectedAppIsRegistered
+      ? sessions.find((session) => session.appId === selectedApp.id && session.state === 'running')
+      : selectedApp.sessions?.find((session) => session.state === 'running') ?? null
     : null;
   const activeUrl = selectedSession?.targetUrl ?? selectedApp?.target_url ?? status?.target_url ?? 'No target';
   const activeHost = activeUrl === 'No target' ? 'No target' : hostname(activeUrl) ?? activeUrl;
@@ -285,9 +294,9 @@ export function OverviewView() {
           <div className={styles.windowGrid} aria-label="Observed browser windows">
             {observableApps.map((app) => {
               const isRegisteredApp = apps.some((item) => item.id === app.id);
-              const session = sessions.find(
-                (item) => item.appId === app.id && item.state === 'running',
-              );
+              const session = isRegisteredApp
+                ? sessions.find((item) => item.appId === app.id && item.state === 'running')
+                : app.sessions?.find((item) => item.state === 'running');
               return (
                 <article
                   role="button"
@@ -309,7 +318,22 @@ export function OverviewView() {
                 >
                   <div className={styles.windowBar}>
                     <div>
-                      <span className={session ? styles.windowLive : styles.windowIdle} />
+                      {session ? (
+                        <button
+                          type="button"
+                          className={styles.participantDotButton}
+                          aria-label={`Show participants for session ${session.slot}`}
+                          title="Show participants"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setParticipantsSessionId(session.id);
+                          }}
+                        >
+                          <span className={styles.windowLive} />
+                        </button>
+                      ) : (
+                        <span className={styles.windowIdle} />
+                      )}
                       <strong>{session ? session.slot : 'idle'}</strong>
                     </div>
                     <div className={styles.windowBarActions}>
@@ -571,6 +595,67 @@ export function OverviewView() {
           setDeleteAppId(null);
         }}
       />
+
+      <Modal
+        open={Boolean(participantsSession)}
+        onClose={() => setParticipantsSessionId(null)}
+        title={`Session ${participantsSession?.slot ?? ''} participants`}
+        description={participantsSession?.targetUrl}
+        size="md"
+      >
+        {participantsSession ? (
+          <div className={styles.participantsPanel}>
+            <div className={styles.participantsSummary}>
+              <span>Owner</span>
+              <strong>
+                {participantsSession.owner?.label ??
+                  participantsSession.owner?.agentId ??
+                  'Unassigned'}
+              </strong>
+            </div>
+            <div className={styles.participantsList}>
+              {(participantsSession.participants?.length
+                ? participantsSession.participants
+                : participantsSession.owner
+                  ? [
+                      {
+                        id: participantsSession.owner.agentId,
+                        label: participantsSession.owner.label,
+                        kind: participantsSession.owner.agentId === 'manual' ? 'human' : 'agent',
+                        connectedAt: participantsSession.startedAt,
+                        lastSeenAt: participantsSession.startedAt,
+                      },
+                    ]
+                  : []
+              ).map((participant) => (
+                <article key={participant.id} className={styles.participantRow}>
+                  <div>
+                    <strong>{participant.label ?? participant.id}</strong>
+                    <span>{participant.id}</span>
+                  </div>
+                  <dl>
+                    <div>
+                      <dt>Type</dt>
+                      <dd>{participant.kind}</dd>
+                    </div>
+                    <div>
+                      <dt>Joined</dt>
+                      <dd>{formatTime(participant.connectedAt)}</dd>
+                    </div>
+                    <div>
+                      <dt>Seen</dt>
+                      <dd>{formatTime(participant.lastSeenAt)}</dd>
+                    </div>
+                  </dl>
+                </article>
+              ))}
+              {!participantsSession.participants?.length && !participantsSession.owner ? (
+                <p className={styles.empty}>No participants reported for this session.</p>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+      </Modal>
     </section>
   );
 }

@@ -24,6 +24,15 @@ export interface ObserverSession {
     agentId: string;
     label: string | null;
   } | null;
+  participants?: SessionParticipant[];
+}
+
+export interface SessionParticipant {
+  id: string;
+  label: string | null;
+  kind: 'agent' | 'human';
+  connectedAt: string;
+  lastSeenAt: string;
 }
 
 export interface OpenAppResult {

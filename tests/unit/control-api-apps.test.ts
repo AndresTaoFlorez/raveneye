@@ -72,6 +72,7 @@ function handle(overrides: Partial<SessionHandle>): SessionHandle {
       overrides.novncUrl ?? `http://127.0.0.1:${novnc}/vnc.html?autoconnect=true&resize=scale`,
     cdpUrl: overrides.cdpUrl ?? `http://127.0.0.1:${cdp}`,
     owner: overrides.owner ?? null,
+    participants: overrides.participants ?? [],
   };
 }
 
@@ -126,6 +127,28 @@ class FakeSessions {
     );
   }
 
+  joinSession(id: string, participant?: { agentId: string; label?: string | null }) {
+    const session = this.sessions.get(id);
+    if (!session) throw new Error('session not found');
+    if (participant) {
+      const now = new Date().toISOString();
+      const existing = session.participants.find((item) => item.id === participant.agentId);
+      if (existing) {
+        existing.label = participant.label ?? existing.label;
+        existing.lastSeenAt = now;
+      } else {
+        session.participants.push({
+          id: participant.agentId,
+          label: participant.label ?? null,
+          kind: participant.agentId === 'manual' ? 'human' : 'agent',
+          connectedAt: now,
+          lastSeenAt: now,
+        });
+      }
+    }
+    return session;
+  }
+
   contextOf(id: string) {
     return this.contexts.get(id) ?? null;
   }
@@ -158,6 +181,17 @@ class FakeSessions {
       owner: opts.ownerAgentId
         ? { agentId: opts.ownerAgentId, label: opts.ownerLabel ?? null }
         : null,
+      participants: opts.ownerAgentId
+        ? [
+            {
+              id: opts.ownerAgentId,
+              label: opts.ownerLabel ?? null,
+              kind: opts.ownerAgentId === 'manual' ? 'human' : 'agent',
+              connectedAt: new Date().toISOString(),
+              lastSeenAt: new Date().toISOString(),
+            },
+          ]
+        : [],
     });
     this.sessions.set(session.id, session);
     this.contexts.set(session.id, this.createContext());
@@ -344,6 +378,41 @@ describe('app registry API', () => {
     expect(again.reused).toBe(true);
     expect(again.session.id).toBe(first.session.id);
     expect(again.session.id).not.toBe(other.session.id);
+  });
+
+  it('joins an existing session by id and records the participant', async () => {
+    const { baseUrl, registry, sessions } = await startTestApi();
+    const app = registry.create({
+      name: 'Shared session app',
+      target_url: 'http://sample-app:3000',
+      allowed_hosts: ['sample-app'],
+    });
+    const created = await (
+      await fetch(`${baseUrl}/api/sessions/acquire`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ appId: app.id, agentId: 'codex-a' }),
+      })
+    ).json();
+
+    const joined = await (
+      await fetch(`${baseUrl}/api/sessions/acquire`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: created.session.id,
+          agentId: 'codex-b',
+          label: 'Reviewer',
+        }),
+      })
+    ).json();
+
+    expect(joined.reused).toBe(true);
+    expect(joined.session.id).toBe(created.session.id);
+    expect(joined.session.participants).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: 'codex-b', label: 'Reviewer' })]),
+    );
+    expect(sessions.list().filter((session) => session.slot !== 'base')).toHaveLength(1);
   });
 
   it('rejects direct navigation when the target is not in Observed Apps', async () => {
