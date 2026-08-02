@@ -19,7 +19,14 @@ const WATCH = 'http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale';
 // Agregar uno nuevo = añadir una entrada aquí.
 const TARGETS = {
   claude: () => {
-    execSync('claude mcp add raveneye -- npx --yes raveneye-mcp-server', { stdio: 'inherit' });
+    try {
+      execSync('claude mcp remove raveneye', { stdio: 'ignore' });
+    } catch {
+      // raveneye was not registered yet — nothing to replace.
+    }
+    execSync(`claude mcp add raveneye -- ${RAVENEYE_MCP.command} ${RAVENEYE_MCP.args.join(' ')}`, {
+      stdio: 'inherit',
+    });
   },
   codex: () => registerToml(join(homedir(), '.codex', 'config.toml'), '[mcp_servers.raveneye]'),
   zcode: () => registerJson(join(homedir(), '.zcode', 'cli', 'config.json'), ['mcp', 'servers']),
